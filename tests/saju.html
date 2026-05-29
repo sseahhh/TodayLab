@@ -1,0 +1,392 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>사주 간이 분석 | 오늘연구소</title>
+  <meta name="description" content="사주 간이 분석 — 오늘연구소에서 재미있게 즐겨보세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .saju-pillars {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .saju-pillar {
+      flex: 1;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px;
+      padding: 14px 8px;
+      text-align: center;
+      max-width: 80px;
+    }
+    .saju-pillar-label { font-size: 10px; color: var(--gray3); margin-bottom: 8px; letter-spacing: 1px; }
+    .saju-pillar-gan { font-size: 24px; font-weight: 900; margin-bottom: 4px; }
+    .saju-pillar-ji { font-size: 20px; font-weight: 700; color: var(--gray2); }
+    .ohaeng-chart {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .ohaeng-bar-wrap {
+      flex: 1;
+      text-align: center;
+    }
+    .ohaeng-label { font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+    .ohaeng-bar-bg {
+      background: rgba(255,255,255,.06);
+      border-radius: 4px;
+      height: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .ohaeng-bar-fill {
+      border-radius: 4px;
+      transition: height 1.2s cubic-bezier(.4,0,.2,1) .2s;
+    }
+    .ohaeng-val { font-size: 11px; font-weight: 700; margin-top: 5px; }
+    .saju-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .saju-info-box {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .saju-info-box-label { font-size: 11px; color: var(--gray3); margin-bottom: 6px; }
+    .saju-info-box-val { font-size: 18px; font-weight: 800; }
+    .strength-list, .caution-list {
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 14px;
+    }
+    .strength-list {
+      background: rgba(70,211,105,.07);
+      border: 1px solid rgba(70,211,105,.18);
+    }
+    .caution-list {
+      background: rgba(229,9,20,.07);
+      border: 1px solid rgba(229,9,20,.15);
+    }
+    .strength-list h4 { font-size: 13px; color: #46d369; margin-bottom: 8px; }
+    .caution-list h4 { font-size: 13px; color: #ff6b6b; margin-bottom: 8px; }
+    .s-item { font-size: 13px; color: var(--gray2); line-height: 1.8; }
+    .s-item::before { content: "✓ "; }
+    .c-item { font-size: 13px; color: var(--gray2); line-height: 1.8; }
+    .c-item::before { content: "⚠ "; color: #ff6b6b; }
+    .hour-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .hour-chips .chip {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+    .time-group-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gray3);
+      margin-bottom: 8px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">☯️</span>
+          <h1>사주 간이 분석</h1>
+          <p>생년월일시로 알아보는 나의 사주<br>오행 균형 · 성격 · 2025년 운세 분석!</p>
+          <div class="test-meta">
+            <span>🔮 운세</span>
+            <span>⏱ 2분</span>
+            <span>👥 124,556명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-text" style="margin-bottom:20px;">생년월일과 시간을 입력해주세요</div>
+
+          <div style="display:flex;gap:12px;margin-bottom:0;">
+            <div style="flex:2;">
+              <label class="input-label">생년 (연도)</label>
+              <input type="number" class="input-field" id="birthYear" placeholder="예: 1990" min="1930" max="2010">
+            </div>
+            <div style="flex:1;">
+              <label class="input-label">생월</label>
+              <select class="input-field" id="birthMonth">
+                <option value="">월</option>
+                ${Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}월</option>`).join('')}
+              </select>
+            </div>
+            <div style="flex:1;">
+              <label class="input-label">생일</label>
+              <select class="input-field" id="birthDay">
+                <option value="">일</option>
+                ${Array.from({length:31},(_,i)=>`<option value="${i+1}">${i+1}일</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <label class="input-label" style="margin-top:4px;">태어난 시간대 (시주)</label>
+          <div class="hour-chips" id="hourGroup">
+            <button class="chip" data-hour="0" onclick="selectHour(this)">자시 (0-1시)</button>
+            <button class="chip" data-hour="1" onclick="selectHour(this)">축시 (2-3시)</button>
+            <button class="chip" data-hour="2" onclick="selectHour(this)">인시 (4-5시)</button>
+            <button class="chip" data-hour="3" onclick="selectHour(this)">묘시 (6-7시)</button>
+            <button class="chip" data-hour="4" onclick="selectHour(this)">진시 (8-9시)</button>
+            <button class="chip" data-hour="5" onclick="selectHour(this)">사시 (10-11시)</button>
+            <button class="chip" data-hour="6" onclick="selectHour(this)">오시 (12-13시)</button>
+            <button class="chip" data-hour="7" onclick="selectHour(this)">미시 (14-15시)</button>
+            <button class="chip" data-hour="8" onclick="selectHour(this)">신시 (16-17시)</button>
+            <button class="chip" data-hour="9" onclick="selectHour(this)">유시 (18-19시)</button>
+            <button class="chip" data-hour="10" onclick="selectHour(this)">술시 (20-21시)</button>
+            <button class="chip" data-hour="11" onclick="selectHour(this)">해시 (22-23시)</button>
+          </div>
+
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;margin-top:4px;">
+            ☯️ 사주 분석하기
+          </button>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+
+    </div>
+  </div>
+
+<script>
+let selectedHour = null;
+
+function selectHour(btn) {
+  document.querySelectorAll('#hourGroup .chip').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedHour = parseInt(btn.dataset.hour);
+}
+
+// 천간: year last digit → 천간
+const CHEONGAN = ['갑','을','병','정','무','기','경','신','임','계'];
+// 지지: year % 12
+const JIJI = ['자','축','인','묘','진','사','오','미','신','유','술','해'];
+// 지지 for hours (same 12 cycle)
+const HOUR_JIJI = ['자','축','인','묘','진','사','오','미','신','유','술','해'];
+
+// 오행 mapping
+const OHAENG_CG = { '갑':'목','을':'목','병':'화','정':'화','무':'토','기':'토','경':'금','신':'금','임':'수','계':'수' };
+const OHAENG_JJ = { '자':'수','축':'토','인':'목','묘':'목','진':'토','사':'화','오':'화','미':'토','신':'금','유':'금','술':'토','해':'수' };
+
+const OHAENG_COLORS = { '목':'#46d369','화':'#ff6b6b','토':'#ffd700','금':'#c0c0c0','수':'#4facfe' };
+
+// Month 천간 (approximate: uses year gan + month number)
+const MONTH_CG_TABLE = ['갑','을','병','정','무','기','경','신','임','계','갑','을'];
+// Month jiji: fixed by lunar month (인묘진사오미신유술해자축)
+const MONTH_JJ = ['인','묘','진','사','오','미','신','유','술','해','자','축'];
+
+// Day pillar: simplified hash
+function getDayGan(year, month, day) {
+  const offset = (year * 5 + month * 2 + day * 7) % 10;
+  return CHEONGAN[offset];
+}
+function getDayJi(year, month, day) {
+  const offset = ((year - 1900) * 5 + month * 3 + day * 11) % 12;
+  return JIJI[((offset % 12) + 12) % 12];
+}
+
+const PERSONALITIES = {
+  '목': '성장과 인자함의 기운을 타고났습니다. 창의적이고 따뜻한 마음을 가졌으며, 새로운 시작과 발전에 강한 에너지를 발휘합니다. 남을 도우려는 강한 의지와 가르치는 능력이 탁월합니다.',
+  '화': '열정과 예의의 기운이 강합니다. 밝고 활발하며 표현력이 뛰어나고, 주위를 환하게 만드는 카리스마가 있습니다. 직관적이며 창의적인 분야에서 두각을 나타냅니다.',
+  '토': '신뢰와 균형의 기운이 풍부합니다. 성실하고 책임감이 강하며 모든 일에 중용을 지키려 합니다. 사람들 사이에서 중재자 역할을 자연스럽게 맡게 되며, 꾸준한 노력으로 성공을 이루는 타입입니다.',
+  '금': '의로움과 결단력의 기운을 타고났습니다. 판단이 명확하고 원칙을 중시하며, 한번 결심한 일은 끝까지 밀고 나가는 강인한 의지의 소유자입니다. 정의감이 강하고 신뢰받는 인물이 됩니다.',
+  '수': '지혜와 유연함의 기운이 넘칩니다. 상황에 따라 유연하게 대처하는 능력이 탁월하며, 깊은 사고력과 직관이 뛰어납니다. 학문과 예술적 감각이 뛰어나 지적인 분야에서 빛을 발합니다.',
+};
+
+const FORTUNE_2025 = {
+  '목': '2025년 목 기운이 강한 분은 새로운 프로젝트와 인간관계에서 큰 성장을 경험할 것입니다. 특히 상반기에 중요한 만남이 예상되며, 하반기에는 재물적 안정이 찾아옵니다.',
+  '화': '2025년 화 기운이 강한 분은 직업적 도약의 기회가 찾아옵니다. 주변의 주목을 받게 되며, 표현하고 싶었던 것들을 과감하게 실행에 옮기기 좋은 해입니다.',
+  '토': '2025년 토 기운이 강한 분은 인내와 성실함이 빛을 발하는 해입니다. 꾸준히 쌓아온 노력이 실질적인 성과로 이어지며, 부동산이나 자산 관련 운이 특히 좋습니다.',
+  '금': '2025년 금 기운이 강한 분은 결단과 실행이 중요한 해입니다. 오래 망설이던 일을 과감히 결정하면 좋은 결과를 얻을 수 있으며, 금전운이 하반기에 크게 상승합니다.',
+  '수': '2025년 수 기운이 강한 분은 학습과 자기 계발에 최적의 해입니다. 새로운 지식을 흡수하는 능력이 최고조에 달하며, 대인관계에서 소중한 인연을 만날 가능성이 높습니다.',
+};
+
+const STRENGTHS = {
+  '목': ['창의적 문제 해결 능력이 뛰어남', '배려심과 공감 능력이 탁월함'],
+  '화': ['강한 추진력과 리더십', '인상적인 표현력과 설득력'],
+  '토': ['흔들리지 않는 신뢰와 성실함', '위기 상황에서도 균형을 유지하는 능력'],
+  '금': ['명확한 판단력과 결단력', '높은 원칙과 강직한 성품'],
+  '수': ['빠른 상황 파악과 적응력', '깊은 통찰력과 지혜'],
+};
+
+const CAUTIONS = {
+  '목': ['고집이 세져 타인과 갈등이 생길 수 있음', '너무 많은 일을 벌여 마무리가 부족해질 수 있음'],
+  '화': ['감정 기복이 심해 주변을 당황시킬 수 있음', '충동적 결정으로 후회하는 상황을 주의'],
+  '토': ['변화에 저항하여 기회를 놓칠 수 있음', '모든 것을 혼자 짊어지려다 번아웃 위험'],
+  '금': ['지나친 완벽주의가 스트레스를 유발', '유연성이 부족해 인간관계에서 마찰 가능'],
+  '수': ['우유부단한 면이 결정을 어렵게 만들 수 있음', '지나친 걱정과 불안이 실행을 막을 수 있음'],
+};
+
+function countOhaeng(elements) {
+  const count = { '목':0, '화':0, '토':0, '금':0, '수':0 };
+  elements.forEach(e => { if (e && count[e] !== undefined) count[e]++; });
+  return count;
+}
+
+function calculate() {
+  const year = parseInt(document.getElementById('birthYear').value);
+  const month = parseInt(document.getElementById('birthMonth').value);
+  const day = parseInt(document.getElementById('birthDay').value);
+  if (!year || year < 1930 || year > 2010) { alert('1930~2010 사이 출생 연도를 입력해주세요!'); return; }
+  if (!month) { alert('생월을 선택해주세요!'); return; }
+  if (!day) { alert('생일을 선택해주세요!'); return; }
+  if (selectedHour === null) { alert('태어난 시간대를 선택해주세요!'); return; }
+
+  // Year pillar
+  const yearGan = CHEONGAN[(year - 4) % 10 < 0 ? ((year - 4) % 10 + 10) : (year - 4) % 10];
+  const yearJi  = JIJI[((year - 4) % 12 + 12) % 12];
+
+  // Month pillar
+  const monthGan = MONTH_CG_TABLE[(month - 1 + (year % 5) * 2) % 10];
+  const monthJi  = MONTH_JJ[month - 1];
+
+  // Day pillar
+  const dayGan = getDayGan(year, month, day);
+  const dayJi  = getDayJi(year, month, day);
+
+  // Hour pillar
+  const hourJi  = HOUR_JIJI[selectedHour];
+  const hourGanIdx = (selectedHour + (CHEONGAN.indexOf(dayGan) % 5) * 2) % 10;
+  const hourGan = CHEONGAN[hourGanIdx];
+
+  // 오행 count
+  const allGan = [yearGan, monthGan, dayGan, hourGan];
+  const allJi  = [yearJi, monthJi, dayJi, hourJi];
+  const ganOhaeng = allGan.map(g => OHAENG_CG[g] || '토');
+  const jiOhaeng  = allJi.map(j => OHAENG_JJ[j] || '토');
+  const allOhaeng = [...ganOhaeng, ...jiOhaeng];
+  const ohaengCount = countOhaeng(allOhaeng);
+
+  // Dominant ohaeng
+  const dominant = Object.entries(ohaengCount).sort((a,b) => b[1]-a[1])[0][0];
+  const total = allOhaeng.length;
+
+  const ohaengKeys = ['목','화','토','금','수'];
+
+  showAdThenResult(() => {
+    document.getElementById('formSection').style.display = 'none';
+    const sec = document.getElementById('resultSection');
+    sec.style.display = 'block';
+
+    const pillarsHtml = `
+      <div class="saju-pillars">
+        ${[{g:yearGan,j:yearJi,l:'년주'},{g:monthGan,j:monthJi,l:'월주'},{g:dayGan,j:dayJi,l:'일주'},{g:hourGan,j:hourJi,l:'시주'}].map(p => `
+          <div class="saju-pillar">
+            <div class="saju-pillar-label">${p.l}</div>
+            <div class="saju-pillar-gan" style="color:${OHAENG_COLORS[OHAENG_CG[p.g]||'토']}">${p.g}</div>
+            <div class="saju-pillar-ji" style="color:${OHAENG_COLORS[OHAENG_JJ[p.j]||'토']}">${p.j}</div>
+          </div>
+        `).join('')}
+      </div>`;
+
+    const ohaengBarsHtml = `
+      <div style="margin-bottom:8px;font-size:13px;font-weight:700;color:var(--gray2);">오행 균형</div>
+      <div class="ohaeng-chart">
+        ${ohaengKeys.map(k => {
+          const pct = Math.round((ohaengCount[k] / total) * 100);
+          const fillH = Math.round((ohaengCount[k] / total) * 60);
+          return `<div class="ohaeng-bar-wrap">
+            <div class="ohaeng-label" style="color:${OHAENG_COLORS[k]}">${k}</div>
+            <div class="ohaeng-bar-bg">
+              <div class="ohaeng-bar-fill" style="height:0px;background:${OHAENG_COLORS[k]}" data-h="${fillH}"></div>
+            </div>
+            <div class="ohaeng-val" style="color:${OHAENG_COLORS[k]}">${ohaengCount[k]}</div>
+          </div>`;
+        }).join('')}
+      </div>`;
+
+    sec.innerHTML = `<div class="result-card">
+      <div class="result-type">☯️ 사주 간이 분석</div>
+      <div class="result-title" style="font-size:22px;">${year}년 ${month}월 ${day}일생</div>
+
+      ${pillarsHtml}
+      ${ohaengBarsHtml}
+
+      <div class="saju-info-grid" style="margin-top:20px;">
+        <div class="saju-info-box">
+          <div class="saju-info-box-label">주된 오행</div>
+          <div class="saju-info-box-val" style="color:${OHAENG_COLORS[dominant]}">${dominant}(${['木','火','土','金','水'][ohaengKeys.indexOf(dominant)]})</div>
+        </div>
+        <div class="saju-info-box">
+          <div class="saju-info-box-label">일간 (나)</div>
+          <div class="saju-info-box-val" style="color:${OHAENG_COLORS[OHAENG_CG[dayGan]||'토']}">${dayGan}(${OHAENG_CG[dayGan]||'토'})</div>
+        </div>
+      </div>
+
+      <div class="fortune-desc-box" style="margin-bottom:16px;">${PERSONALITIES[dominant]}</div>
+
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px 18px;margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:#c9b8f7;margin-bottom:8px;">✨ 2025년 운세</div>
+        <div style="font-size:14px;color:var(--gray2);line-height:1.8;">${FORTUNE_2025[dominant]}</div>
+      </div>
+
+      <div class="strength-list">
+        <h4>💚 나의 강점</h4>
+        ${STRENGTHS[dominant].map(s => `<div class="s-item">${s}</div>`).join('')}
+      </div>
+
+      <div class="caution-list">
+        <h4>⚠️ 주의사항</h4>
+        ${CAUTIONS[dominant].map(c => `<div class="c-item">${c}</div>`).join('')}
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-share" onclick="shareResult()">🔗 결과 공유하기</button>
+        <button class="btn-retry" onclick="location.reload()">🔄 다시하기</button>
+        <a href="../index.html" class="btn-back">← 포털로</a>
+      </div>
+    </div>`;
+
+    setTimeout(() => {
+      document.querySelectorAll('.ohaeng-bar-fill').forEach(el => {
+        el.style.height = el.dataset.h + 'px';
+      });
+    }, 150);
+  });
+}
+
+function shareResult() {
+  const text = '사주 간이 분석 ☯️ 나의 오행과 사주를 분석해봤어! 너도 해봐~';
+  if (navigator.share) navigator.share({ title: '사주 간이 분석', text, url: window.location.href });
+  else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+}
+</script>
+</body>
+</html>

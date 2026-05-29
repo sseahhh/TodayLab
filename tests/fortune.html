@@ -1,0 +1,424 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오늘의 운세 | 오늘연구소</title>
+  <meta name="description" content="오늘의 운세 — 생년월일로 알아보는 애정운·금전운·건강운·직장운 완전 분석 | 오늘연구소">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .fortune-hero {
+      background: linear-gradient(145deg, #0d0d1a 0%, #1a0a2e 100%);
+      border-radius: 16px;
+      padding: 36px 28px;
+      text-align: center;
+      margin-bottom: 20px;
+      border: 1.5px solid rgba(255,255,255,.06);
+      position: relative;
+      overflow: hidden;
+    }
+    .fortune-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(161,140,209,.25) 0%, transparent 60%);
+    }
+    .fortune-date {
+      font-size: 13px;
+      color: var(--gray3);
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .fortune-stars {
+      font-size: 28px;
+      letter-spacing: 6px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .fortune-main-msg {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.5;
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .fortune-sub-msg {
+      font-size: 14px;
+      color: var(--gray2);
+      line-height: 1.8;
+      position: relative;
+    }
+    .fortune-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .fortune-card {
+      background: var(--bg2);
+      border-radius: 12px;
+      padding: 18px 16px;
+      border: 1.5px solid rgba(255,255,255,.06);
+    }
+    .fc-icon { font-size: 30px; display:block; margin-bottom: 8px; }
+    .fc-label { font-size: 12px; color: var(--gray3); margin-bottom: 6px; }
+    .fc-stars { font-size: 16px; margin-bottom: 4px; }
+    .fc-text { font-size: 13px; color: var(--gray2); line-height: 1.6; }
+    .lucky-section {
+      background: var(--bg2);
+      border-radius: 12px;
+      padding: 18px 20px;
+      border: 1.5px solid rgba(255,255,255,.06);
+      margin-bottom: 20px;
+    }
+    .lucky-title { font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+    .lucky-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .lucky-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .lucky-item-icon { font-size: 24px; }
+    .lucky-item-label { font-size: 10px; color: var(--gray3); }
+    .lucky-item-val { font-size: 13px; font-weight: 700; }
+    .advice-box {
+      background: rgba(161,140,209,.1);
+      border: 1px solid rgba(161,140,209,.25);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+    }
+    .advice-box p { font-size: 14px; color: var(--gray1); line-height: 1.8; }
+    .advice-box strong { color: #c9b8f7; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">🔮</span>
+          <h1>오늘의 운세</h1>
+          <p>생년월일로 알아보는 오늘의 운세<br>애정운 · 금전운 · 건강운 · 직장운 완전 분석!</p>
+          <div class="test-meta">
+            <span>🔮 운세</span>
+            <span>⏱ 1분</span>
+            <span>👥 312,009명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-num">생년월일 입력</div>
+          <div class="question-text" style="margin-bottom:24px;">오늘의 운세를 확인해볼게요!</div>
+
+          <label class="input-label">생년월일 기준</label>
+          <div class="chip-group" style="margin-bottom:14px;">
+            <button class="chip selected" data-cal="solar" onclick="selCal(this)">☀️ 양력</button>
+            <button class="chip" data-cal="lunar" onclick="selCal(this)">🌙 음력</button>
+          </div>
+          <label class="input-label" id="dateLabel">생년월일 (양력)</label>
+          <input type="date" class="input-field" id="birthDate" style="cursor:pointer;">
+          <div id="lunarNote" style="display:none; font-size:12px; color:#c9b8f7; background:rgba(161,140,209,.1); border:1px solid rgba(161,140,209,.2); border-radius:8px; padding:10px 14px; margin-top:-8px; margin-bottom:12px; line-height:1.6;">
+            🌙 음력 날짜를 입력해주세요. 양력으로 자동 환산되며 ±1~2일 오차가 있을 수 있습니다. (지원 범위: 1930~2025년)
+          </div>
+
+          <label class="input-label" style="margin-top:8px;">성별</label>
+          <div class="chip-group">
+            <button class="chip" data-g="M" onclick="selG(this)">👨 남자</button>
+            <button class="chip" data-g="F" onclick="selG(this)">👩 여자</button>
+          </div>
+
+          <button class="btn-primary" onclick="getFortune()" style="width:100%;padding:15px;font-size:16px;margin-top:8px;">
+            🔮 운세 보기
+          </button>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+
+    </div>
+  </div>
+
+<script>
+let selectedG = null;
+let selectedCal = 'solar';
+
+const def = new Date();
+def.setFullYear(def.getFullYear() - 25);
+document.getElementById('birthDate').value = def.toISOString().split('T')[0];
+
+function selG(btn) {
+  document.querySelectorAll('.chip[data-g]').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedG = btn.dataset.g;
+}
+
+function selCal(btn) {
+  document.querySelectorAll('.chip[data-cal]').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedCal = btn.dataset.cal;
+  const isLunar = selectedCal === 'lunar';
+  document.getElementById('lunarNote').style.display = isLunar ? 'block' : 'none';
+  document.getElementById('dateLabel').textContent = isLunar ? '생년월일 (음력)' : '생년월일 (양력)';
+}
+
+// 음력 1월 1일(설날)의 양력 날짜 [월, 일] — 1930~2025
+const LUNAR_NEW_YEAR = {
+  1930:[1,30], 1931:[2,17], 1932:[2,6],  1933:[1,26], 1934:[2,14],
+  1935:[2,4],  1936:[1,24], 1937:[2,11], 1938:[1,31], 1939:[2,19],
+  1940:[2,8],  1941:[1,27], 1942:[2,15], 1943:[2,5],  1944:[1,25],
+  1945:[2,13], 1946:[2,2],  1947:[1,22], 1948:[2,10], 1949:[1,29],
+  1950:[2,17], 1951:[2,6],  1952:[1,27], 1953:[2,14], 1954:[2,3],
+  1955:[1,24], 1956:[2,12], 1957:[1,31], 1958:[2,18], 1959:[2,8],
+  1960:[1,28], 1961:[2,15], 1962:[2,5],  1963:[1,25], 1964:[2,13],
+  1965:[2,2],  1966:[1,21], 1967:[2,9],  1968:[1,30], 1969:[2,17],
+  1970:[2,6],  1971:[1,27], 1972:[2,15], 1973:[2,3],  1974:[1,23],
+  1975:[2,11], 1976:[1,31], 1977:[2,18], 1978:[2,7],  1979:[1,28],
+  1980:[2,16], 1981:[2,5],  1982:[1,25], 1983:[2,13], 1984:[2,2],
+  1985:[2,20], 1986:[2,9],  1987:[1,29], 1988:[2,17], 1989:[2,6],
+  1990:[1,27], 1991:[2,15], 1992:[2,4],  1993:[1,23], 1994:[2,10],
+  1995:[1,31], 1996:[2,19], 1997:[2,7],  1998:[1,28], 1999:[2,16],
+  2000:[2,5],  2001:[1,24], 2002:[2,12], 2003:[2,1],  2004:[1,22],
+  2005:[2,9],  2006:[1,29], 2007:[2,18], 2008:[2,7],  2009:[1,26],
+  2010:[2,14], 2011:[2,3],  2012:[1,23], 2013:[2,10], 2014:[1,31],
+  2015:[2,19], 2016:[2,8],  2017:[1,28], 2018:[2,16], 2019:[2,5],
+  2020:[1,25], 2021:[2,12], 2022:[2,1],  2023:[1,22], 2024:[2,10],
+  2025:[1,29],
+};
+
+// 음력 → 양력 변환 (홀수달=30일, 짝수달=29일 근사치, ±1~2일 오차)
+function lunarToSolar(ly, lm, ld) {
+  const ny = LUNAR_NEW_YEAR[ly];
+  if (!ny) return null;
+  let days = 0;
+  for (let m = 1; m < lm; m++) days += (m % 2 === 1) ? 30 : 29;
+  days += (ld - 1);
+  const base = new Date(ly, ny[0] - 1, ny[1]);
+  return new Date(base.getTime() + days * 86400000);
+}
+
+const LUCKY_COLORS = ['빨간색', '파란색', '노란색', '초록색', '보라색', '흰색', '분홍색', '주황색'];
+const LUCKY_DIRS   = ['동쪽', '서쪽', '남쪽', '북쪽', '남동쪽', '북서쪽'];
+const LUCKY_ITEMS  = ['🌸꽃', '📚책', '☕커피', '🎵음악', '🌿식물', '💎액세서리', '🕯촛불', '🧸인형'];
+
+const MAIN_MSGS = [
+  ['오늘은 새로운 기회의 문이 열리는 날!', '주변의 작은 변화에 주목하세요. 그 속에 행운의 씨앗이 있습니다.'],
+  ['인내의 열매를 거두는 시간이 왔습니다', '그동안의 노력이 빛을 발할 때입니다. 자신을 믿으세요.'],
+  ['조용히 내면을 들여다보는 하루', '급하게 결정하기보다는 충분히 생각하고 신중하게 행동하세요.'],
+  ['주변 사람들과의 인연이 빛나는 날', '소중한 인연에 감사하고, 먼저 연락해보는 것도 좋은 날입니다.'],
+  ['창의력과 에너지가 넘치는 하루!', '새로운 아이디어를 실행에 옮기기 좋은 날입니다. 도전하세요!'],
+  ['평온하고 안정적인 에너지의 날', '무리하지 않고 현재에 집중하면 좋은 결과가 따라옵니다.'],
+];
+
+const FORTUNE_TEXTS = {
+  love:    [
+    ['💕 오늘 특별한 만남이 기다리고 있어요. 마음을 열어두세요!', 4],
+    ['💞 연인과의 관계가 한층 깊어지는 날. 솔직한 대화를 나눠보세요', 5],
+    ['💝 짝사랑 중이라면 오늘 고백하기 좋은 날이에요!', 5],
+    ['🌸 인연은 예상치 못한 곳에서 찾아옵니다. 주변을 둘러보세요', 3],
+    ['💔 감정 표현을 자제하고 상대방의 입장을 먼저 이해해보세요', 2],
+    ['🌹 오늘은 자신을 사랑하는 데 집중해보세요', 3],
+  ],
+  money:   [
+    ['💰 뜻밖의 수입이 생길 수 있는 날! 기회를 놓치지 마세요', 5],
+    ['💸 충동구매는 자제하세요. 계획적인 지출이 필요한 날입니다', 2],
+    ['🏦 투자나 재테크에 관심을 가져볼 좋은 시기입니다', 4],
+    ['💵 소소하지만 확실한 행운이 따르는 날', 4],
+    ['🎰 도박이나 투기는 피하세요. 안정적인 선택이 최선', 2],
+    ['✨ 재물운이 서서히 좋아지는 중. 꾸준히 노력하세요', 3],
+  ],
+  health:  [
+    ['💪 에너지가 넘치는 하루! 운동하기 딱 좋은 날이에요', 5],
+    ['😴 충분한 휴식을 취하세요. 몸이 회복을 원하고 있어요', 3],
+    ['🥗 식이 관리에 신경써보세요. 건강한 식단이 도움이 돼요', 4],
+    ['🏃 야외 활동이 기분 전환에 도움이 될 거예요', 4],
+    ['⚠️ 무리하지 마세요. 오늘은 천천히 가는 날입니다', 2],
+    ['🌿 마음의 건강도 중요해요. 명상이나 산책을 해보세요', 3],
+  ],
+  career:  [
+    ['🚀 업무에서 빛나는 하루! 리더십을 발휘할 기회가 와요', 5],
+    ['📋 꼼꼼한 준비가 성과로 이어집니다. 세부 사항을 챙기세요', 4],
+    ['🤝 협력과 소통이 중요한 날. 팀원과 적극적으로 소통하세요', 4],
+    ['💡 새로운 아이디어가 인정받을 수 있는 날이에요', 5],
+    ['⏰ 기한을 지키는 것이 중요한 날. 우선순위를 정하세요', 3],
+    ['🌱 성장을 위한 학습에 투자해보세요', 3],
+  ],
+};
+
+function stars(n) {
+  return '⭐'.repeat(n) + '☆'.repeat(5-n);
+}
+
+function seed(date, offset) {
+  const d = new Date(date);
+  const today = new Date();
+  return (d.getFullYear() * 13 + d.getMonth() * 7 + d.getDate() * 3 + today.getDate() * 17 + offset) % 6;
+}
+
+function getFortune() {
+  const birthStr = document.getElementById('birthDate').value;
+  if (!birthStr) { alert('생년월일을 입력해주세요!'); return; }
+  if (!selectedG) { alert('성별을 선택해주세요!'); return; }
+
+  const parts = birthStr.split('-');
+  const inputY = parseInt(parts[0]), inputM = parseInt(parts[1]), inputD = parseInt(parts[2]);
+
+  let birth = birthStr;
+  let calBadge, convertInfo = '';
+
+  if (selectedCal === 'lunar') {
+    const solar = lunarToSolar(inputY, inputM, inputD);
+    if (solar) {
+      birth = solar.toISOString().split('T')[0];
+      const sy = solar.getFullYear(), sm = solar.getMonth() + 1, sd = solar.getDate();
+      calBadge = '🌙 음력';
+      convertInfo = `양력 환산: ${sy}년 ${sm}월 ${sd}일`;
+    } else {
+      calBadge = '🌙 음력';
+      convertInfo = '지원 범위(1930~2025) 외 — 그대로 계산';
+    }
+  } else {
+    calBadge = '☀️ 양력';
+  }
+
+  const s0 = seed(birth, 0);
+  const s1 = seed(birth, 1);
+  const s2 = seed(birth, 2);
+  const s3 = seed(birth, 3);
+  const s4 = seed(birth, 4);
+
+  const [mainMsg, subMsg] = MAIN_MSGS[s0];
+  const [loveText, loveStars]   = FORTUNE_TEXTS.love[s1];
+  const [moneyText, moneyStars] = FORTUNE_TEXTS.money[s2];
+  const [healthText, healthStars] = FORTUNE_TEXTS.health[s3];
+  const [careerText, careerStars] = FORTUNE_TEXTS.career[s4];
+
+  const total = Math.round((loveStars + moneyStars + healthStars + careerStars) / 4 * 20);
+
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일`;
+
+  const luckyColor = LUCKY_COLORS[s1 % LUCKY_COLORS.length];
+  const luckyDir   = LUCKY_DIRS[s2 % LUCKY_DIRS.length];
+  const luckyItem  = LUCKY_ITEMS[s3 % LUCKY_ITEMS.length];
+  const luckyNum   = ((s4 + 1) * 7 % 45) + 1;
+
+  const sec = document.getElementById('resultSection');
+  showAdThenResult(() => {
+  document.getElementById('formSection').style.display = 'none';
+  sec.style.display = 'block';
+  sec.innerHTML = `
+    <div class="fortune-hero">
+      <div class="fortune-date">
+        📅 ${dateStr} 운세
+        <br>
+        <span style="font-size:11px; opacity:.65; display:inline-block; margin-top:4px;">
+          ${calBadge} ${inputY}년 ${inputM}월 ${inputD}일 생
+          ${convertInfo ? `&nbsp;·&nbsp;${convertInfo}` : ''}
+        </span>
+      </div>
+      <div class="fortune-stars">${stars(Math.round(total/20))}</div>
+      <div class="fortune-main-msg">${mainMsg}</div>
+      <div class="fortune-sub-msg">${subMsg}</div>
+    </div>
+
+    <div class="fortune-cards">
+      <div class="fortune-card">
+        <span class="fc-icon">💕</span>
+        <div class="fc-label">애정운</div>
+        <div class="fc-stars">${stars(loveStars)}</div>
+        <div class="fc-text">${loveText}</div>
+      </div>
+      <div class="fortune-card">
+        <span class="fc-icon">💰</span>
+        <div class="fc-label">금전운</div>
+        <div class="fc-stars">${stars(moneyStars)}</div>
+        <div class="fc-text">${moneyText}</div>
+      </div>
+      <div class="fortune-card">
+        <span class="fc-icon">💪</span>
+        <div class="fc-label">건강운</div>
+        <div class="fc-stars">${stars(healthStars)}</div>
+        <div class="fc-text">${healthText}</div>
+      </div>
+      <div class="fortune-card">
+        <span class="fc-icon">💼</span>
+        <div class="fc-label">직장운</div>
+        <div class="fc-stars">${stars(careerStars)}</div>
+        <div class="fc-text">${careerText}</div>
+      </div>
+    </div>
+
+    <div class="lucky-section">
+      <div class="lucky-title">🍀 오늘의 행운 아이템</div>
+      <div class="lucky-row">
+        <div class="lucky-item">
+          <span class="lucky-item-icon">🎨</span>
+          <span class="lucky-item-label">행운의 색</span>
+          <span class="lucky-item-val">${luckyColor}</span>
+        </div>
+        <div class="lucky-item">
+          <span class="lucky-item-icon">🧭</span>
+          <span class="lucky-item-label">행운의 방향</span>
+          <span class="lucky-item-val">${luckyDir}</span>
+        </div>
+        <div class="lucky-item">
+          <span class="lucky-item-icon">🔢</span>
+          <span class="lucky-item-label">행운의 숫자</span>
+          <span class="lucky-item-val">${luckyNum}</span>
+        </div>
+        <div class="lucky-item">
+          <span class="lucky-item-icon">${luckyItem.slice(0,2)}</span>
+          <span class="lucky-item-label">행운의 물건</span>
+          <span class="lucky-item-val">${luckyItem.slice(2)}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="advice-box">
+      <p>💜 오늘의 조언: <strong>지금 이 순간에 충실하세요.</strong> 과거를 후회하거나 미래를 두려워하기보다, 오늘 하루 최선을 다하는 것이 가장 좋은 운세를 만드는 방법입니다.</p>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn-share" onclick="shareResult()">🔗 운세 공유하기</button>
+      <button class="btn-retry" onclick="location.reload()">🔄 다시 보기</button>
+      <a href="../index.html" class="btn-back">← 포털로</a>
+    </div>`;
+  }); // showAdThenResult
+}
+
+function shareResult() {
+  const text = `오늘 나의 운세 확인했어 🔮 너도 궁금하면 해봐!`;
+  if (navigator.share) {
+    navigator.share({ title:'오늘의 운세', text, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>월급 실수령액 계산기 | 오늘연구소</title>
+  <meta name="description" content="월급 실수령액 계산기 — 세전 월급에서 4대보험·소득세 공제 후 실수령액을 바로 계산 | 오늘연구소">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .salary-big {
+      font-size: 56px;
+      font-weight: 900;
+      text-align: center;
+      background: linear-gradient(135deg, #96fbc4, #f9f586);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 20px 0 4px;
+    }
+    .deduction-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: 14px;
+    }
+    .deduction-row:last-child { border-bottom: none; }
+    .deduction-label { color: var(--gray2); }
+    .deduction-val { font-weight: 600; color: #ff9999; }
+    .deduction-total { color: #ff6666; font-weight: 700; }
+    .income-select {
+      width: 100%;
+      background: var(--bg3);
+      border: 1.5px solid rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: var(--white);
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
+    .income-select:focus { border-color: var(--red); }
+    .income-select option { background: #242424; }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">💰</span>
+          <h1>월급 실수령액 계산기</h1>
+          <p>4대보험과 세금을 제외하고<br>실제로 받는 금액을 계산해드려요!</p>
+          <div class="test-meta">
+            <span>💳 금융</span>
+            <span>⏱ 1분</span>
+            <span>👥 489,334명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <label class="input-label">월 급여 (만원)</label>
+          <input type="number" class="input-field" id="salary" placeholder="예: 300 (300만원)" min="100" max="10000">
+
+          <label class="input-label">부양가족 수 (본인 포함)</label>
+          <select class="income-select" id="dependents">
+            <option value="1">1명 (본인만)</option>
+            <option value="2">2명</option>
+            <option value="3">3명</option>
+            <option value="4">4명</option>
+            <option value="5">5명</option>
+            <option value="6">6명 이상</option>
+          </select>
+
+          <label class="input-label">비과세 금액 (원, 기본 200,000원)</label>
+          <input type="number" class="input-field" id="nonTaxable" placeholder="200000" min="0" max="2000000" value="200000">
+
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;">
+            💰 실수령액 계산하기
+          </button>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:16px 18px;margin-top:16px;">
+          <p style="font-size:12px;color:var(--gray3);line-height:1.7;">
+            📌 <strong style="color:var(--gray2)">2024년 기준 간이세액표</strong>를 기반으로 한 근사치입니다.<br>
+            실제 공제액은 회사 상황, 개인 공제 항목에 따라 다를 수 있어요. 정확한 계산은 국세청 홈택스를 이용하세요 😊
+          </p>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+    </div>
+  </div>
+
+<script>
+function calcIncomeTax(taxableMonthly, dependents) {
+  // 간이세액표 근사 계산 (만원 단위로 처리)
+  const m = taxableMonthly / 10000; // 만원 단위
+  const dep = parseInt(dependents);
+
+  let baseTax = 0;
+  if (m <= 150) {
+    baseTax = 0;
+  } else if (m <= 300) {
+    baseTax = (m - 150) * 10000 * 0.06;
+  } else if (m <= 450) {
+    baseTax = 90000 + (m - 300) * 10000 * 0.15;
+  } else if (m <= 800) {
+    baseTax = 315000 + (m - 450) * 10000 * 0.24;
+  } else {
+    baseTax = 1155000 + (m - 800) * 10000 * 0.35;
+  }
+
+  // 부양가족 공제: 1명당 약 12,500원 절감 (간략 근사)
+  const depDeduction = Math.max(0, (dep - 1)) * 12500;
+  return Math.max(0, baseTax - depDeduction);
+}
+
+function calculate() {
+  const salaryWan = parseFloat(document.getElementById('salary').value);
+  const dependents = parseInt(document.getElementById('dependents').value);
+  const nonTaxable = parseFloat(document.getElementById('nonTaxable').value) || 200000;
+
+  if (!salaryWan || salaryWan < 100 || salaryWan > 10000) {
+    alert('월 급여를 100~10000만원 사이로 입력해주세요!'); return;
+  }
+
+  const salaryWon = salaryWan * 10000;
+  const taxableBase = Math.max(0, salaryWon - nonTaxable);
+
+  // 국민연금: 4.5% (상한 590만원)
+  const npBase = Math.min(salaryWon, 5900000);
+  const nationalPension = Math.round(npBase * 0.045);
+
+  // 건강보험: 3.545%
+  const healthInsurance = Math.round(salaryWon * 0.03545);
+
+  // 장기요양보험: 건강보험료의 12.95%
+  const longTermCare = Math.round(healthInsurance * 0.1295);
+
+  // 고용보험: 0.9%
+  const employmentInsurance = Math.round(salaryWon * 0.009);
+
+  // 소득세 (간이세액표 근사)
+  const incomeTax = Math.round(calcIncomeTax(taxableBase, dependents));
+
+  // 지방소득세: 소득세의 10%
+  const localIncomeTax = Math.round(incomeTax * 0.1);
+
+  const totalDeduction = nationalPension + healthInsurance + longTermCare + employmentInsurance + incomeTax + localIncomeTax;
+  const netSalary = salaryWon - totalDeduction;
+  const annualNet = netSalary * 12;
+  const hourlyWage = Math.round(netSalary / 209);
+
+  showAdThenResult(() => {
+    document.getElementById('formSection').style.display = 'none';
+    const sec = document.getElementById('resultSection');
+    sec.style.display = 'block';
+    sec.innerHTML = `
+      <div class="result-card">
+        <span class="result-emoji">💰</span>
+        <div class="result-type">월 실수령액</div>
+        <div class="salary-big">${netSalary.toLocaleString('ko-KR')}원</div>
+        <div style="text-align:center;color:var(--gray3);font-size:13px;margin-bottom:24px;">
+          세전 ${salaryWon.toLocaleString('ko-KR')}원 → 실수령 ${netSalary.toLocaleString('ko-KR')}원
+        </div>
+
+        <div style="text-align:left;margin-bottom:20px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px;">📋 공제 내역</div>
+          <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:4px 18px;">
+            <div class="deduction-row">
+              <span class="deduction-label">🏥 국민연금 (4.5%)</span>
+              <span class="deduction-val">-${nationalPension.toLocaleString('ko-KR')}원</span>
+            </div>
+            <div class="deduction-row">
+              <span class="deduction-label">💊 건강보험 (3.545%)</span>
+              <span class="deduction-val">-${healthInsurance.toLocaleString('ko-KR')}원</span>
+            </div>
+            <div class="deduction-row">
+              <span class="deduction-label">🏠 장기요양보험</span>
+              <span class="deduction-val">-${longTermCare.toLocaleString('ko-KR')}원</span>
+            </div>
+            <div class="deduction-row">
+              <span class="deduction-label">💼 고용보험 (0.9%)</span>
+              <span class="deduction-val">-${employmentInsurance.toLocaleString('ko-KR')}원</span>
+            </div>
+            <div class="deduction-row">
+              <span class="deduction-label">📄 소득세</span>
+              <span class="deduction-val">-${incomeTax.toLocaleString('ko-KR')}원</span>
+            </div>
+            <div class="deduction-row">
+              <span class="deduction-label">🏙️ 지방소득세</span>
+              <span class="deduction-val">-${localIncomeTax.toLocaleString('ko-KR')}원</span>
+            </div>
+            <div class="deduction-row" style="margin-top:4px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);">
+              <span style="font-weight:700;">총 공제액</span>
+              <span class="deduction-total">-${totalDeduction.toLocaleString('ko-KR')}원</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="range-info">
+          <div class="range-row">
+            <span>💰 월 실수령액</span>
+            <span class="range-val">${netSalary.toLocaleString('ko-KR')}원</span>
+          </div>
+          <div class="range-row">
+            <span>📅 연간 실수령액</span>
+            <span class="range-val">${annualNet.toLocaleString('ko-KR')}원</span>
+          </div>
+          <div class="range-row">
+            <span>⏰ 시급 환산 (209시간)</span>
+            <span class="range-val">${hourlyWage.toLocaleString('ko-KR')}원/시간</span>
+          </div>
+          <div class="range-row">
+            <span>📊 공제율</span>
+            <span class="range-val">${((totalDeduction / salaryWon) * 100).toFixed(1)}%</span>
+          </div>
+        </div>
+
+        <div class="result-actions" style="margin-top:24px;">
+          <button class="btn-share" onclick="shareResult(${netSalary})">🔗 결과 공유하기</button>
+          <button class="btn-retry" onclick="location.reload()">🔄 다시 계산</button>
+          <a href="../index.html" class="btn-back">← 포털로</a>
+        </div>
+      </div>`;
+  });
+}
+
+function shareResult(net) {
+  const text = `월급 실수령액 계산해봤어요! 실수령 ${net.toLocaleString('ko-KR')}원 💰 너도 계산해봐~`;
+  if (navigator.share) navigator.share({ title: '월급 실수령액 계산기', text, url: window.location.href });
+  else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>혈액형 궁합 | 오늘연구소</title>
+  <meta name="description" content="혈액형 궁합 — 나와 상대방의 혈액형으로 알아보는 궁합! 16가지 조합별 상세 분석 | 오늘연구소">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .compat-score-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .compat-ring {
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .compat-ring-inner {
+      width: 120px; height: 120px;
+      background: var(--bg2);
+      border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .compat-score-num { font-size: 42px; font-weight: 900; line-height: 1; }
+    .compat-score-unit { font-size: 13px; color: var(--gray3); margin-top: 2px; }
+    .compat-tier {
+      font-size: 20px; font-weight: 800; margin-bottom: 6px;
+    }
+    .blood-pair {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .blood-badge {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; font-weight: 900;
+      background: rgba(229,9,20,.15);
+      border: 2px solid rgba(229,9,20,.4);
+      color: #ff6b6b;
+    }
+    .blood-heart { font-size: 28px; }
+    .compat-strengths {
+      background: rgba(70,211,105,.08);
+      border: 1px solid rgba(70,211,105,.2);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    .compat-strengths h4 { font-size: 14px; color: #46d369; margin-bottom: 10px; }
+    .compat-strengths li { font-size: 14px; color: var(--gray2); line-height: 1.8; list-style: none; padding-left: 4px; }
+    .compat-strengths li::before { content: "✓ "; color: #46d369; }
+    .compat-challenge {
+      background: rgba(229,9,20,.07);
+      border: 1px solid rgba(229,9,20,.18);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+    .compat-challenge h4 { font-size: 14px; color: #ff6b6b; margin-bottom: 8px; }
+    .compat-challenge p { font-size: 14px; color: var(--gray2); line-height: 1.7; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">🩸</span>
+          <h1>혈액형 궁합</h1>
+          <p>두 사람의 혈액형으로 알아보는<br>찰떡 궁합 or 환장 조합?</p>
+          <div class="test-meta">
+            <span>🔮 운세</span>
+            <span>⏱ 1분</span>
+            <span>👥 178,332명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-num">STEP 1</div>
+          <div class="question-text">나의 혈액형은?</div>
+          <div class="chip-group" id="myBloodGroup">
+            <button class="chip" data-blood="A" onclick="selectBlood('my', this)">🅰️ A형</button>
+            <button class="chip" data-blood="B" onclick="selectBlood('my', this)">🅱️ B형</button>
+            <button class="chip" data-blood="O" onclick="selectBlood('my', this)">⭕ O형</button>
+            <button class="chip" data-blood="AB" onclick="selectBlood('my', this)">🆎 AB형</button>
+          </div>
+
+          <div class="question-num" style="margin-top:8px;">STEP 2</div>
+          <div class="question-text">상대방의 혈액형은?</div>
+          <div class="chip-group" id="theirBloodGroup">
+            <button class="chip" data-blood="A" onclick="selectBlood('their', this)">🅰️ A형</button>
+            <button class="chip" data-blood="B" onclick="selectBlood('their', this)">🅱️ B형</button>
+            <button class="chip" data-blood="O" onclick="selectBlood('their', this)">⭕ O형</button>
+            <button class="chip" data-blood="AB" onclick="selectBlood('their', this)">🆎 AB형</button>
+          </div>
+
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;margin-top:8px;">
+            💘 궁합 확인하기
+          </button>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+
+    </div>
+  </div>
+
+<script>
+let myBlood = null;
+let theirBlood = null;
+
+function selectBlood(who, btn) {
+  const groupId = who === 'my' ? 'myBloodGroup' : 'theirBloodGroup';
+  document.querySelectorAll(`#${groupId} .chip`).forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  if (who === 'my') myBlood = btn.dataset.blood;
+  else theirBlood = btn.dataset.blood;
+}
+
+// 16 combinations: [score, tier, description, strengths x3, challenge]
+const COMPAT = {
+  'A-A':  [82, '좋은 궁합👍', 'A형 커플은 서로의 감정을 세심하게 이해합니다. 둘 다 꼼꼼하고 배려심이 넘쳐서 갈등이 생겨도 차분하게 해결해 나가요. 완벽주의 성향이 비슷해서 가치관 공유가 쉽습니다.', ['서로의 감정을 잘 이해함', '규칙적이고 안정된 생활 패턴', '약속과 신뢰를 매우 중시'], '둘 다 스트레스를 내면에 쌓는 경향이 있어, 가끔 답답함이 폭발할 수 있습니다. 솔직한 대화 창구를 열어두세요.'],
+  'A-B':  [61, '노력이 필요해💪', 'A형의 계획적인 성향과 B형의 즉흥적 자유로움이 자주 충돌합니다. 하지만 서로의 다름이 삶을 풍요롭게 해준다는 것을 알게 되면 최고의 파트너가 될 수 있어요.', ['서로의 부족한 부분을 채워줌', '새로운 자극과 설렘이 지속됨', 'B형의 유머가 A형의 긴장을 풀어줌'], 'A형은 B형의 일관성 없는 행동에 지칠 수 있고, B형은 A형이 너무 통제적으로 느껴질 수 있습니다.'],
+  'A-O':  [88, '천생연분💑', 'A형의 세심함과 O형의 든든한 리더십이 완벽한 균형을 이룹니다. O형이 방향을 제시하고 A형이 세부를 챙기는 최강의 팀워크! 서로를 자연스럽게 보완해주는 이상적인 궁합입니다.', ['역할 분담이 자연스럽게 이루어짐', 'O형이 A형에게 자신감을 불어넣어 줌', '위기 상황에서 서로 의지할 수 있음'], 'O형의 지나친 주도 성향이 A형을 주눅 들게 할 수 있습니다. O형은 A형의 의견을 더 적극적으로 물어봐 주세요.'],
+  'A-AB': [75, '좋은 궁합👍', 'AB형의 다면적 성격이 A형에게 신비롭게 느껴집니다. A형은 AB형을 이해하려는 노력을 아끼지 않고, AB형은 A형의 진심 어린 배려에 감동받아요. 지적 교류가 활발한 커플입니다.', ['깊은 대화와 지적 교류를 즐김', 'AB형이 A형의 고민을 객관적으로 도와줌', '서로의 취미를 존중하는 성숙한 관계'], 'AB형의 때때로 차갑게 느껴지는 태도가 A형에게 상처를 줄 수 있습니다.'],
+
+  'B-A':  [61, '노력이 필요해💪', 'B형의 자유로운 영혼과 A형의 계획적인 성향이 처음에는 매력으로 다가오지만 함께할수록 마찰이 생기기 쉽습니다. 서로의 생활 방식을 인정하는 연습이 필요합니다.', ['초기 설렘과 두근거림이 강렬함', 'A형이 B형의 삶에 안정감을 줌', 'B형이 A형에게 웃음과 활력을 줌'], 'B형은 자유를 중시하고 A형은 약속을 중시해 잦은 충돌이 생길 수 있어요.'],
+  'B-B':  [70, '무난한 사이😊', 'B형끼리는 서로의 자유로운 성격을 완벽히 이해합니다. 구속 없이 각자의 공간을 지켜주며 오래 사귈 수 있어요. 단, 둘 다 마이웨이라 진지한 미래 계획을 세우는 것이 약점입니다.', ['서로를 구속하지 않는 자유로운 관계', '같은 즉흥적 성향으로 재미있는 데이트', '감정적으로 집착하지 않아 편안함'], '진지한 계획이나 미래 이야기를 회피하다 관계가 흐지부지될 수 있어요.'],
+  'B-O':  [85, '천생연분💑', 'O형의 카리스마가 B형을 사로잡고, B형의 독특한 개성이 O형에게 신선합니다. O형은 B형을 이끌어 주고 B형은 O형에게 세상 모든 즐거움을 선사해요. 에너지가 넘치는 최고의 커플!', ['강렬한 첫인상과 오래가는 설렘', 'O형이 B형의 방향을 잡아줌', '함께라면 어떤 모험도 즐거움으로 만들어 냄'], 'B형의 변덕스러운 행동이 O형의 자존심을 건드릴 수 있습니다.'],
+  'B-AB': [72, '무난한 사이😊', 'AB형과 B형은 서로의 개성을 존중하는 자유롭고 신나는 조합입니다. 창의적인 아이디어를 함께 즐기며 지루할 틈이 없어요. 깊은 감정적 연결이 더해지면 장기 연애도 가능합니다.', ['창의적이고 독창적인 데이트 스타일', '서로의 독립성을 존중함', '지적 대화와 유머가 풍부한 관계'], '감정 표현이 부족해 상대가 마음을 알기 어려울 때가 많습니다.'],
+
+  'O-A':  [88, '천생연분💑', 'O형이 이끌고 A형이 뒷받침하는 최상의 팀! 서로가 없으면 허전할 만큼 자연스럽게 맞아 떨어집니다. A형의 세심한 배려를 O형이 당연하게 여기지 않도록 표현을 아끼지 마세요.', ['역할이 명확해 갈등이 적음', 'O형의 결단력과 A형의 신중함이 시너지를 냄', '위기에서도 흔들리지 않는 탄탄한 신뢰'], 'O형이 자신의 방식을 고집할 때 A형이 참고만 있다면 불만이 쌓입니다.'],
+  'O-B':  [85, '천생연분💑', 'O형의 강한 에너지와 B형의 발랄함이 만나 폭발적인 케미를 자랑합니다. 함께 있으면 늘 즐거운 한 쌍! 서로 다른 매력에 끝없이 끌립니다.', ['에너지 넘치고 활기찬 관계', '서로에게 강한 끌림과 유지되는 설렘', 'B형의 유머로 O형의 스트레스를 풀어줌'], 'B형이 O형의 기대에 부응하지 않을 때 O형이 상처받을 수 있어요.'],
+  'O-O':  [78, '좋은 궁합👍', '두 O형은 강한 리더십을 가진 만큼 주도권 경쟁이 생기기도 합니다. 하지만 서로의 열정과 의리를 알기에 오래 함께할 수 있는 든든한 관계입니다.', ['의리와 신뢰를 매우 중시하는 관계', '목표를 향해 함께 달려가는 파워 커플', '솔직한 대화로 오해를 빠르게 해소'], '두 사람 모두 지기 싫어하는 성격이라 사소한 의견 충돌이 자존심 싸움으로 번질 수 있어요.'],
+  'O-AB': [74, '좋은 궁합👍', 'O형의 직관적 열정이 이성적인 AB형에게 신선한 충격을 줍니다. AB형은 O형에게 깊은 통찰력을, O형은 AB형에게 실행력을 제공합니다. 서로의 강점이 잘 맞물리는 관계입니다.', ['열정과 이성의 균형 잡힌 커플', 'AB형의 분석력이 O형의 결정을 도와줌', '지루하지 않고 늘 새로운 자극이 있음'], 'AB형이 너무 계산적으로 느껴질 때 감성적인 O형이 상처받을 수 있습니다.'],
+
+  'AB-A': [75, '좋은 궁합👍', 'AB형의 다채로운 매력이 A형을 끊임없이 호기심 갖게 합니다. A형의 정성 어린 배려에 AB형도 마음을 열게 되는 관계. 서로에게 성장의 자극제가 되어주는 지적인 커플입니다.', ['지적 교류와 깊은 대화를 즐김', 'A형이 AB형에게 꾸준한 안정감을 줌', 'AB형이 A형의 시야를 넓혀줌'], 'AB형의 이중적 면이 A형에게 불안감을 줄 수 있습니다. 솔직한 감정 표현이 열쇠입니다.'],
+  'AB-B': [72, '무난한 사이😊', '두 사람 모두 자기만의 독특한 세계가 있어 처음에는 서로에게 흥미를 느낍니다. 각자의 공간을 지켜주는 자유로운 관계를 맺을 수 있지만 감정적 친밀감을 쌓는 노력이 필요합니다.', ['서로의 독립성과 개성을 완벽히 존중', '창의적이고 비범한 아이디어를 공유', '구속 없는 자유로운 연애 스타일'], '두 사람 모두 감정을 잘 드러내지 않아 관계가 표면적으로 흐를 위험이 있습니다.'],
+  'AB-O': [74, '좋은 궁합👍', 'O형의 뜨거운 열정이 냉철한 AB형의 마음을 따뜻하게 녹입니다. AB형은 O형에게 깊은 사고를, O형은 AB형에게 행동력과 용기를 선사합니다. 함께라면 어떤 목표도 달성 가능한 커플!', ['강점이 서로 보완되는 이상적 조합', 'O형의 열정이 AB형을 동기 부여함', '지적이면서도 활동적인 균형 잡힌 관계'], 'AB형의 차가운 논리 앞에 O형의 감정이 무시당한다고 느낄 수 있어요.'],
+  'AB-AB':[68, '무난한 사이😊', 'AB형끼리는 서로를 가장 잘 이해하는 동시에 가장 어렵게 느끼는 역설적인 관계입니다. 지적 교류는 최상이지만, 둘 다 감정 표현에 인색해 가까워지기까지 시간이 오래 걸립니다.', ['지적 대화와 서로의 복잡한 내면 이해', '독립성을 완벽히 존중하는 성숙한 관계', '예술·문화적 취미 공유가 풍부'], '둘 다 자신의 감정을 숨기는 경향이 있어 오해가 쌓이면 급격히 멀어질 수 있어요.'],
+};
+
+function calculate() {
+  if (!myBlood) { alert('내 혈액형을 선택해주세요!'); return; }
+  if (!theirBlood) { alert('상대방 혈액형을 선택해주세요!'); return; }
+
+  const key = `${myBlood}-${theirBlood}`;
+  const [score, tier, desc, strengths, challenge] = COMPAT[key];
+
+  const color = score >= 85 ? '#ff6b6b' : score >= 75 ? '#46d369' : score >= 65 ? '#4facfe' : '#f6d365';
+  const deg = score * 3.6;
+
+  showAdThenResult(() => {
+    document.getElementById('formSection').style.display = 'none';
+    const sec = document.getElementById('resultSection');
+    sec.style.display = 'block';
+    sec.innerHTML = `<div class="result-card">
+      <div class="result-type">혈액형 궁합 결과</div>
+
+      <div class="blood-pair">
+        <div class="blood-badge">${myBlood}</div>
+        <div class="blood-heart">💘</div>
+        <div class="blood-badge">${theirBlood}</div>
+      </div>
+
+      <div class="compat-score-wrap">
+        <div class="compat-ring" style="background: conic-gradient(${color} ${deg}deg, rgba(255,255,255,.08) 0deg);">
+          <div class="compat-ring-inner">
+            <div class="compat-score-num" style="color:${color}">${score}</div>
+            <div class="compat-score-unit">/ 100점</div>
+          </div>
+        </div>
+        <div class="compat-tier" style="color:${color}">${tier}</div>
+      </div>
+
+      <p class="result-desc">${desc}</p>
+
+      <div class="compat-strengths">
+        <h4>💚 궁합의 강점</h4>
+        <ul>
+          ${strengths.map(s => `<li>${s}</li>`).join('')}
+        </ul>
+      </div>
+
+      <div class="compat-challenge">
+        <h4>⚠️ 주의할 점</h4>
+        <p>${challenge}</p>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-share" onclick="shareResult()">🔗 결과 공유하기</button>
+        <button class="btn-retry" onclick="location.reload()">🔄 다시하기</button>
+        <a href="../index.html" class="btn-back">← 포털로</a>
+      </div>
+    </div>`;
+  });
+}
+
+function shareResult() {
+  const key = `${myBlood}-${theirBlood}`;
+  const [score, tier] = COMPAT[key];
+  const text = `혈액형 궁합 테스트 🩸 ${myBlood}형 ❤️ ${theirBlood}형 = ${score}점 (${tier}) 나도 테스트해봐!`;
+  if (navigator.share) navigator.share({ title: '혈액형 궁합', text, url: window.location.href });
+  else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+}
+</script>
+</body>
+</html>

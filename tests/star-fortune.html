@@ -1,0 +1,312 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>별자리 운세 | 오늘연구소</title>
+  <meta name="description" content="별자리 운세 — 오늘 나의 별자리 운세는? 애정·금전·건강·직업 완전 분석 | 오늘연구소">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .star-sign-hero {
+      background: linear-gradient(145deg, #0a0a1e 0%, #1a0a3e 100%);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      margin-bottom: 24px;
+      border: 1.5px solid rgba(161,140,209,.25);
+      position: relative;
+      overflow: hidden;
+    }
+    .star-sign-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(161,140,209,.3) 0%, transparent 60%);
+    }
+    .star-sign-emoji { font-size: 72px; display: block; margin-bottom: 12px; position: relative; }
+    .star-sign-name { font-size: 28px; font-weight: 900; margin-bottom: 4px; position: relative; }
+    .star-sign-period { font-size: 13px; color: var(--gray3); position: relative; }
+    .lucky-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .lucky-box {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+    .lucky-box-icon { font-size: 26px; display: block; margin-bottom: 6px; }
+    .lucky-box-label { font-size: 11px; color: var(--gray3); margin-bottom: 4px; }
+    .lucky-box-val { font-size: 15px; font-weight: 700; }
+    .date-row { display: flex; gap: 12px; margin-bottom: 16px; }
+    .date-row .input-wrap { flex: 1; }
+    @media (max-width: 600px) {
+      .lucky-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 400px) {
+      .lucky-grid { grid-template-columns: 1fr; }
+      .date-row { flex-direction: column; }
+    }
+    .today-fortune-box {
+      background: rgba(161,140,209,.08);
+      border: 1px solid rgba(161,140,209,.2);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+    }
+    .today-fortune-box p { font-size: 14px; color: var(--gray1); line-height: 1.85; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">⭐</span>
+          <h1>별자리 운세</h1>
+          <p>생일로 알아보는 오늘의 별자리 운세<br>총운 · 애정 · 금전 · 건강 · 직업 완전 분석!</p>
+          <div class="test-meta">
+            <span>🔮 운세</span>
+            <span>⏱ 1분</span>
+            <span>👥 203,441명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-text" style="margin-bottom:20px;">생일을 입력해주세요</div>
+          <div class="date-row">
+            <div class="input-wrap">
+              <label class="input-label">생월</label>
+              <select class="input-field" id="birthMonth" style="margin-bottom:0;">
+                <option value="">월 선택</option>
+                <option value="1">1월</option><option value="2">2월</option>
+                <option value="3">3월</option><option value="4">4월</option>
+                <option value="5">5월</option><option value="6">6월</option>
+                <option value="7">7월</option><option value="8">8월</option>
+                <option value="9">9월</option><option value="10">10월</option>
+                <option value="11">11월</option><option value="12">12월</option>
+              </select>
+            </div>
+            <div class="input-wrap">
+              <label class="input-label">생일</label>
+              <select class="input-field" id="birthDay" style="margin-bottom:0;">
+                <option value="">일 선택</option>
+                ${Array.from({length:31},(_,i)=>`<option value="${i+1}">${i+1}일</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;margin-top:16px;">
+            ✨ 별자리 운세 보기
+          </button>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+
+    </div>
+  </div>
+
+<script>
+const SIGNS = [
+  { name:'염소자리', emoji:'♑', start:[12,22], end:[1,19], color:'#b3c6ff',
+    personality:'책임감이 강하고 현실적인 당신. 목표를 향해 꾸준히 노력하는 힘이 있으며 신뢰받는 리더입니다.',
+    advice:['오늘은 오래된 인연에게 먼저 연락해보세요. 뜻밖의 기쁜 소식이 올 수 있어요.', '재정 계획을 다시 점검할 좋은 타이밍입니다. 작은 저축이 큰 변화를 만들어요.', '몸이 피곤하다면 충분한 수면이 최고의 보약입니다.', '업무에서 당신의 꼼꼼함이 빛날 날입니다. 자신감을 가지세요.', '작은 변화를 두려워 말고 새로운 루틴을 시도해보세요.'],
+    luckyColors:['짙은 갈색','검정','남색'], luckyNums:[4,8,13,22], luckyDirs:['남쪽','서쪽'] },
+  { name:'물병자리', emoji:'♒', start:[1,20], end:[2,18], color:'#80d8ff',
+    personality:'독창적이고 혁신적인 사상가. 평범한 것에 만족하지 않으며 세상을 바꾸고 싶은 이상주의자입니다.',
+    advice:['오늘은 새로운 아이디어를 글로 정리해보세요. 미래의 씨앗이 될 수 있어요.', '오래된 친구와의 재회가 에너지를 충전시켜 줄 거예요.', '무리한 계획보다 한 가지에 집중하는 것이 효과적입니다.', '직관을 믿으세요. 오늘 번뜩이는 영감이 정답일 수 있어요.', '전기·IT 관련 작업이 순조롭게 풀리는 날입니다.'],
+    luckyColors:['하늘색','은색','보라색'], luckyNums:[7,11,19,29], luckyDirs:['동쪽','북쪽'] },
+  { name:'물고기자리', emoji:'♓', start:[2,19], end:[3,20], color:'#b2dfdb',
+    personality:'감수성이 풍부하고 공감 능력이 뛰어난 예술가적 기질. 타인의 아픔을 내 것처럼 느끼는 따뜻한 영혼입니다.',
+    advice:['오늘은 직감을 믿고 행동해보세요. 논리보다 마음이 더 정확할 때입니다.', '창의적인 활동이 마음을 치유해 줄 거예요. 음악이나 그림을 즐겨보세요.', '지나친 감정 이입은 오늘 피하세요. 경계 설정이 필요한 날입니다.', '물가나 수족관 방문이 기분 전환에 도움이 됩니다.', '잠들기 전 감사 일기를 써보세요.'],
+    luckyColors:['연두색','바다색','라벤더'], luckyNums:[3,9,12,21], luckyDirs:['남쪽','서쪽'] },
+  { name:'양자리', emoji:'♈', start:[3,21], end:[4,19], color:'#ffb3b3',
+    personality:'불꽃처럼 열정적이고 선구자 기질이 넘칩니다. 두려움 없이 새로운 일에 뛰어드는 용기 있는 개척자입니다.',
+    advice:['오늘은 첫인상이 중요합니다. 만남과 발표에서 자신감 있는 모습을 보여주세요.', '충동적인 결정은 내일까지 보류해보세요. 하루 더 생각하면 더 좋은 선택을 할 수 있어요.', '운동이 오늘의 에너지를 최고로 끌어올려 줍니다.', '경쟁 상황에서 특히 운이 좋은 날입니다. 도전을 두려워 말아요.', '빨간색 아이템이 오늘의 운을 높여줍니다.'],
+    luckyColors:['빨간색','주황색','금색'], luckyNums:[1,9,19,27], luckyDirs:['동쪽','남쪽'] },
+  { name:'황소자리', emoji:'♉', start:[4,20], end:[5,20], color:'#c8e6c9',
+    personality:'인내심과 안정감의 화신. 천천히 하지만 반드시 목표에 도달하는 불굴의 의지를 가진 실용주의자입니다.',
+    advice:['오늘은 자연 속에서 시간을 보내면 마음이 안정됩니다.', '맛있는 음식이 오늘의 최고 힐링입니다. 좋아하는 음식을 즐겨보세요.', '재정적 판단이 날카로운 날입니다. 중요한 결정을 내리기 좋아요.', '고집을 내려놓으면 더 좋은 기회가 찾아옵니다.', '오래된 소원이 이루어질 조짐이 보입니다.'],
+    luckyColors:['초록색','분홍색','아이보리'], luckyNums:[2,6,16,24], luckyDirs:['북쪽','서쪽'] },
+  { name:'쌍둥이자리', emoji:'♊', start:[5,21], end:[6,20], color:'#fff9c4',
+    personality:'재치와 언변이 넘치는 소통의 달인. 다양한 관심사를 자유롭게 넘나드는 호기심 많은 영원한 청춘입니다.',
+    advice:['오늘은 평소보다 더 수다스러워질 수 있어요. 좋은 정보가 대화 속에 있습니다.', '두 가지 선택지에서 고민 중이라면 오늘 직감이 더 정확합니다.', 'SNS에서 좋은 기회나 인연을 만날 수 있는 날이에요.', '에너지 분산을 주의하세요. 하나에 집중하면 더 큰 성과가 납니다.', '여행이나 단기 외출이 새로운 영감을 줍니다.'],
+    luckyColors:['노란색','은색','하늘색'], luckyNums:[5,7,14,23], luckyDirs:['동쪽','남동쪽'] },
+  { name:'게자리', emoji:'♋', start:[6,21], end:[7,22], color:'#e1f5fe',
+    personality:'따뜻한 모성애와 깊은 감수성을 지닌 수호자. 가족과 소중한 사람들을 위해 모든 것을 바칠 수 있는 헌신의 아이콘입니다.',
+    advice:['오늘은 집에서 시간을 보내는 것이 최고의 에너지 충전입니다.', '가족이나 친한 친구에게 안부를 전해보세요. 따뜻한 교류가 행운을 불러와요.', '감정 기복이 심할 수 있으니 중요한 결정은 내일로 미루세요.', '요리나 집 꾸미기가 오늘의 기분을 업 시켜줍니다.', '꿈에서 힌트를 얻을 수 있어요. 잠들기 전 소원을 빌어보세요.'],
+    luckyColors:['흰색','은색','연보라'], luckyNums:[2,7,11,20], luckyDirs:['북쪽','북서쪽'] },
+  { name:'사자자리', emoji:'♌', start:[7,23], end:[8,22], color:'#fff3e0',
+    personality:'타고난 왕의 카리스마. 무대 위에서 빛나는 존재감과 넘치는 자신감으로 주변을 이끄는 천생 주인공입니다.',
+    advice:['오늘은 자신을 빛낼 완벽한 기회가 기다리고 있어요. 용기 있게 앞으로 나서세요.', '관대함이 오늘의 최고 덕목입니다. 아낌없이 베푸세요.', '연애 운이 강하게 빛나는 날! 감정 표현을 솔직하게 해보세요.', '금전적 호기심을 행동으로 옮기기 좋은 날입니다.', '당신의 웃음이 오늘 주변을 밝혀줍니다.'],
+    luckyColors:['금색','주황색','빨간색'], luckyNums:[1,5,10,19], luckyDirs:['남쪽','남동쪽'] },
+  { name:'처녀자리', emoji:'♍', start:[8,23], end:[9,22], color:'#f3e5f5',
+    personality:'완벽을 추구하는 분석의 달인. 섬세한 관찰력과 실용적인 문제 해결 능력으로 어디서나 없어서는 안 될 존재입니다.',
+    advice:['오늘은 세부 사항에 집중하면 큰 성과를 낼 수 있습니다.', '너무 완벽하려 하지 말고 70%에서 만족하는 연습도 필요합니다.', '건강 체크를 소홀히 하지 마세요. 작은 신호도 무시하지 말아요.', '정리·정돈이 마음의 평온을 가져다 줍니다.', '비판보다 칭찬이 오늘 더 큰 에너지를 만들어냅니다.'],
+    luckyColors:['베이지','갈색','남색'], luckyNums:[4,6,15,22], luckyDirs:['서쪽','남서쪽'] },
+  { name:'천칭자리', emoji:'♎', start:[9,23], end:[10,22], color:'#fce4ec',
+    personality:'조화와 균형의 마에스트로. 아름다움과 공정함을 추구하며 어떤 상황에서도 우아하게 중심을 잡는 외교의 달인입니다.',
+    advice:['오늘 중요한 협상이나 합의는 성공적인 결과를 얻을 가능성이 높아요.', '패션이나 인테리어에서 영감이 번뜩이는 날입니다.', '우유부단함이 오늘의 적! 결정을 미루지 말고 선택하세요.', '예술 활동이 큰 위안이 됩니다.', '선물을 받거나 줄 기회가 생길 수 있어요.'],
+    luckyColors:['분홍색','하늘색','흰색'], luckyNums:[6,9,15,24], luckyDirs:['동쪽','남쪽'] },
+  { name:'전갈자리', emoji:'♏', start:[10,23], end:[11,21], color:'#d1c4e9',
+    personality:'신비롭고 강렬한 내면 세계를 가진 탐구자. 한번 결심하면 어떤 장애도 돌파하는 불굴의 의지와 직관력을 갖고 있습니다.',
+    advice:['오늘은 숨겨진 정보나 진실이 밝혀질 수 있는 날입니다.', '집중력이 최고조에 달하는 날이니 중요한 작업을 처리하세요.', '질투나 의심은 오늘 에너지를 낭비하게 만들어요. 내려놓으세요.', '심리나 철학 관련 독서가 새로운 시각을 열어줍니다.', '비밀을 잘 지켜야 신뢰를 얻을 수 있는 날입니다.'],
+    luckyColors:['검정','진보라','진홍색'], luckyNums:[8,11,18,22], luckyDirs:['북쪽','북동쪽'] },
+  { name:'궁수자리', emoji:'♐', start:[11,22], end:[12,21], color:'#ffe0b2',
+    personality:'자유와 모험을 사랑하는 철학자. 넓은 세상을 향한 끝없는 호기심과 낙관주의로 삶을 축제처럼 즐기는 영혼입니다.',
+    advice:['오늘은 평소보다 운이 강하게 따라주는 날입니다. 행운을 적극적으로 활용하세요.', '새로운 배움을 시작하기 좋은 날이에요. 온라인 강의나 책을 펼쳐보세요.', '너무 솔직한 말이 상대를 상처줄 수 있으니 말을 선택하세요.', '여행 계획을 세우면 기대감이 에너지를 높여줍니다.', '웃음이 가장 강력한 무기인 날입니다.'],
+    luckyColors:['보라색','파란색','주황색'], luckyNums:[3,9,21,27], luckyDirs:['남동쪽','동쪽'] },
+];
+
+function getSign(month, day) {
+  const m = parseInt(month), d = parseInt(day);
+  if ((m === 3 && d >= 21) || (m === 4 && d <= 19)) return SIGNS[3]; // 양자리
+  if ((m === 4 && d >= 20) || (m === 5 && d <= 20)) return SIGNS[4]; // 황소자리
+  if ((m === 5 && d >= 21) || (m === 6 && d <= 20)) return SIGNS[5]; // 쌍둥이
+  if ((m === 6 && d >= 21) || (m === 7 && d <= 22)) return SIGNS[6]; // 게자리
+  if ((m === 7 && d >= 23) || (m === 8 && d <= 22)) return SIGNS[7]; // 사자자리
+  if ((m === 8 && d >= 23) || (m === 9 && d <= 22)) return SIGNS[8]; // 처녀자리
+  if ((m === 9 && d >= 23) || (m === 10 && d <= 22)) return SIGNS[9]; // 천칭
+  if ((m === 10 && d >= 23) || (m === 11 && d <= 21)) return SIGNS[10]; // 전갈
+  if ((m === 11 && d >= 22) || (m === 12 && d <= 21)) return SIGNS[11]; // 궁수
+  if ((m === 12 && d >= 22) || (m === 1 && d <= 19)) return SIGNS[0]; // 염소
+  if ((m === 1 && d >= 20) || (m === 2 && d <= 18)) return SIGNS[1]; // 물병
+  return SIGNS[2]; // 물고기
+}
+
+function periodLabel(sign) {
+  const names = ['양자리','황소자리','쌍둥이자리','게자리','사자자리','처녀자리','천칭자리','전갈자리','궁수자리','염소자리','물병자리','물고기자리'];
+  const periods = ['3/21~4/19','4/20~5/20','5/21~6/20','6/21~7/22','7/23~8/22','8/23~9/22','9/23~10/22','10/23~11/21','11/22~12/21','12/22~1/19','1/20~2/18','2/19~3/20'];
+  const idx = names.indexOf(sign.name);
+  return idx >= 0 ? periods[idx] : '';
+}
+
+function seededVal(seed, min, max) {
+  return min + (seed % (max - min + 1));
+}
+
+function statBar(label, value, color) {
+  return `<div class="stat-row">
+    <div class="stat-label"><span>${label}</span><span style="color:${color}">${value}</span></div>
+    <div class="stat-bar-bg"><div class="stat-bar-fill" data-val="${value}" style="width:0%;background:${color}"></div></div>
+  </div>`;
+}
+
+function calculate() {
+  const month = document.getElementById('birthMonth').value;
+  const day = document.getElementById('birthDay').value;
+  if (!month || !day) { alert('생월과 생일을 선택해주세요!'); return; }
+
+  const sign = getSign(month, day);
+  const today = new Date();
+  const seed = today.getDate() * 7 + today.getMonth() * 13 + parseInt(month) * 3 + parseInt(day) * 5;
+
+  const overall = seededVal(seed * 3, 55, 98);
+  const love    = seededVal(seed * 7, 42, 99);
+  const money   = seededVal(seed * 11, 40, 95);
+  const health  = seededVal(seed * 13, 50, 97);
+  const career  = seededVal(seed * 17, 45, 96);
+
+  const adviceIdx = seed % sign.advice.length;
+  const luckyColor = sign.luckyColors[seed % sign.luckyColors.length];
+  const luckyNum = sign.luckyNums[seed % sign.luckyNums.length];
+  const luckyDir = sign.luckyDirs[seed % sign.luckyDirs.length];
+  const period = periodLabel(sign);
+
+  const dateStr = `${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일`;
+
+  showAdThenResult(() => {
+    document.getElementById('formSection').style.display = 'none';
+    const sec = document.getElementById('resultSection');
+    sec.style.display = 'block';
+    sec.innerHTML = `<div class="result-card">
+      <div class="result-type">⭐ 별자리 운세 — ${dateStr}</div>
+
+      <div class="star-sign-hero">
+        <span class="star-sign-emoji">${sign.emoji}</span>
+        <div class="star-sign-name" style="color:${sign.color}">${sign.name}</div>
+        <div class="star-sign-period">${period}</div>
+      </div>
+
+      <div class="today-fortune-box">
+        <p>✨ <strong style="color:${sign.color}">${sign.name}</strong> — ${sign.personality}</p>
+      </div>
+
+      <div style="margin-bottom:24px;">
+        ${statBar('총운 ⭐', overall, sign.color)}
+        ${statBar('애정운 💕', love, '#f06292')}
+        ${statBar('금전운 💰', money, '#ffd700')}
+        ${statBar('건강운 💪', health, '#46d369')}
+        ${statBar('직업운 🚀', career, '#4facfe')}
+      </div>
+
+      <div class="lucky-grid">
+        <div class="lucky-box">
+          <span class="lucky-box-icon">🎨</span>
+          <div class="lucky-box-label">행운의 색</div>
+          <div class="lucky-box-val">${luckyColor}</div>
+        </div>
+        <div class="lucky-box">
+          <span class="lucky-box-icon">🔢</span>
+          <div class="lucky-box-label">행운의 숫자</div>
+          <div class="lucky-box-val">${luckyNum}</div>
+        </div>
+        <div class="lucky-box">
+          <span class="lucky-box-icon">🧭</span>
+          <div class="lucky-box-label">행운의 방향</div>
+          <div class="lucky-box-val">${luckyDir}</div>
+        </div>
+      </div>
+
+      <div class="today-fortune-box">
+        <p>💜 오늘의 조언: ${sign.advice[adviceIdx]}</p>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-share" onclick="shareResult()">🔗 결과 공유하기</button>
+        <button class="btn-retry" onclick="location.reload()">🔄 다시하기</button>
+        <a href="../index.html" class="btn-back">← 포털로</a>
+      </div>
+    </div>`;
+
+    setTimeout(() => {
+      document.querySelectorAll('.stat-bar-fill').forEach(el => {
+        el.style.width = el.dataset.val + '%';
+      });
+    }, 100);
+  });
+}
+
+function shareResult() {
+  const month = document.getElementById('birthMonth').value;
+  const day = document.getElementById('birthDay').value;
+  const sign = getSign(month, day);
+  const text = `내 별자리 ${sign.emoji} ${sign.name} 오늘의 운세 확인했어! 너도 해봐 ⭐`;
+  if (navigator.share) navigator.share({ title: '별자리 운세', text, url: window.location.href });
+  else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+}
+</script>
+</body>
+</html>

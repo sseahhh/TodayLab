@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>연봉 계산기 | 오늘연구소</title>
+  <meta name="description" content="연봉 계산기 — 연봉을 월급·주급·일급·시급으로 환산! 내 연봉은 상위 몇 %? | 오늘연구소">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .wage-big {
+      font-size: 56px;
+      font-weight: 900;
+      text-align: center;
+      background: linear-gradient(135deg, #96fbc4, #f9f586);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 20px 0 4px;
+    }
+    .income-tier-badge {
+      display: inline-block;
+      padding: 8px 22px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 700;
+      margin: 10px 0 20px;
+    }
+    .tier-low { background: rgba(100,180,255,.12); color: #64b4ff; border: 1px solid rgba(100,180,255,.25); }
+    .tier-mid { background: rgba(150,251,196,.12); color: #96fbc4; border: 1px solid rgba(150,251,196,.25); }
+    .tier-high { background: rgba(249,245,134,.12); color: #f9f586; border: 1px solid rgba(249,245,134,.25); }
+    .tier-top { background: rgba(255,107,107,.12); color: #ff6b6b; border: 1px solid rgba(255,107,107,.25); }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">📊</span>
+          <h1>연봉 계산기</h1>
+          <p>연봉을 월급, 주급, 일급, 시급, 분당 수입으로!<br>소득 분위까지 한 번에 알려드려요!</p>
+          <div class="test-meta">
+            <span>💳 금융</span>
+            <span>⏱ 1분</span>
+            <span>👥 312,118명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <label class="input-label">연봉 (만원)</label>
+          <input type="number" class="input-field" id="annual" placeholder="예: 3500 (3500만원)" min="1000" max="100000">
+
+          <label class="input-label">주 근무시간 (시간)</label>
+          <input type="number" class="input-field" id="weeklyHours" placeholder="40 (기본값)" min="1" max="80" value="40">
+
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;">
+            📊 연봉 분석하기
+          </button>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:16px 18px;margin-top:16px;">
+          <p style="font-size:12px;color:var(--gray3);line-height:1.7;">
+            📌 세전 연봉 기준이며, 실수령액은 약 <strong style="color:var(--gray2)">20% 공제(4대보험+세금)</strong>를 적용한 근사치입니다.<br>
+            소득 분위는 통계청 근로소득 분포 자료를 참고한 참고값이에요 😊
+          </p>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+    </div>
+  </div>
+
+<script>
+function getIncomeTier(annualWan) {
+  if (annualWan < 2400) return { label: '하위 약 30%', cls: 'tier-low', msg: '연봉을 올리기 위한 역량 개발을 시작해보세요. 첫 걸음이 가장 중요해요!' };
+  if (annualWan < 3000) return { label: '하위 약 40%', cls: 'tier-low', msg: '성장 가능성이 충분한 구간이에요. 추가 자격증이나 사이드 프로젝트를 고려해보세요.' };
+  if (annualWan < 4000) return { label: '중간 구간 (약 50~60%)', cls: 'tier-mid', msg: '한국 근로자 평균 연봉 근처예요. 투자와 저축으로 자산을 키워가는 것이 중요합니다!' };
+  if (annualWan < 5000) return { label: '상위 약 35%', cls: 'tier-mid', msg: '평균 이상의 연봉이에요! 재테크와 연금을 본격적으로 준비해볼 시기입니다.' };
+  if (annualWan < 8000) return { label: '상위 약 20%', cls: 'tier-high', msg: '상위 소득자예요! 세금 최적화와 다양한 투자로 자산을 불려나가세요 🚀' };
+  if (annualWan < 15000) return { label: '상위 약 8%', cls: 'tier-top', msg: '고소득자예요! 절세 전략과 포트폴리오 다각화를 전문가와 상담해보세요 🏆' };
+  return { label: '상위 1%', cls: 'tier-top', msg: '최상위 소득자! 자산 운용 전략을 전문가와 함께 계획하세요 💎' };
+}
+
+function calculate() {
+  const annualWan = parseFloat(document.getElementById('annual').value);
+  const weeklyHours = parseFloat(document.getElementById('weeklyHours').value) || 40;
+
+  if (!annualWan || annualWan < 1000 || annualWan > 100000) {
+    alert('연봉을 1000~100000만원 사이로 입력해주세요!'); return;
+  }
+  if (weeklyHours < 1 || weeklyHours > 80) {
+    alert('주 근무시간을 1~80시간 사이로 입력해주세요!'); return;
+  }
+
+  const annualWon = annualWan * 10000;
+  const monthly = Math.round(annualWon / 12);
+  const weekly = Math.round(annualWon / 52);
+  const daily = Math.round(annualWon / 260); // 52주 × 5일
+  const hourly = Math.round(annualWon / (52 * weeklyHours));
+  const perMinute = Math.round(annualWon / (52 * weeklyHours * 60));
+  const netMonthly = Math.round(monthly * 0.8); // 약 20% 공제
+  const tier = getIncomeTier(annualWan);
+
+  showAdThenResult(() => {
+    document.getElementById('formSection').style.display = 'none';
+    const sec = document.getElementById('resultSection');
+    sec.style.display = 'block';
+    sec.innerHTML = `
+      <div class="result-card">
+        <span class="result-emoji">📊</span>
+        <div class="result-type">연봉 분석 결과</div>
+        <div class="wage-big">${annualWon.toLocaleString('ko-KR')}원</div>
+        <div style="text-align:center;color:var(--gray3);font-size:13px;margin-bottom:8px;">연봉 (세전)</div>
+        <div style="text-align:center;margin-bottom:24px;">
+          <span class="income-tier-badge ${tier.cls}">${tier.label}</span>
+        </div>
+
+        <div class="range-info" style="margin-bottom:24px;">
+          <div class="range-row">
+            <span>📅 월 급여 (세전)</span>
+            <span class="range-val">${monthly.toLocaleString('ko-KR')}원</span>
+          </div>
+          <div class="range-row">
+            <span>💚 월 실수령 (약 80%)</span>
+            <span class="range-val">${netMonthly.toLocaleString('ko-KR')}원</span>
+          </div>
+          <div class="range-row">
+            <span>📆 주급</span>
+            <span class="range-val">${weekly.toLocaleString('ko-KR')}원</span>
+          </div>
+          <div class="range-row">
+            <span>🗓️ 일급</span>
+            <span class="range-val">${daily.toLocaleString('ko-KR')}원</span>
+          </div>
+          <div class="range-row">
+            <span>⏰ 시급 (주 ${weeklyHours}시간 기준)</span>
+            <span class="range-val">${hourly.toLocaleString('ko-KR')}원</span>
+          </div>
+          <div class="range-row">
+            <span>⚡ 분당 수입</span>
+            <span class="range-val">${perMinute.toLocaleString('ko-KR')}원/분</span>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:16px 18px;margin-bottom:20px;text-align:left;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:8px;">💡 소득 분위 메시지</div>
+          <p style="font-size:14px;color:var(--gray2);line-height:1.7;">${tier.msg}</p>
+        </div>
+
+        <div style="background:rgba(249,245,134,.06);border:1px solid rgba(249,245,134,.15);border-radius:12px;padding:14px 18px;margin-bottom:20px;">
+          <p style="font-size:14px;color:#f9f586;font-weight:700;text-align:center;">
+            ⏱️ 지금 이 순간에도 ${perMinute.toLocaleString('ko-KR')}원씩 벌고 있어요!
+          </p>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn-share" onclick="shareResult(${annualWan}, '${tier.label}')">🔗 결과 공유하기</button>
+          <button class="btn-retry" onclick="location.reload()">🔄 다시 계산</button>
+          <a href="../index.html" class="btn-back">← 포털로</a>
+        </div>
+      </div>`;
+  });
+}
+
+function shareResult(wan, tier) {
+  const text = `내 연봉 ${wan.toLocaleString('ko-KR')}만원, ${tier}! 📊 너도 연봉 분석해봐~`;
+  if (navigator.share) navigator.share({ title: '연봉 계산기', text, url: window.location.href });
+  else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+}
+</script>
+</body>
+</html>

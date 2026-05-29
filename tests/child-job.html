@@ -1,0 +1,355 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>우리 아이 미래직업 | 오늘연구소</title>
+  <meta name="description" content="우리 아이 미래직업 — 오늘연구소에서 재미있게 즐겨보세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .job-result-header {
+      background: linear-gradient(145deg, #43e97b 0%, #38f9d7 100%);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #0a0a0a;
+    }
+    .job-result-header h2 { font-size: 28px; font-weight: 900; margin-bottom: 8px; }
+    .job-result-header p { font-size: 15px; opacity: .8; }
+    .job-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .job-card {
+      background: var(--bg2);
+      border-radius: 12px;
+      padding: 18px 14px;
+      text-align: center;
+      border: 1.5px solid rgba(255,255,255,.06);
+    }
+    .job-card-icon { font-size: 32px; margin-bottom: 8px; display: block; }
+    .job-card-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .job-card-desc { font-size: 12px; color: var(--gray3); line-height: 1.5; }
+    .traits-section {
+      background: var(--bg2);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      border: 1.5px solid rgba(255,255,255,.06);
+    }
+    .trait-chip {
+      display: inline-block;
+      background: rgba(67,233,123,.12);
+      border: 1px solid rgba(67,233,123,.25);
+      color: #43e97b;
+      font-size: 13px;
+      padding: 5px 14px;
+      border-radius: 50px;
+      margin: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <div id="introSection">
+        <div class="test-header">
+          <span class="test-header-emoji">🚀</span>
+          <h1>우리 아이 미래직업</h1>
+          <p>아이의 성향과 관심사로 알아보는<br>미래에 어울리는 직업 TOP 4!</p>
+          <div class="test-meta">
+            <span>👶 육아</span>
+            <span>⏱ 2분</span>
+            <span>👥 176,332명 참여</span>
+          </div>
+        </div>
+        <div style="text-align:center;">
+          <button class="btn-primary" onclick="start()" style="font-size:18px;padding:16px 44px;">▶ 시작하기</button>
+        </div>
+      </div>
+
+      <div id="quizSection" style="display:none;">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progressFill" style="width:12.5%"></div>
+        </div>
+        <div class="progress-text" id="progressText">1 / 8</div>
+        <div class="question-card">
+          <div class="question-num" id="questionNum">Q1</div>
+          <div class="question-text" id="questionText"></div>
+          <div class="choices" id="choices"></div>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+
+    </div>
+  </div>
+
+<script>
+// Categories: 창의(creative), 과학(science), 소통(comm), 리더(leader), 예술(art), 돌봄(care)
+const QUESTIONS = [
+  {
+    text: "아이가 가장 좋아하는 놀이는?",
+    choices: [
+      { text: "🎨 그림 그리기, 만들기", score: { creative:3, art:2 } },
+      { text: "🔬 실험하기, 분해하기", score: { science:3, creative:1 } },
+      { text: "👫 친구들과 함께 놀기", score: { comm:3, leader:1 } },
+      { text: "📖 책 읽기, 이야기 만들기", score: { creative:2, art:2, comm:1 } },
+    ]
+  },
+  {
+    text: "아이가 TV를 볼 때 가장 좋아하는 프로그램은?",
+    choices: [
+      { text: "🦸 히어로, 모험 액션물", score: { leader:3, creative:1 } },
+      { text: "🐾 동물, 자연 다큐멘터리", score: { science:3, care:1 } },
+      { text: "🎭 노래, 춤, 예능", score: { art:3, comm:2 } },
+      { text: "🔎 퀴즈, 탐정, 추리", score: { science:2, creative:2 } },
+    ]
+  },
+  {
+    text: "아이에게 용돈을 주면?",
+    choices: [
+      { text: "모두 저축한다", score: { leader:2, science:1 } },
+      { text: "하고 싶은 것에 바로 쓴다", score: { creative:2, art:2 } },
+      { text: "친구들에게 사탕이나 간식을 나눠준다", score: { comm:3, care:2 } },
+      { text: "뭔가를 만들거나 배우는 데 쓴다", score: { creative:3, science:2 } },
+    ]
+  },
+  {
+    text: "아이가 어려운 일이 생겼을 때?",
+    choices: [
+      { text: "끝까지 혼자 해결하려 한다", score: { leader:3, science:2 } },
+      { text: "친구나 어른에게 도움을 요청한다", score: { comm:3, care:1 } },
+      { text: "새로운 방법을 생각해서 시도한다", score: { creative:3, science:1 } },
+      { text: "울거나 포기하기도 한다", score: { care:1 } },
+    ]
+  },
+  {
+    text: "학교에서 아이가 가장 잘한다는 과목은?",
+    choices: [
+      { text: "수학, 과학", score: { science:3, leader:1 } },
+      { text: "국어, 미술, 음악", score: { art:3, creative:2 } },
+      { text: "체육, 사회활동", score: { leader:3, comm:2 } },
+      { text: "특별히 뛰어나진 않지만 전반적으로 무난", score: { care:1, comm:1 } },
+    ]
+  },
+  {
+    text: "아이가 친구들 사이에서 주로 맡는 역할은?",
+    choices: [
+      { text: "🎬 놀이를 기획하고 이끄는 리더", score: { leader:3, comm:2 } },
+      { text: "🤝 싸우는 친구들 사이에서 중재자", score: { care:3, comm:2 } },
+      { text: "💡 재밌는 아이디어를 내는 창의왕", score: { creative:3, art:1 } },
+      { text: "🔍 게임 규칙을 정확히 기억하는 분석가", score: { science:3, leader:1 } },
+    ]
+  },
+  {
+    text: "아이가 가장 좋아하는 활동은?",
+    choices: [
+      { text: "🎵 노래 부르기, 악기 연주", score: { art:3, comm:1 } },
+      { text: "⚽ 운동, 스포츠", score: { leader:3, comm:1 } },
+      { text: "💻 컴퓨터, 코딩, 게임", score: { science:3, creative:2 } },
+      { text: "🌿 동물, 식물 키우기", score: { care:3, science:1 } },
+    ]
+  },
+  {
+    text: "아이가 어른이 되면 가장 하고 싶다고 하는 것은?",
+    choices: [
+      { text: "🌍 세상을 바꾸는 일", score: { leader:3, science:1 } },
+      { text: "🎨 예쁘고 멋진 것을 만드는 일", score: { art:3, creative:3 } },
+      { text: "💊 아픈 사람이나 동물을 도와주는 일", score: { care:3, science:1 } },
+      { text: "🔬 신기한 것을 발명하거나 발견하는 일", score: { science:3, creative:2 } },
+    ]
+  },
+];
+
+const TYPES = {
+  creative: {
+    label: '창의 탐험가',
+    emoji: '🎨',
+    subtitle: '세상을 자기만의 방식으로 바꾸는 크리에이터',
+    jobs: [
+      { icon:'🎮', name:'게임 디자이너', desc:'창의적인 게임 세계를 설계하는 크리에이터' },
+      { icon:'📱', name:'UX/UI 디자이너', desc:'사람이 쓰기 편한 서비스를 만드는 디자이너' },
+      { icon:'✍️', name:'작가/크리에이터', desc:'이야기와 콘텐츠로 세상과 소통하는 작가' },
+      { icon:'🏗️', name:'건축가', desc:'공간을 예술로 만드는 건축 설계자' },
+    ],
+    traits: ['독창적인', '호기심 왕', '상상력 풍부', '자유로운', '예술적 감각'],
+    msg: '이 아이는 세상을 남다른 시각으로 바라봅니다. 창의적인 환경과 자유로운 표현을 허용해주세요. 어떤 분야든 새로운 방식으로 접근하는 능력이 미래의 강점이 될 거예요!',
+  },
+  science: {
+    label: '과학 탐험가',
+    emoji: '🔬',
+    subtitle: '"왜?"라는 질문을 멈추지 않는 꼬마 과학자',
+    jobs: [
+      { icon:'👨‍💻', name:'AI 개발자', desc:'미래를 만드는 인공지능 엔지니어' },
+      { icon:'🚀', name:'우주항공 엔지니어', desc:'하늘과 우주를 탐구하는 과학자' },
+      { icon:'🧬', name:'바이오 연구원', desc:'생명과학의 비밀을 밝히는 연구자' },
+      { icon:'🏥', name:'의사/약사', desc:'과학 지식으로 사람을 치료하는 전문가' },
+    ],
+    traits: ['분석적인', '논리적인', '끈기 있는', '호기심 많은', '집중력 강한'],
+    msg: '이 아이는 "왜?"라는 질문을 멈추지 않는 타입입니다. 과학·수학·기술 분야에서 빛을 발할 가능성이 높아요. 다양한 실험과 탐구 활동으로 지적 호기심을 키워주세요!',
+  },
+  comm: {
+    label: '소통 마스터',
+    emoji: '💬',
+    subtitle: '어디서든 분위기를 밝히는 타고난 소통왕',
+    jobs: [
+      { icon:'📺', name:'방송인/유튜버', desc:'콘텐츠로 많은 사람과 소통하는 크리에이터' },
+      { icon:'⚖️', name:'변호사', desc:'언어의 힘으로 정의를 실현하는 법률가' },
+      { icon:'📣', name:'마케터/홍보', desc:'브랜드의 이야기를 세상에 전달하는 전문가' },
+      { icon:'🎓', name:'교사/교육자', desc:'지식을 나누고 사람을 키우는 선생님' },
+    ],
+    traits: ['사교적인', '공감 능력', '표현력 좋은', '친화력 있는', '유머 감각'],
+    msg: '이 아이는 사람과의 연결에서 에너지를 얻습니다. 어떤 자리에서도 자연스럽게 분위기를 이끄는 능력이 있어요. 다양한 사람들을 만나고 소통하는 경험을 많이 쌓아주세요!',
+  },
+  leader: {
+    label: '미래 리더',
+    emoji: '👑',
+    subtitle: '목표를 정하면 끝까지 이끄는 타고난 리더',
+    jobs: [
+      { icon:'🏢', name:'CEO/창업가', desc:'새로운 세상을 만드는 기업가 정신의 리더' },
+      { icon:'🗳️', name:'정치인/공무원', desc:'세상을 바꾸는 정책을 만드는 공직자' },
+      { icon:'⚽', name:'스포츠 선수/감독', desc:'경기를 이끄는 강한 리더십의 스포츠인' },
+      { icon:'🎖️', name:'군인/경찰', desc:'나라와 사람을 지키는 강인한 직업인' },
+    ],
+    traits: ['리더십', '결단력 있는', '책임감 강한', '도전적인', '진취적인'],
+    msg: '이 아이는 태어난 리더입니다. 목표를 향해 나아가는 추진력과 주변 사람을 이끄는 능력이 뛰어나요. 다양한 도전 경험을 통해 리더십을 더욱 키워주세요!',
+  },
+  art: {
+    label: '예술 감각파',
+    emoji: '🎭',
+    subtitle: '아름다움을 보고 느끼고 표현하는 감성인',
+    jobs: [
+      { icon:'🎬', name:'영화감독/배우', desc:'감동을 만들어내는 스크린의 예술가' },
+      { icon:'🎵', name:'뮤지션/작곡가', desc:'음악으로 감정을 전달하는 아티스트' },
+      { icon:'👗', name:'패션 디자이너', desc:'옷으로 세상에 아름다움을 더하는 디자이너' },
+      { icon:'📸', name:'사진작가/영상감독', desc:'렌즈를 통해 세상을 담는 비주얼 아티스트' },
+    ],
+    traits: ['감성적인', '표현력 풍부', '심미안', '섬세한', '개성 있는'],
+    msg: '이 아이는 세상의 아름다움을 누구보다 잘 포착합니다. 예술적 표현에 재능이 있으며, 다양한 예술 활동을 통해 자신만의 목소리를 찾을 수 있어요!',
+  },
+  care: {
+    label: '따뜻한 돌봄이',
+    emoji: '🤗',
+    subtitle: '세상에서 가장 따뜻한 마음을 가진 아이',
+    jobs: [
+      { icon:'👨‍⚕️', name:'의사/간호사', desc:'아픈 사람을 치료하는 의료 전문가' },
+      { icon:'🐾', name:'수의사', desc:'동물을 사랑하고 치료하는 동물 의사' },
+      { icon:'🧑‍🏫', name:'유치원/초등교사', desc:'아이들의 성장을 함께하는 교육자' },
+      { icon:'🌍', name:'사회복지사/NGO', desc:'도움이 필요한 사람들 곁에서 함께하는 활동가' },
+    ],
+    traits: ['공감 능력', '따뜻한 마음', '인내심', '희생정신', '배려심 깊은'],
+    msg: '이 아이는 세상에서 가장 따뜻한 마음을 가진 사람입니다. 다른 사람의 감정에 공감하고 도움을 주려는 본능이 있어요. 이 마음이 세상을 더 좋은 곳으로 만드는 힘이 될 거예요!',
+  },
+};
+
+let scores = { creative:0, science:0, comm:0, leader:0, art:0, care:0 };
+let current = 0;
+
+function start() {
+  document.getElementById('introSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = QUESTIONS[i];
+  document.getElementById('questionNum').textContent = `Q${i+1}`;
+  document.getElementById('questionText').textContent = q.text;
+  document.getElementById('progressText').textContent = `${i+1} / ${QUESTIONS.length}`;
+  document.getElementById('progressFill').style.width = `${((i+1)/QUESTIONS.length)*100}%`;
+
+  const el = document.getElementById('choices');
+  el.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.choices.forEach((c, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-letter">${letters[idx]}</span>${c.text}`;
+    btn.onclick = () => { Object.keys(c.score).forEach(k => { scores[k] += c.score[k]; }); current++; current < QUESTIONS.length ? showQ(current) : showAdThenResult(showResult); };
+    el.appendChild(btn);
+  });
+}
+
+function showResult() {
+  document.getElementById('quizSection').style.display = 'none';
+  const top = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  const r = TYPES[top];
+  const sec = document.getElementById('resultSection');
+  sec.style.display = 'block';
+  sec.innerHTML = `
+    <div class="job-result-header">
+      <div style="font-size:64px;margin-bottom:12px;">${r.emoji}</div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:1.5px;opacity:.7;margin-bottom:6px;">우리 아이 유형</div>
+      <h2>${r.label}</h2>
+      <p>${r.subtitle}</p>
+    </div>
+
+    <div style="background:var(--bg2);border-radius:12px;padding:18px 20px;margin-bottom:20px;border:1.5px solid rgba(255,255,255,.06);">
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px;">💌 아이에게 전하는 말</div>
+      <p style="font-size:14px;color:var(--gray2);line-height:1.9;margin:0;">${r.msg}</p>
+    </div>
+
+    <div style="background:var(--bg2);border-radius:12px;padding:18px 20px;margin-bottom:20px;border:1.5px solid rgba(255,255,255,.06);">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">✨ 아이의 강점 특성</div>
+      <div>${r.traits.map(t => `<span class="trait-chip">${t}</span>`).join('')}</div>
+    </div>
+
+    <div style="font-size:15px;font-weight:700;margin-bottom:14px;">🚀 어울리는 미래 직업 TOP 4</div>
+    <div class="job-cards" style="margin-bottom:28px;">
+      ${r.jobs.map(j => `
+        <div class="job-card">
+          <span class="job-card-icon">${j.icon}</span>
+          <div class="job-card-name">${j.name}</div>
+          <div class="job-card-desc">${j.desc}</div>
+        </div>`).join('')}
+    </div>
+
+    <div class="result-actions">
+      <button class="btn-share" onclick="shareResult('${r.label}')">🔗 결과 공유하기</button>
+      <button class="btn-retry" onclick="retryTest()">🔄 다시하기</button>
+      <a href="../index.html" class="btn-back">← 포털로</a>
+    </div>`;
+}
+
+function retryTest() {
+  scores = { creative:0, science:0, comm:0, leader:0, art:0, care:0 };
+  current = 0;
+  document.getElementById('resultSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  showQ(0);
+}
+
+function shareResult(label) {
+  const text = `우리 아이 미래 직업 유형은 "${label}"! 너희 아이는? 🚀`;
+  if (navigator.share) {
+    navigator.share({ title:'우리 아이 미래직업', text, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(text).then(() => alert('복사됐어요! 🎉'));
+  }
+}
+</script>
+</body>
+</html>

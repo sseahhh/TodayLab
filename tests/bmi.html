@@ -1,0 +1,247 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>내 BMI 계산기 | 오늘연구소</title>
+  <meta name="description" content="BMI 계산기 — 키와 몸무게로 알아보는 나의 BMI! 한국인 기준 적정 체중 범위 분석 | 오늘연구소">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .input-row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .bmi-big {
+      font-size: 80px;
+      font-weight: 900;
+      text-align: center;
+      margin: 20px 0 4px;
+    }
+    .bmi-bar-wrap {
+      position: relative;
+      background: linear-gradient(90deg, #64b4ff 0%, #46d369 25%, #ffc800 55%, #ff8c00 75%, #ff4444 100%);
+      border-radius: 50px;
+      height: 14px;
+      margin: 16px 0 6px;
+    }
+    .bmi-bar-marker {
+      position: absolute;
+      top: -4px;
+      width: 22px;
+      height: 22px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,.5);
+      transform: translateX(-50%);
+      transition: left 1.2s cubic-bezier(.4,0,.2,1) .3s;
+      border: 3px solid #141414;
+    }
+    .bmi-scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--gray3);
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 8px 24px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 700;
+      margin: 8px auto 20px;
+    }
+    .status-under { background: rgba(100,180,255,.15); color: #64b4ff; border: 1px solid rgba(100,180,255,.3); }
+    .status-normal { background: rgba(70,211,105,.15); color: #46d369; border: 1px solid rgba(70,211,105,.3); }
+    .status-over { background: rgba(255,200,0,.15); color: #ffc800; border: 1px solid rgba(255,200,0,.3); }
+    .status-obese1 { background: rgba(255,140,0,.15); color: #ff8c00; border: 1px solid rgba(255,140,0,.3); }
+    .status-obese2 { background: rgba(255,68,68,.15); color: #ff4444; border: 1px solid rgba(255,68,68,.3); }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">⚖️</span>
+          <h1>내 BMI 계산기</h1>
+          <p>나의 체질량지수(BMI)와 건강 상태를<br>한국인 기준으로 확인해보세요!</p>
+          <div class="test-meta">
+            <span>💪 건강</span>
+            <span>⏱ 1분</span>
+            <span>👥 334,556명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-num">신체 정보 입력</div>
+          <div class="chip-group" id="genderGroup" style="margin-bottom:24px;">
+            <button class="chip" onclick="selectGender(this,'M')">👨 남성</button>
+            <button class="chip" onclick="selectGender(this,'F')">👩 여성</button>
+          </div>
+
+          <div class="input-row2">
+            <div>
+              <label class="input-label">키 (cm)</label>
+              <input type="number" class="input-field" id="height" placeholder="예: 170" min="100" max="250" style="margin-bottom:0;">
+            </div>
+            <div>
+              <label class="input-label">몸무게 (kg)</label>
+              <input type="number" class="input-field" id="weight" placeholder="예: 65" min="20" max="250" style="margin-bottom:0;">
+            </div>
+          </div>
+
+          <div style="margin-top:16px;">
+            <label class="input-label">나이 (선택사항)</label>
+            <input type="number" class="input-field" id="age" placeholder="예: 28 (선택 입력)" min="10" max="100">
+          </div>
+
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;">
+            ⚖️ BMI 계산하기
+          </button>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:16px 18px;margin-top:16px;">
+          <p style="font-size:12px;color:var(--gray3);line-height:1.7;">
+            📌 한국인은 WHO 기준보다 낮은 BMI에서도 대사질환 위험이 높아<br>
+            <strong style="color:var(--gray2)">대한비만학회 기준 BMI 23부터 과체중</strong>으로 분류합니다. 수치는 참고용이에요 😊
+          </p>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+    </div>
+  </div>
+
+<script>
+let userGender = null;
+
+function selectGender(btn, g) {
+  document.querySelectorAll('#genderGroup .chip').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  userGender = g;
+}
+
+function calculate() {
+  if (!userGender) { alert('성별을 선택해주세요!'); return; }
+  const height = parseFloat(document.getElementById('height').value);
+  const weight = parseFloat(document.getElementById('weight').value);
+  const age = parseInt(document.getElementById('age').value) || null;
+
+  if (!height || height < 100 || height > 250) { alert('키를 정확하게 입력해주세요! (100~250cm)'); return; }
+  if (!weight || weight < 20 || weight > 250) { alert('몸무게를 정확하게 입력해주세요! (20~250kg)'); return; }
+
+  const bmi = weight / Math.pow(height / 100, 2);
+
+  let status, cls, color, advice;
+  if (bmi < 18.5) {
+    status = '저체중'; cls = 'status-under'; color = '#64b4ff';
+    advice = '체중이 기준보다 적은 편이에요. 균형 잡힌 식사와 단백질 섭취를 늘려보세요. 무리한 다이어트는 피하고, 필요하다면 영양사 상담을 받아보는 것도 좋아요.';
+  } else if (bmi < 23) {
+    status = '정상'; cls = 'status-normal'; color = '#46d369';
+    advice = '건강한 체중 범위예요! 지금처럼 규칙적인 운동과 균형 잡힌 식사를 유지해주세요. 꾸준함이 최고의 건강 비결이랍니다 💪';
+  } else if (bmi < 25) {
+    status = '과체중'; cls = 'status-over'; color = '#ffc800';
+    advice = '한국인 기준으로 과체중 구간이에요. 주 3~4회 유산소 운동과 식단 조절로 건강을 챙겨보세요. 작은 변화부터 시작하면 돼요!';
+  } else if (bmi < 30) {
+    status = '비만 1단계'; cls = 'status-obese1'; color = '#ff8c00';
+    advice = '비만 1단계입니다. 당뇨, 고혈압, 심혈관 질환의 위험이 높아지는 구간이에요. 규칙적인 운동과 식이 조절이 필요하며, 의사 상담도 권장합니다.';
+  } else {
+    status = '비만 2단계'; cls = 'status-obese2'; color = '#ff4444';
+    advice = '고도 비만 구간입니다. 건강 위험이 상당히 높아요. 전문 의료진과 함께 체계적인 체중 감량 계획을 세우는 것을 강력히 권장합니다.';
+  }
+
+  // 이상적인 체중 범위 (BMI 18.5 ~ 22.9)
+  const idealMin = (18.5 * Math.pow(height/100, 2)).toFixed(1);
+  const idealMax = (22.9 * Math.pow(height/100, 2)).toFixed(1);
+
+  // BMI 막대 위치 계산 (15~40 범위를 0~100%로 매핑)
+  const markerPct = Math.max(2, Math.min(98, ((bmi - 15) / 25) * 100));
+
+  showAdThenResult(() => {
+    document.getElementById('formSection').style.display = 'none';
+    const sec = document.getElementById('resultSection');
+    sec.style.display = 'block';
+    sec.innerHTML = `
+      <div class="result-card">
+        <span class="result-emoji">⚖️</span>
+        <div class="result-type">나의 BMI</div>
+        <div class="bmi-big" style="color:${color};">${bmi.toFixed(1)}</div>
+        <div style="text-align:center;margin-bottom:4px;color:var(--gray3);font-size:13px;">체질량지수 (BMI)</div>
+        <div style="text-align:center;margin-bottom:20px;">
+          <span class="status-badge ${cls}">${status}</span>
+        </div>
+
+        <div style="margin-bottom:24px;">
+          <div class="bmi-bar-wrap">
+            <div class="bmi-bar-marker" id="bmiMarker" style="left:0%"></div>
+          </div>
+          <div class="bmi-scale-labels">
+            <span>저체중<br>&lt;18.5</span>
+            <span>정상<br>18.5</span>
+            <span>과체중<br>23</span>
+            <span>비만1<br>25</span>
+            <span>비만2<br>30+</span>
+          </div>
+        </div>
+
+        <div class="range-info">
+          <div class="range-row">
+            <span>📏 키 / 몸무게</span>
+            <span class="range-val">${height}cm / ${weight}kg</span>
+          </div>
+          <div class="range-row">
+            <span>✅ 이상적인 체중 범위</span>
+            <span class="range-val">${idealMin}kg ~ ${idealMax}kg</span>
+          </div>
+          ${age ? `<div class="range-row"><span>🎂 나이</span><span class="range-val">${age}세</span></div>` : ''}
+          <div class="range-row">
+            <span>🇰🇷 한국인 과체중 기준</span>
+            <span class="range-val">BMI 23 이상</span>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:16px 18px;margin:20px 0;text-align:left;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:8px;">💡 건강 조언</div>
+          <p style="font-size:14px;color:var(--gray2);line-height:1.7;">${advice}</p>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn-share" onclick="shareResult('${bmi.toFixed(1)}','${status}')">🔗 결과 공유하기</button>
+          <button class="btn-retry" onclick="location.reload()">🔄 다시 계산</button>
+          <a href="../index.html" class="btn-back">← 포털로</a>
+        </div>
+      </div>`;
+
+    setTimeout(() => {
+      document.getElementById('bmiMarker').style.left = markerPct + '%';
+    }, 200);
+  });
+}
+
+function shareResult(bmi, status) {
+  const text = `나의 BMI는 ${bmi}! 상태: ${status} ⚖️ 너도 계산해봐~`;
+  if (navigator.share) navigator.share({ title: '내 BMI 계산기', text, url: window.location.href });
+  else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+}
+</script>
+</body>
+</html>

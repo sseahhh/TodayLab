@@ -1,0 +1,275 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>연애 능력치 | 오늘연구소</title>
+  <meta name="description" content="연애 능력치 — 오늘연구소에서 재미있게 즐겨보세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <div id="introSection">
+        <div class="test-header">
+          <span class="test-header-emoji">💕</span>
+          <h1>연애 능력치</h1>
+          <p>나의 연애 능력치는 몇 점일까?<br>매력 · 소통 · 배려 · 열정 · 센스 5가지 스탯 분석!</p>
+          <div class="test-meta">
+            <span>💕 연애</span>
+            <span>⏱ 3분</span>
+            <span>👥 198,776명 참여</span>
+          </div>
+        </div>
+        <div style="text-align:center;">
+          <button class="btn-primary" onclick="startTest()" style="font-size:18px;padding:16px 44px;">▶ 시작하기</button>
+        </div>
+      </div>
+
+      <div id="quizSection" style="display:none;">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progressFill" style="width:10%"></div>
+        </div>
+        <div class="progress-text" id="progressText">1 / 10</div>
+        <div class="question-card">
+          <div class="question-num" id="questionNum">Q1</div>
+          <div class="question-text" id="questionText"></div>
+          <div class="choices" id="choices"></div>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+    </div>
+  </div>
+
+<script>
+// Stats: 매력(charm), 소통(comm), 배려(care), 열정(passion), 센스(sense)
+const QUESTIONS = [
+  {
+    text: "처음 만난 사람에게 나는?",
+    choices: [
+      { text: "자연스럽게 먼저 말을 건넨다", score: { charm:3, comm:2, care:0, passion:0, sense:1 } },
+      { text: "상대방이 먼저 말 걸어주길 기다린다", score: { charm:0, comm:0, care:1, passion:0, sense:1 } },
+      { text: "관심 있으면 눈빛으로 신호를 보낸다", score: { charm:2, comm:0, care:0, passion:1, sense:2 } },
+      { text: "공통 관심사를 찾아 자연스럽게 대화를 이어간다", score: { charm:1, comm:3, care:1, passion:0, sense:2 } },
+    ]
+  },
+  {
+    text: "연인이 기분이 안 좋아 보일 때?",
+    choices: [
+      { text: "먼저 안아주고 괜찮냐고 물어본다", score: { charm:1, comm:1, care:3, passion:2, sense:1 } },
+      { text: "맛있는 거 사주며 기운 내라고 한다", score: { charm:2, comm:0, care:2, passion:1, sense:2 } },
+      { text: "왜 그런지 물어보고 들어준다", score: { charm:0, comm:3, care:2, passion:0, sense:1 } },
+      { text: "눈치채지 못하고 평소처럼 행동한다", score: { charm:0, comm:0, care:0, passion:0, sense:0 } },
+    ]
+  },
+  {
+    text: "연애에서 가장 중요하게 생각하는 것은?",
+    choices: [
+      { text: "외모 & 첫인상", score: { charm:3, comm:0, care:0, passion:2, sense:1 } },
+      { text: "대화가 잘 통하는 것", score: { charm:0, comm:3, care:1, passion:0, sense:2 } },
+      { text: "서로를 아끼고 배려하는 것", score: { charm:0, comm:1, care:3, passion:1, sense:1 } },
+      { text: "설레임과 열정", score: { charm:1, comm:0, care:0, passion:3, sense:2 } },
+    ]
+  },
+  {
+    text: "데이트 코스를 정할 때 나는?",
+    choices: [
+      { text: "상대방이 좋아할 만한 곳을 미리 리서치한다", score: { charm:1, comm:1, care:2, passion:0, sense:3 } },
+      { text: "그냥 가서 둘이 같이 정한다", score: { charm:0, comm:2, care:1, passion:0, sense:0 } },
+      { text: "내가 가고 싶은 곳 위주로 정한다", score: { charm:1, comm:0, care:0, passion:2, sense:0 } },
+      { text: "깜짝 서프라이즈 코스를 준비한다", score: { charm:2, comm:0, care:2, passion:2, sense:3 } },
+    ]
+  },
+  {
+    text: "연인과 싸웠을 때 나는?",
+    choices: [
+      { text: "먼저 사과하고 화해를 시도한다", score: { charm:0, comm:2, care:3, passion:0, sense:1 } },
+      { text: "시간이 지나면 자연스럽게 해결되길 기다린다", score: { charm:0, comm:0, care:0, passion:0, sense:0 } },
+      { text: "감정을 솔직하게 털어놓고 대화한다", score: { charm:0, comm:3, care:1, passion:1, sense:2 } },
+      { text: "기분 전환 이벤트로 분위기를 바꾼다", score: { charm:2, comm:1, care:1, passion:1, sense:3 } },
+    ]
+  },
+  {
+    text: "연인의 기념일을 나는?",
+    choices: [
+      { text: "모두 외워두고 미리 준비한다", score: { charm:1, comm:0, care:3, passion:1, sense:3 } },
+      { text: "가끔 잊어버리기도 한다", score: { charm:0, comm:0, care:0, passion:0, sense:0 } },
+      { text: "상대방이 중요하게 생각하는 것만 챙긴다", score: { charm:0, comm:1, care:2, passion:0, sense:2 } },
+      { text: "당일에 알아채고 즉흥적으로 이벤트를 만든다", score: { charm:2, comm:0, care:1, passion:3, sense:2 } },
+    ]
+  },
+  {
+    text: "나의 스킨십 스타일은?",
+    choices: [
+      { text: "자주 스킨십을 원한다", score: { charm:2, comm:0, care:1, passion:3, sense:1 } },
+      { text: "상대방이 원할 때만 한다", score: { charm:0, comm:1, care:3, passion:0, sense:2 } },
+      { text: "자연스러운 스킨십을 즐긴다", score: { charm:2, comm:1, care:1, passion:2, sense:2 } },
+      { text: "스킨십이 어색하다", score: { charm:0, comm:0, care:0, passion:0, sense:0 } },
+    ]
+  },
+  {
+    text: "연인에게 연락은?",
+    choices: [
+      { text: "하루에도 여러 번 연락한다", score: { charm:1, comm:2, care:2, passion:3, sense:0 } },
+      { text: "필요할 때만 한다", score: { charm:0, comm:0, care:0, passion:0, sense:1 } },
+      { text: "아침저녁으로 챙긴다", score: { charm:1, comm:2, care:3, passion:1, sense:2 } },
+      { text: "먼저 연락하기보다 기다린다", score: { charm:0, comm:0, care:1, passion:0, sense:1 } },
+    ]
+  },
+  {
+    text: "이상형을 한마디로 말하면?",
+    choices: [
+      { text: "나를 설레게 해주는 사람", score: { charm:2, comm:0, care:0, passion:3, sense:1 } },
+      { text: "대화가 끊이지 않는 사람", score: { charm:0, comm:3, care:0, passion:0, sense:2 } },
+      { text: "날 늘 챙겨주는 따뜻한 사람", score: { charm:0, comm:1, care:3, passion:1, sense:1 } },
+      { text: "나를 편하게 해주는 사람", score: { charm:1, comm:2, care:2, passion:0, sense:2 } },
+    ]
+  },
+  {
+    text: "마지막! 연애에서 나의 강점은?",
+    choices: [
+      { text: "상대를 끌어당기는 매력", score: { charm:3, comm:0, care:0, passion:2, sense:1 } },
+      { text: "어떤 대화도 잘 들어주는 것", score: { charm:0, comm:3, care:2, passion:0, sense:1 } },
+      { text: "상대가 원하는 걸 먼저 알아채는 것", score: { charm:1, comm:1, care:2, passion:0, sense:3 } },
+      { text: "연애에 진심으로 쏟는 것", score: { charm:1, comm:0, care:1, passion:3, sense:2 } },
+    ]
+  },
+];
+
+let stats = { charm:0, comm:0, care:0, passion:0, sense:0 };
+let current = 0;
+
+function startTest() {
+  document.getElementById('introSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = QUESTIONS[i];
+  document.getElementById('questionNum').textContent = `Q${i+1}`;
+  document.getElementById('questionText').textContent = q.text;
+  document.getElementById('progressText').textContent = `${i+1} / ${QUESTIONS.length}`;
+  document.getElementById('progressFill').style.width = `${((i+1)/QUESTIONS.length)*100}%`;
+
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.choices.forEach((c, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-letter">${letters[idx]}</span>${c.text}`;
+    btn.onclick = () => pick(c.score, i);
+    choicesEl.appendChild(btn);
+  });
+}
+
+function pick(score, questionIdx) {
+  Object.keys(score).forEach(k => { stats[k] += score[k]; });
+  current++;
+  if (current < QUESTIONS.length) showQ(current);
+  else showAdThenResult(showResult);
+}
+
+function showResult() {
+  document.getElementById('quizSection').style.display = 'none';
+
+  const max = 30;
+  const pct = k => Math.min(99, Math.round((stats[k] / max) * 100));
+  const total = Math.round(Object.values(stats).reduce((a,b)=>a+b,0) / (max*5) * 100);
+  const totalPct = Math.min(99, Math.max(42, total));
+
+  const bars = [
+    { key:'charm',   label:'매력', emoji:'✨', color:'#ff6b9d' },
+    { key:'comm',    label:'소통', emoji:'💬', color:'#4facfe' },
+    { key:'care',    label:'배려', emoji:'🤗', color:'#46d369' },
+    { key:'passion', label:'열정', emoji:'🔥', color:'#f5576c' },
+    { key:'sense',   label:'센스', emoji:'💡', color:'#ffd200' },
+  ];
+
+  const grade = totalPct >= 85 ? '연애 천재형 💑'
+              : totalPct >= 70 ? '연애 잘하는 편 💕'
+              : totalPct >= 55 ? '발전 가능형 🌱'
+              :                  '연습이 필요해 📚';
+
+  const sec = document.getElementById('resultSection');
+  sec.style.display = 'block';
+
+  sec.innerHTML = `
+    <div class="result-card">
+      <span class="result-emoji">💕</span>
+      <div class="result-type">연애 능력치 분석</div>
+      <div class="result-title">${grade}</div>
+      <p style="color:var(--gray2);font-size:15px;line-height:1.8;margin-bottom:28px;text-align:center;">
+        종합 연애 점수 <strong style="color:#ff6b9d;font-size:22px;">${totalPct}점</strong>
+      </p>
+
+      <div style="margin-bottom:32px;">
+        ${bars.map(b => `
+          <div class="stat-row">
+            <div class="stat-label">
+              <span>${b.emoji} ${b.label}</span>
+              <span style="color:${b.color}">${pct(b.key)}점</span>
+            </div>
+            <div class="stat-bar-bg">
+              <div class="stat-bar-fill" style="width:${pct(b.key)}%;background:${b.color}"></div>
+            </div>
+          </div>`).join('')}
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-share" onclick="shareResult(${totalPct})">🔗 결과 공유하기</button>
+        <button class="btn-retry" onclick="retryTest()">🔄 다시하기</button>
+        <a href="../index.html" class="btn-back">← 포털로</a>
+      </div>
+    </div>`;
+
+  // Animate bars after render
+  setTimeout(() => {
+    document.querySelectorAll('.stat-bar-fill').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0';
+      setTimeout(() => { el.style.width = w; }, 50);
+    });
+  }, 100);
+}
+
+function retryTest() {
+  stats = { charm:0, comm:0, care:0, passion:0, sense:0 };
+  current = 0;
+  document.getElementById('resultSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  showQ(0);
+}
+
+function shareResult(score) {
+  const text = `나의 연애 능력치는 ${score}점! 너는 몇 점? 💕`;
+  if (navigator.share) {
+    navigator.share({ title:'연애 능력치', text, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(text).then(() => alert('복사됐어요! 🎉'));
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>나이 계산기 | 오늘연구소</title>
+  <meta name="description" content="나이 계산기 — 만 나이·세는 나이·연 나이를 한 번에! 다음 생일까지 D-day도 확인 | 오늘연구소">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .date-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 400px) {
+      .date-row { grid-template-columns: 1fr; }
+    }
+    .age-big {
+      font-size: 80px;
+      font-weight: 900;
+      text-align: center;
+      background: linear-gradient(135deg, #96fbc4, #f9f586);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 16px 0 4px;
+    }
+    .birthday-bar {
+      background: var(--bg3);
+      border-radius: 50px;
+      height: 10px;
+      margin: 12px 0 4px;
+      overflow: hidden;
+    }
+    .birthday-fill {
+      height: 100%;
+      border-radius: 50px;
+      background: linear-gradient(90deg, var(--red), #ff6b6b);
+      transition: width 1.5s cubic-bezier(.4,0,.2,1) .3s;
+    }
+    .ganzhi-badge {
+      display: inline-block;
+      background: rgba(249,245,134,.1);
+      border: 1px solid rgba(249,245,134,.3);
+      color: #f9f586;
+      padding: 6px 18px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">🎂</span>
+          <h1>나이 계산기</h1>
+          <p>만 나이, 세는 나이, 연 나이 모두!<br>생일 D-day와 간지(干支)까지 알려드려요!</p>
+          <div class="test-meta">
+            <span>📅 생활</span>
+            <span>⏱ 1분</span>
+            <span>👥 445,221명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-num">생년월일 입력</div>
+          <label class="input-label">태어난 날짜를 입력해주세요</label>
+          <div class="date-row">
+            <div>
+              <input type="number" class="input-field" id="birthYear" placeholder="년도" min="1900" max="2024" style="margin-bottom:0;">
+            </div>
+            <div>
+              <input type="number" class="input-field" id="birthMonth" placeholder="월" min="1" max="12" style="margin-bottom:0;">
+            </div>
+            <div>
+              <input type="number" class="input-field" id="birthDay" placeholder="일" min="1" max="31" style="margin-bottom:0;">
+            </div>
+          </div>
+
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;margin-top:16px;">
+            🎂 나이 계산하기
+          </button>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:16px 18px;margin-top:16px;">
+          <p style="font-size:12px;color:var(--gray3);line-height:1.7;">
+            📌 <strong style="color:var(--gray2)">2023년 6월부터 만 나이가 법적 기준</strong>이 되었습니다.<br>
+            세는 나이와 연 나이는 일상에서 여전히 쓰이는 나이 계산법이에요 😊
+          </p>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+    </div>
+  </div>
+
+<script>
+const heavenlyStems = ['갑','을','병','정','무','기','경','신','임','계'];
+const earthlyBranches = ['자','축','인','묘','진','사','오','미','신','유','술','해'];
+const zodiacAnimals = ['쥐','소','호랑이','토끼','용','뱀','말','양','원숭이','닭','개','돼지'];
+const weekdays = ['일','월','화','수','목','금','토'];
+
+function getGanzhi(year) {
+  const stemIdx = (year - 4) % 10;
+  const branchIdx = (year - 4) % 12;
+  const stem = heavenlyStems[(stemIdx + 10) % 10];
+  const branch = earthlyBranches[(branchIdx + 12) % 12];
+  const animal = zodiacAnimals[(branchIdx + 12) % 12];
+  return `${stem}${branch}년 (${animal}띠)`;
+}
+
+function calculate() {
+  const y = parseInt(document.getElementById('birthYear').value);
+  const m = parseInt(document.getElementById('birthMonth').value);
+  const d = parseInt(document.getElementById('birthDay').value);
+
+  if (!y || !m || !d || y < 1900 || y > 2024 || m < 1 || m > 12 || d < 1 || d > 31) {
+    alert('생년월일을 정확하게 입력해주세요!'); return;
+  }
+
+  const birth = new Date(y, m - 1, d);
+  if (isNaN(birth.getTime())) { alert('올바른 날짜를 입력해주세요!'); return; }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayYear = today.getFullYear();
+  const todayMonth = today.getMonth() + 1;
+  const todayDay = today.getDate();
+
+  // 만 나이
+  let manAge = todayYear - y;
+  if (todayMonth < m || (todayMonth === m && todayDay < d)) manAge--;
+
+  // 세는 나이
+  const saenAge = todayYear - y + 1;
+
+  // 연 나이
+  const yeonAge = todayYear - y;
+
+  // 태어난 지 며칠
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const daysLived = Math.floor((today - birth) / msPerDay);
+
+  // 다음 생일
+  let nextBirthday = new Date(todayYear, m - 1, d);
+  if (nextBirthday <= today) nextBirthday = new Date(todayYear + 1, m - 1, d);
+  const daysUntilBirthday = Math.ceil((nextBirthday - today) / msPerDay);
+  const isBirthdayToday = daysUntilBirthday === 365 || (m === todayMonth && d === todayDay);
+
+  // 생일 진행률 (이번 생일 기준)
+  const lastBirthday = new Date(todayYear, m - 1, d);
+  if (lastBirthday > today) lastBirthday.setFullYear(todayYear - 1);
+  const daysSinceLastBday = Math.floor((today - lastBirthday) / msPerDay);
+  const birthdayProgress = Math.round((daysSinceLastBday / 365) * 100);
+
+  // 태어난 요일
+  const birthWeekday = weekdays[birth.getDay()];
+
+  // 간지
+  const ganzhi = getGanzhi(y);
+
+  // 특별 메시지
+  const birthdayMsg = (m === todayMonth && d === todayDay)
+    ? '🎉 오늘이 생일이에요! 생일 축하해요!'
+    : `다음 생일까지 ${daysUntilBirthday}일 남았어요`;
+
+  showAdThenResult(() => {
+    document.getElementById('formSection').style.display = 'none';
+    const sec = document.getElementById('resultSection');
+    sec.style.display = 'block';
+    sec.innerHTML = `
+      <div class="result-card">
+        <span class="result-emoji">🎂</span>
+        <div class="result-type">나의 나이</div>
+        <div class="age-big">${manAge}세</div>
+        <div style="text-align:center;color:var(--gray3);font-size:13px;margin-bottom:16px;">만 나이 (법적 기준)</div>
+
+        <div style="text-align:center;margin-bottom:24px;">
+          <span class="ganzhi-badge">${ganzhi}</span>
+        </div>
+
+        <div class="range-info" style="margin-bottom:24px;">
+          <div class="range-row">
+            <span>🇰🇷 만 나이 (법적)</span>
+            <span class="range-val">${manAge}세</span>
+          </div>
+          <div class="range-row">
+            <span>🔢 세는 나이 (한국식)</span>
+            <span class="range-val">${saenAge}살</span>
+          </div>
+          <div class="range-row">
+            <span>📅 연 나이</span>
+            <span class="range-val">${yeonAge}세</span>
+          </div>
+          <div class="range-row">
+            <span>📆 태어난 요일</span>
+            <span class="range-val">${birthWeekday}요일</span>
+          </div>
+          <div class="range-row">
+            <span>⏳ 살아온 날</span>
+            <span class="range-val">${daysLived.toLocaleString('ko-KR')}일</span>
+          </div>
+          <div class="range-row">
+            <span>🎂 다음 생일</span>
+            <span class="range-val">${birthdayMsg}</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom:24px;text-align:left;">
+          <div style="font-size:13px;color:var(--gray3);margin-bottom:6px;">이번 생일까지 진행률</div>
+          <div class="birthday-bar">
+            <div class="birthday-fill" id="bdayFill" style="width:0%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray3);">
+            <span>지난 생일</span><span>${birthdayProgress}%</span><span>다음 생일</span>
+          </div>
+        </div>
+
+        <div style="background:rgba(150,251,196,.06);border:1px solid rgba(150,251,196,.15);border-radius:12px;padding:16px 18px;margin-bottom:20px;">
+          <p style="font-size:14px;color:#96fbc4;font-weight:700;text-align:center;">
+            🌟 지금까지 살아온 날: <strong>${daysLived.toLocaleString('ko-KR')}일!</strong>
+          </p>
+          <p style="font-size:13px;color:var(--gray2);text-align:center;margin-top:6px;">
+            하루하루가 소중한 선물이에요 💕
+          </p>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn-share" onclick="shareResult(${manAge}, ${daysLived})">🔗 결과 공유하기</button>
+          <button class="btn-retry" onclick="location.reload()">🔄 다시 계산</button>
+          <a href="../index.html" class="btn-back">← 포털로</a>
+        </div>
+      </div>`;
+
+    setTimeout(() => {
+      document.getElementById('bdayFill').style.width = birthdayProgress + '%';
+    }, 200);
+  });
+}
+
+function shareResult(age, days) {
+  const text = `나는 만 ${age}세! 지금까지 ${days.toLocaleString('ko-KR')}일을 살았어요 🎂 너도 계산해봐~`;
+  if (navigator.share) navigator.share({ title: '나이 계산기', text, url: window.location.href });
+  else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>나의 숨겨진 성격 | 오늘연구소</title>
+  <meta name="description" content="나의 숨겨진 성격 — 오늘연구소에서 재미있게 즐겨보세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .reveal-box {
+      background: linear-gradient(135deg, rgba(229,9,20,.08), rgba(100,30,180,.08));
+      border: 1px solid rgba(229,9,20,.2);
+      border-radius: 14px;
+      padding: 20px 22px;
+      margin: 18px 0;
+      text-align: left;
+    }
+    .reveal-box-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #c084fc;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .reveal-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: var(--gray2);
+      line-height: 1.6;
+    }
+    .reveal-item-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .tip-box {
+      background: rgba(70,211,105,.07);
+      border: 1px solid rgba(70,211,105,.2);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: #6edd8a;
+      margin-top: 16px;
+      text-align: left;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <!-- INTRO -->
+      <div id="introSection">
+        <div class="test-header">
+          <span class="test-header-emoji">🎭</span>
+          <h1>나의 숨겨진 성격</h1>
+          <p>평소의 나와 다른, 진짜 나는 누구일까?<br>10가지 일상 속 상황으로 알아보는 숨겨진 자아</p>
+          <div class="test-meta">
+            <span>🎭 심리테스트</span>
+            <span>⏱ 약 3분</span>
+            <span>👥 189,443명 참여</span>
+          </div>
+        </div>
+        <div style="text-align:center;">
+          <button class="btn-primary" onclick="startTest()" style="font-size:18px; padding:16px 44px;">
+            ▶ 시작하기
+          </button>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div id="quizSection" style="display:none;">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progressFill" style="width:10%"></div>
+        </div>
+        <div class="progress-text" id="progressText">1 / 10</div>
+        <div class="question-card" id="questionCard">
+          <div class="question-num" id="questionNum">Q1</div>
+          <div class="question-text" id="questionText"></div>
+          <div class="choices" id="choices"></div>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="resultSection" style="display:none;"></div>
+
+    </div>
+  </div>
+
+<script>
+const QUESTIONS = [
+  {
+    text: "모임에서 갑자기 리더 역할을 맡게 됐을 때 나는?",
+    choices: [
+      { text: "어색하지만 의외로 빠르게 상황을 파악하고 정리한다", score: { leader: 3 } },
+      { text: "아이디어보다 분위기를 살리려 노력한다", score: { artist: 2 } },
+      { text: "말은 없지만 모두의 상태를 조용히 체크한다", score: { analyst: 3 } },
+      { text: "힘들어하는 사람부터 먼저 챙긴다", score: { healer: 3 } },
+    ]
+  },
+  {
+    text: "친구가 잘못된 결정을 하려 할 때 나의 행동은?",
+    choices: [
+      { text: "직접적으로 \"그건 좀 아닌 것 같아\"라고 말한다", score: { leader: 2 } },
+      { text: "내 생각을 예시나 비유로 우회적으로 전달한다", score: { artist: 2 } },
+      { text: "이미 여러 가지 결과를 머릿속으로 시뮬레이션해본다", score: { analyst: 3 } },
+      { text: "친구의 감정 상태를 먼저 살피고 조심스럽게 조언한다", score: { healer: 3 } },
+    ]
+  },
+  {
+    text: "처음 만나는 사람과 대화할 때 나는 주로?",
+    choices: [
+      { text: "대화가 지지부진하면 자연스럽게 주도권을 잡는다", score: { leader: 2 } },
+      { text: "인상적인 이야기나 유머로 기억에 남으려 한다", score: { artist: 2 } },
+      { text: "말보다 상대의 표정, 말투, 행동을 관찰한다", score: { analyst: 3 } },
+      { text: "상대가 편하게 말할 수 있도록 잘 들어준다", score: { healer: 3 } },
+    ]
+  },
+  {
+    text: "그룹 과제에서 의견 충돌이 생겼을 때?",
+    choices: [
+      { text: "조율하고 결론을 내리는 역할을 자연스럽게 맡는다", score: { leader: 3 } },
+      { text: "양측의 의견을 모두 담은 창의적인 타협안을 낸다", score: { artist: 2 } },
+      { text: "충돌의 근본 원인을 분석해서 조용히 제시한다", score: { analyst: 2 } },
+      { text: "감정적으로 상처받은 쪽을 먼저 달랜다", score: { healer: 3 } },
+    ]
+  },
+  {
+    text: "혼자 있을 때 가장 자주 하는 행동은?",
+    choices: [
+      { text: "앞으로 해야 할 일의 계획을 세운다", score: { leader: 2 } },
+      { text: "그림을 그리거나 글을 쓰거나 음악을 듣는다", score: { artist: 3 } },
+      { text: "사람들의 행동 패턴이나 사회 현상을 분석한다", score: { analyst: 3 } },
+      { text: "주변 사람들의 상황을 돌아보며 연락할 사람을 생각한다", score: { healer: 2 } },
+    ]
+  },
+  {
+    text: "위기 상황이 갑자기 발생했을 때 나는?",
+    choices: [
+      { text: "즉각적으로 움직이며 주변 사람들을 이끈다", score: { leader: 3 } },
+      { text: "상황에서 의외의 해결책을 떠올리는 편이다", score: { artist: 2 } },
+      { text: "감정을 배제하고 원인과 대책을 빠르게 정리한다", score: { analyst: 3 } },
+      { text: "패닉 상태의 사람들을 먼저 진정시키려 한다", score: { healer: 3 } },
+    ]
+  },
+  {
+    text: "친구들이 나에게 하는 말로 가장 많은 것은?",
+    choices: [
+      { text: "\"넌 나설 때는 진짜 믿음직하더라\"", score: { leader: 3 } },
+      { text: "\"너 생각하는 방식이 독특해, 신기해\"", score: { artist: 3 } },
+      { text: "\"넌 어떻게 그런 것까지 알아?\"", score: { analyst: 3 } },
+      { text: "\"네 옆에 있으면 왠지 편해지더라\"", score: { healer: 3 } },
+    ]
+  },
+  {
+    text: "무언가를 새로 배울 때 나의 방식은?",
+    choices: [
+      { text: "빠르게 전체 그림을 파악하고 핵심을 짚어낸다", score: { leader: 2 } },
+      { text: "나만의 방식으로 재해석하며 창의적으로 접근한다", score: { artist: 3 } },
+      { text: "원리와 구조를 완전히 이해할 때까지 파고든다", score: { analyst: 3 } },
+      { text: "같이 배우는 사람들과 감정을 나누며 천천히 익힌다", score: { healer: 2 } },
+    ]
+  },
+  {
+    text: "나를 힘들게 하는 상황은?",
+    choices: [
+      { text: "결정권 없이 누군가의 지시만 받아야 할 때", score: { leader: 2 } },
+      { text: "틀 안에서만 생각하고 창의성을 억제당할 때", score: { artist: 3 } },
+      { text: "이유 없이 \"그냥 해\"라는 말을 들을 때", score: { analyst: 3 } },
+      { text: "주변 사람들이 고통받는데 아무것도 못 할 때", score: { healer: 3 } },
+    ]
+  },
+  {
+    text: "내가 잘 모르는 사람에게 가장 두드러지는 나의 모습은?",
+    choices: [
+      { text: "필요하면 나서는 사람, 하지만 평소엔 조용한 사람", score: { leader: 2 } },
+      { text: "특이한 취향이나 감성이 있는 사람", score: { artist: 2 } },
+      { text: "말은 없는데 다 알고 있는 것 같은 사람", score: { analyst: 3 } },
+      { text: "왠지 모르게 먼저 말 걸게 되는 따뜻한 사람", score: { healer: 2 } },
+    ]
+  },
+];
+
+const RESULTS = {
+  leader: {
+    emoji: '👑',
+    type: '숨겨진 리더',
+    title: '숨겨진 리더',
+    desc: '평소엔 조용하고 튀지 않지만, 무언가 중요한 순간이 오면 당신은 자연스럽게 앞으로 나가게 됩니다. 누가 시켜서가 아니라, 상황이 그걸 요구할 때 본능적으로 행동하는 타입이죠. 친구들은 아직 잘 모를 수 있지만, 당신 안에는 사람을 이끌고 방향을 제시하는 강한 에너지가 숨어있어요.',
+    situations: ['팀이 혼란스러울 때 조용히 정리하고 앞장서게 되는 순간', '아무도 나서지 않는 상황에서 결국 내가 결론을 내리고 있을 때'],
+    tip: '🌟 나를 더 빛나게 하는 팁: 리더십을 굳이 숨기지 않아도 돼요. 당신의 결단력과 판단력은 주변 사람들에게 진짜 도움이 됩니다. 먼저 손 드는 연습을 해보세요.',
+  },
+  artist: {
+    emoji: '🎨',
+    type: '숨겨진 예술가',
+    title: '숨겨진 예술가',
+    desc: '겉으로 보기엔 평범해 보일 수 있지만, 당신의 내면에는 놀랍도록 풍부한 감성과 독창적인 세계관이 있습니다. 똑같은 상황을 봐도 남들과 다른 각도로 해석하고, 언어보다 감각으로 세상을 이해하는 사람이죠. 당신의 창의성은 억압됐을 때 가장 크게 폭발합니다.',
+    situations: ['아무도 생각 못 한 방식으로 문제를 해결해서 모두가 놀란 순간', '내가 만든 것이나 표현한 것에 누군가 깊이 공감해줬을 때'],
+    tip: '🌟 나를 더 빛나게 하는 팁: 당신의 독특한 시선을 표현할 수단을 찾아보세요. 글, 그림, 사진, 음악 등 형식은 상관없어요. 꺼내지 않으면 아무도 몰라요.',
+  },
+  analyst: {
+    emoji: '🔍',
+    type: '숨겨진 분석가',
+    title: '숨겨진 분석가',
+    desc: '당신은 말이 없어도 이미 다 보고 있습니다. 사람들의 행동 패턴, 대화의 흐름, 상황의 구조를 조용히 파악하며 내 안에서 결론을 내리고 있죠. 겉으론 무관심해 보여도 속은 정보로 가득 차 있는 타입. 당신의 판단력은 시간이 지날수록 적중률이 높아진다는 걸 스스로도 느낄 거예요.',
+    situations: ['\"어떻게 알았어?\"라는 말을 자주 듣는 순간', '조용히 지켜보다가 한마디로 모두를 깜짝 놀라게 하는 순간'],
+    tip: '🌟 나를 더 빛나게 하는 팁: 당신의 분석 능력을 혼자만 갖고 있지 마세요. 관찰한 것들을 적절한 타이밍에 나눠주면 주변 사람들에게 엄청난 도움이 됩니다.',
+  },
+  healer: {
+    emoji: '🌿',
+    type: '숨겨진 치유사',
+    title: '숨겨진 치유사',
+    desc: '당신 주변 사람들은 이유는 모르지만 당신 옆에 있으면 왠지 편해집니다. 적극적으로 챙기는 것처럼 보이지 않아도, 슬그머니 필요한 것을 해주고 있는 사람. 힘든 감정을 말하지 않아도 먼저 눈치채고 조심스럽게 다가오는 따뜻함. 그게 당신이 가진 가장 강력한 무기예요.',
+    situations: ['말하지 않았는데 파트너나 친구가 내 상태를 먼저 물어봐 줬을 때', '내가 들어줬을 뿐인데 상대방이 \"고마워, 덕분에 살 것 같아\"라고 할 때'],
+    tip: '🌟 나를 더 빛나게 하는 팁: 남을 돌보는 것만큼 스스로도 돌봐주세요. 당신이 지쳐버리면 주변 사람들도 가장 먼저 알아챕니다.',
+  },
+};
+
+let scores = { leader: 0, artist: 0, analyst: 0, healer: 0 };
+let current = 0;
+
+function startTest() {
+  document.getElementById('introSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = QUESTIONS[i];
+  document.getElementById('questionNum').textContent = `Q${i + 1}`;
+  document.getElementById('questionText').textContent = q.text;
+  document.getElementById('progressText').textContent = `${i + 1} / ${QUESTIONS.length}`;
+  document.getElementById('progressFill').style.width = `${((i + 1) / QUESTIONS.length) * 100}%`;
+
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.choices.forEach((c, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-letter">${letters[idx]}</span>${c.text}`;
+    btn.onclick = () => pick(c.score);
+    choicesEl.appendChild(btn);
+  });
+}
+
+function pick(score) {
+  Object.keys(score).forEach(k => { scores[k] += score[k]; });
+  current++;
+  if (current < QUESTIONS.length) {
+    showQ(current);
+  } else {
+    showAdThenResult(showResult);
+  }
+}
+
+function showResult() {
+  document.getElementById('quizSection').style.display = 'none';
+  const top = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const r = RESULTS[top];
+  const sec = document.getElementById('resultSection');
+  sec.style.display = 'block';
+  sec.innerHTML = `
+    <div class="result-card">
+      <span class="result-emoji">${r.emoji}</span>
+      <div class="result-type">숨겨진 성격 유형</div>
+      <div class="result-title">${r.title}</div>
+      <div class="result-desc">${r.desc}</div>
+      <div class="reveal-box">
+        <div class="reveal-box-title">✦ 이런 상황에서 진가 발휘</div>
+        ${r.situations.map(s => `<div class="reveal-item"><span class="reveal-item-icon">⚡</span><span>${s}</span></div>`).join('')}
+      </div>
+      <div class="tip-box">${r.tip}</div>
+      <div class="result-actions" style="margin-top:28px;">
+        <button class="btn-share" onclick="shareResult('${r.title}')">🔗 결과 공유하기</button>
+        <button class="btn-retry" onclick="retryTest()">🔄 다시하기</button>
+        <a href="../index.html" class="btn-back">← 포털로</a>
+      </div>
+    </div>`;
+}
+
+function retryTest() {
+  scores = { leader: 0, artist: 0, analyst: 0, healer: 0 };
+  current = 0;
+  document.getElementById('resultSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  showQ(0);
+}
+
+function shareResult(type) {
+  const text = `내 숨겨진 성격은 "${type}"! 너는?`;
+  if (navigator.share) {
+    navigator.share({ title: '나의 숨겨진 성격', text, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(() => alert('링크가 복사됐어요! 🎉'));
+  }
+}
+</script>
+</body>
+</html>

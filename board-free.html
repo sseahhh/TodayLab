@@ -1,0 +1,457 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>자유게시판 💬 | 오늘연구소</title>
+  <meta name="description" content="오늘연구소 자유게시판 — 자유롭게 이야기를 나눠보세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    .board-wrap { min-height: 100vh; background: var(--bg); padding: calc(var(--nav-h) + 32px) 20px 80px; }
+    .board-inner { max-width: 860px; margin: 0 auto; }
+    .board-header { margin-bottom: 28px; }
+    .board-header h1 { font-size: 26px; font-weight: 900; margin-bottom: 6px; }
+    .board-header p { font-size: 14px; color: var(--gray3); }
+    .board-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .cat-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .cat-chip {
+      padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 600;
+      border: 1.5px solid rgba(255,255,255,.1); background: var(--bg2);
+      color: var(--gray2); cursor: pointer; transition: all .2s;
+    }
+    .cat-chip.active, .cat-chip:hover { background: var(--red); border-color: var(--red); color: #fff; }
+    .btn-write {
+      padding: 10px 22px; background: var(--red); color: #fff; border: none;
+      border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer;
+      font-family: inherit; white-space: nowrap; transition: opacity .2s;
+    }
+    .btn-write:hover { opacity: .85; }
+
+    /* Post list */
+    .post-list { display: flex; flex-direction: column; gap: 2px; }
+    .post-item {
+      background: var(--bg2); border-bottom: 1px solid rgba(255,255,255,.05);
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 12px; padding: 16px 18px; cursor: pointer; transition: background .15s;
+      text-decoration: none; color: inherit;
+    }
+    .post-item:first-child { border-radius: 12px 12px 0 0; }
+    .post-item:last-child { border-radius: 0 0 12px 12px; border-bottom: none; }
+    .post-item:only-child { border-radius: 12px; }
+    .post-item:hover { background: rgba(255,255,255,.04); }
+    .post-left { min-width: 0; }
+    .post-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+    .post-cat {
+      font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+    }
+    .post-title {
+      font-size: 15px; font-weight: 600; line-height: 1.4; margin-bottom: 6px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .post-preview {
+      font-size: 13px; color: var(--gray3); white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; margin-bottom: 8px;
+    }
+    .post-meta { display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--gray3); flex-wrap: wrap; }
+    .post-nick { color: var(--gray2); font-weight: 600; }
+    .post-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; }
+    .like-btn {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 2px; background: none; border: 1.5px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: 8px 12px; cursor: pointer;
+      color: var(--gray3); font-size: 11px; font-weight: 600;
+      transition: all .2s; font-family: inherit; min-width: 48px;
+    }
+    .like-btn:hover, .like-btn.liked { border-color: #ff4d4d; color: #ff4d4d; }
+    .like-btn .like-icon { font-size: 18px; }
+    .post-date { font-size: 11px; color: var(--gray3); text-align: right; margin-top: 4px; }
+    .new-badge {
+      font-size: 10px; font-weight: 800; color: #ff4d4d;
+      background: rgba(255,77,77,.12); border: 1px solid rgba(255,77,77,.3);
+      padding: 1px 6px; border-radius: 4px;
+    }
+    .hot-badge {
+      font-size: 10px; font-weight: 800; color: #ffd700;
+      background: rgba(255,215,0,.1); border: 1px solid rgba(255,215,0,.25);
+      padding: 1px 6px; border-radius: 4px;
+    }
+    .empty-msg { text-align: center; padding: 60px 0; color: var(--gray3); font-size: 15px; }
+    .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 28px; }
+    .page-btn {
+      width: 36px; height: 36px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,.1);
+      background: var(--bg2); color: var(--gray2); font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: all .2s;
+    }
+    .page-btn.active, .page-btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
+
+    /* Post detail modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.8);
+      z-index: 2000; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--bg2); border-radius: 16px; padding: 28px;
+      width: 100%; max-width: 560px; border: 1.5px solid rgba(255,255,255,.1);
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-box h2 { font-size: 20px; font-weight: 800; margin-bottom: 22px; }
+    .modal-label { font-size: 13px; font-weight: 600; color: var(--gray2); margin-bottom: 6px; display: block; }
+    .modal-input, .modal-select, .modal-textarea {
+      width: 100%; background: var(--bg3); border: 1.5px solid rgba(255,255,255,.1);
+      border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 14px;
+      font-family: inherit; outline: none; margin-bottom: 14px; box-sizing: border-box;
+    }
+    .modal-input:focus, .modal-select:focus, .modal-textarea:focus { border-color: var(--red); }
+    .modal-select option { background: #242424; }
+    .modal-textarea { min-height: 120px; resize: vertical; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 6px; }
+    .btn-submit {
+      flex: 1; padding: 13px; background: var(--red); color: #fff; border: none;
+      border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
+    }
+    .btn-submit:hover { opacity: .85; }
+    .btn-cancel {
+      padding: 13px 22px; background: var(--bg3); color: var(--gray2);
+      border: 1.5px solid rgba(255,255,255,.1); border-radius: 8px;
+      font-size: 14px; cursor: pointer; font-family: inherit;
+    }
+
+    /* Read modal */
+    .read-modal .read-meta { font-size: 13px; color: var(--gray3); margin-bottom: 18px; display: flex; gap: 14px; flex-wrap: wrap; }
+    .read-modal .read-cat { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 5px; }
+    .read-modal .read-body { font-size: 14px; line-height: 1.9; color: var(--gray2); white-space: pre-wrap; word-break: break-word; margin-bottom: 22px; }
+    .read-modal .read-like { display: flex; align-items: center; gap: 12px; }
+    .read-like-btn {
+      display: flex; align-items: center; gap: 8px;
+      background: none; border: 1.5px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: 9px 18px; cursor: pointer;
+      color: var(--gray3); font-size: 14px; font-weight: 600;
+      transition: all .2s; font-family: inherit;
+    }
+    .read-like-btn:hover, .read-like-btn.liked { border-color: #ff4d4d; color: #ff4d4d; }
+
+    @media (max-width: 600px) {
+      .post-item { grid-template-columns: 1fr; }
+      .post-right { flex-direction: row; align-items: center; margin-top: 8px; }
+      .modal-box { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="board-hotdeal.html" style="color:var(--gray2);text-decoration:none;font-size:13px;margin-right:16px;">🔥 핫딜공유방</a>
+        <a href="index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="board-wrap">
+    <div class="board-inner">
+      <div class="board-header">
+        <h1>💬 자유게시판</h1>
+        <p>테스트 결과 자랑, 일상 이야기, 궁금한 것 무엇이든 편하게 나눠요 😊</p>
+      </div>
+
+      <div class="board-toolbar">
+        <div class="cat-chips" id="catChips">
+          <button class="cat-chip active" data-cat="전체">전체</button>
+          <button class="cat-chip" data-cat="일상">☀️ 일상</button>
+          <button class="cat-chip" data-cat="운세/심리">🔮 운세/심리</button>
+          <button class="cat-chip" data-cat="육아">👶 육아</button>
+          <button class="cat-chip" data-cat="재테크">💰 재테크</button>
+          <button class="cat-chip" data-cat="질문">❓ 질문</button>
+          <button class="cat-chip" data-cat="기타">💬 기타</button>
+        </div>
+        <button class="btn-write" onclick="openWriteModal()">✏️ 글쓰기</button>
+      </div>
+
+      <div class="post-list" id="postList"></div>
+      <div class="empty-msg" id="emptyMsg" style="display:none;">아직 게시글이 없어요. 첫 글을 남겨보세요! 🙌</div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+
+  <!-- Write Modal -->
+  <div class="modal-overlay" id="writeModalOverlay">
+    <div class="modal-box">
+      <h2>✏️ 글쓰기</h2>
+      <label class="modal-label">닉네임 *</label>
+      <input class="modal-input" id="mNick" placeholder="익명으로 활동할 닉네임을 입력하세요" maxlength="20">
+      <label class="modal-label">카테고리</label>
+      <select class="modal-select" id="mCat">
+        <option>일상</option>
+        <option>운세/심리</option>
+        <option>육아</option>
+        <option>재테크</option>
+        <option>질문</option>
+        <option>기타</option>
+      </select>
+      <label class="modal-label">제목 *</label>
+      <input class="modal-input" id="mTitle" placeholder="제목을 입력하세요" maxlength="60">
+      <label class="modal-label">내용 *</label>
+      <textarea class="modal-textarea" id="mContent" placeholder="자유롭게 내용을 작성해 주세요 😊" maxlength="2000"></textarea>
+      <div class="modal-actions">
+        <button class="btn-submit" onclick="submitPost()">등록하기</button>
+        <button class="btn-cancel" onclick="closeWriteModal()">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Read Modal -->
+  <div class="modal-overlay read-modal" id="readModalOverlay">
+    <div class="modal-box" style="max-width:600px;">
+      <div id="readContent"></div>
+      <button class="btn-cancel" onclick="closeReadModal()" style="margin-top:4px;width:100%;">닫기</button>
+    </div>
+  </div>
+
+<script>
+const CAT_COLORS = {
+  '일상':    { bg: 'rgba(79,172,254,.15)',  color: '#4facfe' },
+  '운세/심리':{ bg: 'rgba(167,139,250,.15)', color: '#a78bfa' },
+  '육아':    { bg: 'rgba(252,182,159,.15)', color: '#fcb69f' },
+  '재테크':  { bg: 'rgba(67,233,123,.15)',  color: '#43e97b' },
+  '질문':    { bg: 'rgba(255,215,0,.12)',   color: '#ffd700' },
+  '기타':    { bg: 'rgba(255,255,255,.08)', color: '#b3b3b3' },
+};
+
+const SAMPLE = [
+  { id:1, nick:'행복한돼지', cat:'운세/심리', title:'사주 테스트 결과 너무 소름... 진짜 나 맞춤인데?', content:'아까 이 사이트 사주 테스트 해봤는데 진짜 소름돋았어요 ㅋㅋㅋ\n사업운이 강하다고 나왔는데 저 요즘 부업 시작하려고 알아보던 참이거든요.\n다들 테스트 결과랑 실제 삶이 비슷한 분 있나요?', views:1243, likes:87, date:'2025-06-25', isHot:true },
+  { id:2, nick:'직장인A', cat:'일상', title:'월요병 공감합니다... 오늘 몇 번이나 한숨 쉬었는지', content:'월요일 아침부터 벌써 퇴근하고 싶다는 생각뿐이에요 😭\n직장인 빌런 테스트 해봤더니 저 "조용한 생존러" 유형이래요 ㅋㅋㅋ\n어쩐지 매일 조용히 살아남기 바쁘더라고요. 공감하시는 분?', views:2187, likes:234, date:'2025-06-25', isHot:true },
+  { id:3, nick:'재테크새싹', cat:'재테크', title:'복리 계산기로 10년 뒤 계산해봤는데 진짜 놀랍네요', content:'이 사이트 복리 계산기로 매달 30만원씩 10년 모으면 얼마인지 계산해봤어요.\n연 4.5% 가정하면 4,500만원이 넘더라고요. 원금이 3,600만원인데!\n복리의 힘이 이렇게 대단한지 몰랐어요. 여러분도 꼭 계산해보세요 💰', views:987, likes:142, date:'2025-06-24', isHot:false },
+  { id:4, nick:'두아이맘', cat:'육아', title:'우리 애 키 예측기 결과 공유해요 (7세 아들)', content:'키 예측기 돌려봤더니 최종 키 176cm 예측이 나왔어요!\n남편이 172cm, 저는 161cm인데 이 정도면 나쁘지 않죠? 😂\n물론 재미로 보는 거지만 희망회로 돌리기엔 딱 좋네요 ㅋㅋ\n다들 결과 어떻게 나왔나요?', views:1563, likes:198, date:'2025-06-24', isHot:false },
+  { id:5, nick:'야밤감성', cat:'운세/심리', title:'타로 테스트 3번 했는데 세 번 다 같은 카드 나옴', content:'세상에 타로 테스트 계속 다시 해봤는데 매번 "달" 카드 나오네요.\n뭔가 현실 직시하고 불확실한 것들 정리하라는 신호 같기도 하고...\n재미로 하는 거 알지만 이렇게 같은 거 나오면 왠지 믿게 돼요 ㅋㅋ', views:2341, likes:312, date:'2025-06-23', isHot:true },
+  { id:6, nick:'절약왕박씨', cat:'재테크', title:'연봉 실수령액 계산해봤어요 — 생각보다 공제가 너무 많네', content:'연봉 계산기로 제 연봉 넣어봤는데 4대보험이랑 소득세 다 빼고 나면\n월 실수령이 생각보다 훨씬 적더라고요 😥\n세전 연봉이랑 세후 차이가 이렇게 크다니... 처음 취업할 때 왜 아무도 알려주지 않은 거죠?', views:3421, likes:567, date:'2025-06-23', isHot:true },
+  { id:7, nick:'수면부족맘', cat:'일상', title:'수면 부채 계산기 돌려봤더니 21시간 빚졌다고 나와요 ㅠ', content:'이 사이트에 수면 계산기 있길래 해봤더니 저 수면 빚이 21시간이래요.\n신생아 키우면서 4-5시간 자는 게 두 달째인데 몸이 버텨지는 게 신기하죠.\n다들 수면 빚 얼마나 되는지 궁금하네요... 저만 이렇게 많은 건 아니겠죠?', views:1876, likes:289, date:'2025-06-22', isHot:false },
+  { id:8, nick:'MBTI고민중', cat:'운세/심리', title:'MBTI 라이트 테스트 결과 — 원래랑 달리 나왔는데 어떻게 생각해요?', content:'MBTI 정식으로 하면 항상 INFP 나오는데 여기 라이트 테스트 해봤더니 INFJ 나왔어요.\n어떻게 보면 비슷한 것 같기도 하고... 다들 정식 MBTI랑 여기 결과랑 일치하던가요?', views:2109, likes:176, date:'2025-06-21', isHot:false },
+  { id:9, nick:'새댁홍씨', cat:'육아', title:'임신 예정일 계산기 — 드디어 날짜 잡았어요! 🍀', content:'마지막 생리 날짜 입력하니까 예정일이 딱 나오더라고요.\n저는 2026년 2월 초로 나왔어요! 남편이랑 같이 보면서 감동받았어요 😭\n임신 중이신 분들 예정일 얼마나 됐는지 같이 공유해요~', views:1432, likes:221, date:'2025-06-21', isHot:false },
+  { id:10, nick:'커피홀릭', cat:'재테크', title:'커피값 절약 계산기 — 저 1년에 커피값만 180만원 쓰네요', content:'하루 아메리카노 한 잔 5,000원으로 계산해보니까 1년에 182만5천원이래요 😱\n그 돈 적금 넣으면 10년에 2천만원... 이거 어떻게 해야 할지 모르겠어요.\n커피 포기 못 하겠는데 이걸 보니까 죄책감이 드네요 ㅋㅋ', views:4312, likes:678, date:'2025-06-20', isHot:true },
+  { id:11, nick:'자취n년차', cat:'일상', title:'혼자 살면서 BMI 관리하기가 진짜 어렵네요', content:'BMI 계산기 돌려봤더니 저 경계선 직전이에요.\n자취하면서 편의점이랑 배달만 먹다보니 이렇게 됐나봐요.\n다들 자취하면서 식단 어떻게 관리하세요? 진짜 꿀팁 있으면 좀 알려주세요!', views:1654, likes:145, date:'2025-06-20', isHot:false },
+  { id:12, nick:'꿈꾸는직장인', cat:'운세/심리', title:'미래 배우자상 테스트 — 결과 너무 웃기다', content:'미래 배우자상 테스트 해봤는데 "따뜻하고 실용적인 파트너"래요 ㅋㅋㅋ\n근데 진짜로 제가 선호하는 스타일이랑 비슷해서 좀 소름.\n다들 결과 어떻게 나왔는지 공유해봐요! 저는 조건: 따뜻함 + 경제관념 굿 이에요', views:3241, likes:445, date:'2025-06-19', isHot:true },
+  { id:13, nick:'건강챙기자', cat:'질문', title:'칼로리 계산기 기초대사량이랑 실제 섭취량 차이가 너무 큰데 맞나요?', content:'칼로리 계산기로 기초대사량 계산해봤더니 1,850kcal 나왔는데\n제가 실제로 하루에 먹는 게 2,400kcal 정도 되는 것 같아요.\n이게 쌓이면 한 달에 얼마나 차이나는 건지... 수치 보니까 좀 심각하네요.\n운동 시작해야 할 것 같은데 어떤 거 추천해요?', views:876, likes:98, date:'2025-06-19', isHot:false },
+  { id:14, nick:'사주마니아', cat:'운세/심리', title:'새해운세 테스트 — 올해 금전운 대박이라는데 믿어도 되나요 ㅋㅋ', content:'새해운세 테스트에서 금전운이 올해 좋다고 나왔거든요.\n근데 벌써 6월인데 아직 대박은 없고... 하반기를 기대해야 하나요?\n테스트 결과에 맞춰 살아보려고 노력 중이에요 ㅋㅋㅋ 다들 새해운세 결과는요?', views:1987, likes:267, date:'2025-06-18', isHot:false },
+  { id:15, nick:'짠내나는인생', cat:'재테크', title:'대출이자 계산기 — 지금 받은 대출 이자 총합 보고 기절할 뻔', content:'대출 계산기로 제 주택담보대출 넣어봤더니\n30년 원리금균등으로 내는 이자만 2억 가까이 되더라고요 😱😱\n원금보다 이자가 거의 절반이나 되는 거잖아요.\n중간에 갚을 수 있을 때 갚아야 한다는 걸 새삼 느꼈어요.', views:5421, likes:891, date:'2025-06-17', isHot:true },
+];
+
+const STORE_KEY = 'ft_freeboard';
+let currentCat = '전체';
+let currentPage = 1;
+const PER_PAGE = 10;
+let readingPostId = null;
+
+function getPosts() {
+  const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+  return saved || SAMPLE;
+}
+function savePosts(posts) { localStorage.setItem(STORE_KEY, JSON.stringify(posts)); }
+
+function getFiltered() {
+  const posts = getPosts();
+  return currentCat === '전체' ? posts : posts.filter(p => p.cat === currentCat);
+}
+
+function isNew(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  return (now - d) < 86400000 * 2;
+}
+
+function renderList() {
+  const list = getFiltered();
+  const total = list.length;
+  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+  currentPage = Math.min(currentPage, totalPages);
+  const slice = list.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
+
+  const container = document.getElementById('postList');
+  const emptyMsg = document.getElementById('emptyMsg');
+
+  if (!slice.length) {
+    container.innerHTML = '';
+    emptyMsg.style.display = 'block';
+  } else {
+    emptyMsg.style.display = 'none';
+    container.innerHTML = slice.map(p => {
+      const cc = CAT_COLORS[p.cat] || CAT_COLORS['기타'];
+      const liked = isLiked(p.id);
+      const newBadge = isNew(p.date) ? '<span class="new-badge">NEW</span>' : '';
+      const hotBadge = p.isHot ? '<span class="hot-badge">HOT</span>' : '';
+      const preview = p.content.replace(/\n/g, ' ').slice(0, 60) + (p.content.length > 60 ? '...' : '');
+      return `<div class="post-item" onclick="openReadModal(${p.id})">
+        <div class="post-left">
+          <div class="post-top">
+            <span class="post-cat" style="background:${cc.bg};color:${cc.color}">${p.cat}</span>
+            ${hotBadge}${newBadge}
+          </div>
+          <div class="post-title">${escHtml(p.title)}</div>
+          <div class="post-preview">${escHtml(preview)}</div>
+          <div class="post-meta">
+            <span class="post-nick">👤 ${escHtml(p.nick)}</span>
+            <span>👁 ${p.views.toLocaleString('ko-KR')}</span>
+            <span>❤️ ${p.likes}</span>
+            <span>${p.date}</span>
+          </div>
+        </div>
+        <div class="post-right">
+          <button class="like-btn${liked ? ' liked' : ''}" onclick="event.stopPropagation();toggleLike(${p.id})">
+            <span class="like-icon">${liked ? '❤️' : '🤍'}</span>
+            <span>${p.likes}</span>
+          </button>
+          <div class="post-date">${p.date}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+  const pg = document.getElementById('pagination');
+  if (totalPages <= 1) { pg.innerHTML = ''; return; }
+  let html = '';
+  for (let i = 1; i <= totalPages; i++) {
+    html += `<button class="page-btn${i === currentPage ? ' active' : ''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  pg.innerHTML = html;
+}
+
+function goPage(n) { currentPage = n; renderList(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+function isLiked(id) {
+  const liked = JSON.parse(localStorage.getItem('ft_free_likes') || '[]');
+  return liked.includes(id);
+}
+
+function toggleLike(id) {
+  const liked = JSON.parse(localStorage.getItem('ft_free_likes') || '[]');
+  const posts = getPosts();
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+
+  if (liked.includes(id)) {
+    const idx = liked.indexOf(id);
+    liked.splice(idx, 1);
+    post.likes = Math.max(0, post.likes - 1);
+  } else {
+    liked.push(id);
+    post.likes++;
+  }
+  localStorage.setItem('ft_free_likes', JSON.stringify(liked));
+  savePosts(posts);
+  renderList();
+  if (readingPostId === id) openReadModal(id);
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Category filter
+document.getElementById('catChips').addEventListener('click', e => {
+  const btn = e.target.closest('.cat-chip');
+  if (!btn) return;
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  currentCat = btn.dataset.cat;
+  currentPage = 1;
+  renderList();
+});
+
+// Write modal
+function openWriteModal() {
+  document.getElementById('writeModalOverlay').classList.add('open');
+}
+function closeWriteModal() {
+  document.getElementById('writeModalOverlay').classList.remove('open');
+}
+document.getElementById('writeModalOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('writeModalOverlay')) closeWriteModal();
+});
+
+function submitPost() {
+  const nick = document.getElementById('mNick').value.trim();
+  const cat = document.getElementById('mCat').value;
+  const title = document.getElementById('mTitle').value.trim();
+  const content = document.getElementById('mContent').value.trim();
+
+  if (!nick) { alert('닉네임을 입력해주세요.'); return; }
+  if (!title) { alert('제목을 입력해주세요.'); return; }
+  if (!content) { alert('내용을 입력해주세요.'); return; }
+
+  const posts = getPosts();
+  const newId = posts.reduce((max, p) => Math.max(max, p.id), 0) + 1;
+  const today = new Date().toISOString().slice(0, 10);
+
+  posts.unshift({ id: newId, nick, cat, title, content, views: 1, likes: 0, date: today, isHot: false });
+  savePosts(posts);
+
+  document.getElementById('mNick').value = '';
+  document.getElementById('mTitle').value = '';
+  document.getElementById('mContent').value = '';
+  closeWriteModal();
+  currentPage = 1;
+  renderList();
+}
+
+// Read modal
+function openReadModal(id) {
+  readingPostId = id;
+  const posts = getPosts();
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+
+  post.views++;
+  savePosts(posts);
+
+  const cc = CAT_COLORS[post.cat] || CAT_COLORS['기타'];
+  const liked = isLiked(id);
+
+  document.getElementById('readContent').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+      <span class="read-cat" style="background:${cc.bg};color:${cc.color}">${escHtml(post.cat)}</span>
+      ${post.isHot ? '<span class="hot-badge">HOT</span>' : ''}
+    </div>
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:14px;line-height:1.4;">${escHtml(post.title)}</h2>
+    <div class="read-meta">
+      <span>👤 ${escHtml(post.nick)}</span>
+      <span>👁 ${post.views.toLocaleString('ko-KR')}</span>
+      <span>📅 ${post.date}</span>
+    </div>
+    <div class="read-body">${escHtml(post.content)}</div>
+    <div class="read-like">
+      <button class="read-like-btn${liked ? ' liked' : ''}" onclick="toggleLike(${post.id})">
+        ${liked ? '❤️' : '🤍'} 좋아요 ${post.likes}
+      </button>
+    </div>
+  `;
+
+  document.getElementById('readModalOverlay').classList.add('open');
+  renderList();
+}
+function closeReadModal() {
+  readingPostId = null;
+  document.getElementById('readModalOverlay').classList.remove('open');
+}
+document.getElementById('readModalOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('readModalOverlay')) closeReadModal();
+});
+
+renderList();
+</script>
+</body>
+</html>

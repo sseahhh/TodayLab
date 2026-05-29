@@ -1,0 +1,219 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>내 이름 점수 | 오늘연구소</title>
+  <meta name="description" content="내 이름 점수 — 오늘연구소에서 재미있게 즐겨보세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .score-circle {
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      margin: 0 auto 28px;
+      position: relative;
+    }
+    .score-circle-num {
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .score-circle-label {
+      font-size: 14px;
+      font-weight: 600;
+      opacity: .8;
+      margin-top: 4px;
+    }
+    .fortune-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .fortune-item {
+      background: rgba(255,255,255,.05);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .fortune-item-icon { font-size: 28px; margin-bottom: 6px; display: block; }
+    .fortune-item-label { font-size: 12px; color: var(--gray3); margin-bottom: 6px; }
+    .fortune-item-val { font-size: 18px; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <!-- INTRO -->
+      <div id="introSection">
+        <div class="test-header">
+          <span class="test-header-emoji">✨</span>
+          <h1>내 이름 점수</h1>
+          <p>이름 획수와 수리(數理)로 알아보는<br>숨겨진 이름의 운세와 점수!</p>
+          <div class="test-meta">
+            <span>🔮 운세</span>
+            <span>⏱ 1분</span>
+            <span>👥 287,443명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-text" style="margin-bottom:20px;">이름을 입력해주세요</div>
+          <label class="input-label">이름 (한글)</label>
+          <input type="text" class="input-field" id="nameInput" placeholder="예: 김민준" maxlength="6">
+          <label class="input-label" style="margin-top:4px;">성별</label>
+          <div class="chip-group">
+            <button class="chip" data-gender="M" onclick="selectGender(this)">👦 남자</button>
+            <button class="chip" data-gender="F" onclick="selectGender(this)">👧 여자</button>
+          </div>
+          <button class="btn-primary" onclick="calculate()" style="width:100%; margin-top:8px; font-size:16px; padding:15px;">
+            ✨ 점수 계산하기
+          </button>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="resultSection" style="display:none;"></div>
+
+    </div>
+  </div>
+
+<script>
+let gender = 'M';
+
+function selectGender(btn) {
+  document.querySelectorAll('.chip[data-gender]').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  gender = btn.dataset.gender;
+}
+
+// 한글 획수 테이블 (대략적 수리용)
+const STROKE = {
+  '가':7,'나':5,'다':5,'라':5,'마':6,'바':7,'사':6,'아':4,'자':5,'차':7,'카':6,'타':5,'파':9,'하':5,
+  '김':7,'이':6,'박':9,'최':12,'정':11,'강':11,'조':7,'윤':4,'장':11,'임':9,'한':5,'오':5,'서':6,
+  '신':10,'권':15,'황':12,'안':6,'송':7,'류':10,'전':9,'홍':9,'고':10,'문':4,'양':11,'손':10,
+  '배':10,'백':5,'허':11,'유':6,'남':9,'심':9,'노':9,'하':5,'곽':11,'성':8,'차':7,'주':5,
+  '우':4,'구':5,'민':5,'준':9,'영':8,'수':4,'진':10,'지':6,'현':11,'재':6,'호':7,'석':11,
+  '기':4,'동':6,'원':10,'형':7,'태':5,'경':11,'찬':14,'혁':16,'범':9,'승':10,
+};
+
+function getStrokeSum(name) {
+  let sum = 0;
+  for (const ch of name) {
+    sum += STROKE[ch] || (ch.charCodeAt(0) % 10 + 3);
+  }
+  return sum;
+}
+
+function calculate() {
+  const name = document.getElementById('nameInput').value.trim();
+  if (!name || name.length < 2) { alert('이름을 2글자 이상 입력해주세요 😊'); return; }
+
+  const strokeSum = getStrokeSum(name);
+  const base = (strokeSum * 7 + name.length * 11) % 40 + 55;
+  const score = Math.min(99, Math.max(55, base));
+
+  const fortune = {
+    love:    Math.min(99, Math.max(40, (strokeSum * 3 + 41) % 60 + 38)),
+    money:   Math.min(99, Math.max(40, (strokeSum * 5 + 33) % 55 + 43)),
+    health:  Math.min(99, Math.max(50, (strokeSum * 2 + 55) % 45 + 50)),
+    career:  Math.min(99, Math.max(40, (strokeSum * 4 + 27) % 55 + 42)),
+  };
+
+  const grade = score >= 90 ? { label: '최상', color: '#ffd700', emoji: '👑' }
+              : score >= 80 ? { label: '상',   color: '#46d369', emoji: '⭐' }
+              : score >= 70 ? { label: '중상',  color: '#4facfe', emoji: '✨' }
+              :               { label: '중',   color: '#f6d365', emoji: '🌟' };
+
+  const msgs = [
+    `${name}님의 이름은 에너지가 넘치고 주변을 밝게 하는 이름입니다.`,
+    `${name}님의 이름에는 강한 의지와 추진력이 담겨 있습니다.`,
+    `${name}님은 이름처럼 섬세하고 창의적인 감각을 가지고 있습니다.`,
+    `${name}님의 이름은 리더십과 카리스마를 상징합니다.`,
+    `${name}님은 이름의 기운처럼 주변 사람을 행복하게 만드는 힘이 있습니다.`,
+  ];
+  const msg = msgs[strokeSum % msgs.length];
+
+  const sec = document.getElementById('resultSection');
+  showAdThenResult(() => {
+  document.getElementById('introSection').style.display = 'none';
+  sec.style.display = 'block';
+  sec.innerHTML = `
+    <div class="result-card">
+      <div class="score-circle" style="background: conic-gradient(${grade.color} ${score * 3.6}deg, rgba(255,255,255,.08) 0deg);">
+        <div class="score-circle" style="width:130px;height:130px;background:var(--bg2);position:absolute;">
+          <div style="text-align:center;">
+            <div class="score-circle-num" style="color:${grade.color}">${score}</div>
+            <div class="score-circle-label">점 · ${grade.label} ${grade.emoji}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-type">이름 분석 결과</div>
+      <div class="result-title">"${name}"</div>
+      <p style="color:var(--gray2); margin-bottom:28px; font-size:15px; line-height:1.8;">${msg}</p>
+
+      <div class="fortune-grid">
+        <div class="fortune-item">
+          <span class="fortune-item-icon">💕</span>
+          <div class="fortune-item-label">애정운</div>
+          <div class="fortune-item-val" style="color:#f06292">${fortune.love}점</div>
+        </div>
+        <div class="fortune-item">
+          <span class="fortune-item-icon">💰</span>
+          <div class="fortune-item-label">금전운</div>
+          <div class="fortune-item-val" style="color:#ffd700">${fortune.money}점</div>
+        </div>
+        <div class="fortune-item">
+          <span class="fortune-item-icon">💪</span>
+          <div class="fortune-item-label">건강운</div>
+          <div class="fortune-item-val" style="color:#46d369">${fortune.health}점</div>
+        </div>
+        <div class="fortune-item">
+          <span class="fortune-item-icon">🚀</span>
+          <div class="fortune-item-label">직업운</div>
+          <div class="fortune-item-val" style="color:#4facfe">${fortune.career}점</div>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-share" onclick="shareResult('${name}', ${score})">🔗 결과 공유하기</button>
+        <button class="btn-retry" onclick="location.reload()">🔄 다시하기</button>
+        <a href="../index.html" class="btn-back">← 포털로</a>
+      </div>
+    </div>`;
+  }); // showAdThenResult
+}
+
+function shareResult(name, score) {
+  const text = `"${name}" 이름 점수는 ${score}점! 내 이름 점수도 확인해봐 ✨`;
+  if (navigator.share) {
+    navigator.share({ title: '내 이름 점수', text, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+  }
+}
+</script>
+</body>
+</html>

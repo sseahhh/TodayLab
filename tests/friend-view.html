@@ -1,0 +1,355 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>친구들이 보는 나 | 오늘연구소</title>
+  <meta name="description" content="친구들이 보는 나 — 오늘연구소에서 재미있게 즐겨보세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .friend-call-box {
+      background: var(--bg3);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin: 14px 0;
+      text-align: left;
+    }
+    .friend-call-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gray3);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .friend-call-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--gray2);
+      line-height: 1.6;
+    }
+    .hidden-charm {
+      background: linear-gradient(135deg, rgba(229,9,20,.08), rgba(255,120,50,.06));
+      border: 1px solid rgba(229,9,20,.2);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: #ffb088;
+      margin-top: 14px;
+      text-align: left;
+      line-height: 1.7;
+    }
+    .hidden-charm strong {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #ff8050;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <!-- INTRO -->
+      <div id="introSection">
+        <div class="test-header">
+          <span class="test-header-emoji">👥</span>
+          <h1>친구들이 보는 나</h1>
+          <p>내 친구들 눈에 나는 어떤 사람일까?<br>10가지 상황으로 알아보는 친구들이 본 나의 캐릭터</p>
+          <div class="test-meta">
+            <span>👥 심리테스트</span>
+            <span>⏱ 약 3분</span>
+            <span>👥 198,334명 참여</span>
+          </div>
+        </div>
+        <div style="text-align:center;">
+          <button class="btn-primary" onclick="startTest()" style="font-size:18px; padding:16px 44px;">
+            ▶ 시작하기
+          </button>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div id="quizSection" style="display:none;">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progressFill" style="width:10%"></div>
+        </div>
+        <div class="progress-text" id="progressText">1 / 10</div>
+        <div class="question-card" id="questionCard">
+          <div class="question-num" id="questionNum">Q1</div>
+          <div class="question-text" id="questionText"></div>
+          <div class="choices" id="choices"></div>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="resultSection" style="display:none;"></div>
+
+    </div>
+  </div>
+
+<script>
+const QUESTIONS = [
+  {
+    text: "단체 채팅방에 글이 없을 때 나는?",
+    choices: [
+      { text: "먼저 재미있는 짤이나 사진을 올려 분위기를 띄운다", score: { maker: 3 } },
+      { text: "위기 상황이 아니면 굳이 먼저 말하지 않는다", score: { senior: 1, observer: 1 } },
+      { text: "읽기만 하고 필요할 때만 댓글을 단다", score: { observer: 3 } },
+      { text: "분위기 살리는 드립을 친다", score: { comedian: 3 } },
+      { text: "\"다들 뭐 해?\"라고 먼저 안부를 묻는다", score: { counselor: 2 } },
+    ]
+  },
+  {
+    text: "모임에서 갑자기 어색한 침묵이 흘렀을 때?",
+    choices: [
+      { text: "즉각적으로 새로운 주제로 자연스럽게 전환한다", score: { maker: 3 } },
+      { text: "\"어, 갑자기 왜 이래\" 하며 상황 정리를 시도한다", score: { senior: 2 } },
+      { text: "그냥 기다린다, 누군가 말하겠지", score: { observer: 2 } },
+      { text: "엉뚱한 말 한마디로 모두를 웃게 만든다", score: { comedian: 3 } },
+      { text: "슬쩍 옆 친구에게 말 걸어 대화를 이어가게 돕는다", score: { counselor: 2 } },
+    ]
+  },
+  {
+    text: "친구가 심각한 고민을 털어놨을 때 나는?",
+    choices: [
+      { text: "\"야, 그거 나도 비슷한 거 있어\" 하며 공감하며 분위기를 풀어준다", score: { maker: 1, comedian: 1 } },
+      { text: "진지하게 듣고 실질적인 해결책을 제시한다", score: { senior: 3 } },
+      { text: "말없이 들어주다가 한마디로 핵심을 찌른다", score: { observer: 2 } },
+      { text: "\"에이, 그게 뭐 어때서~\" 하며 가볍게 만들어준다", score: { comedian: 1 } },
+      { text: "공감과 위로에 집중하며 충분히 들어준다", score: { counselor: 3 } },
+    ]
+  },
+  {
+    text: "처음 만나는 사람이 그룹에 합류했을 때?",
+    choices: [
+      { text: "먼저 다가가서 말을 걸고 분위기에 녹아들게 돕는다", score: { maker: 3 } },
+      { text: "불편한 상황이 생기지 않도록 조용히 상황을 관리한다", score: { senior: 2 } },
+      { text: "그냥 지켜보다 그 사람이 어떤 사람인지 파악한다", score: { observer: 3 } },
+      { text: "웃긴 말로 신입의 긴장을 풀어준다", score: { comedian: 2 } },
+      { text: "신입이 소외되지 않도록 적극적으로 말을 붙인다", score: { counselor: 2 } },
+    ]
+  },
+  {
+    text: "모임 장소나 메뉴를 정할 때 나의 역할은?",
+    choices: [
+      { text: "의견 충돌이 생기면 분위기 좋은 방향으로 조율한다", score: { maker: 2 } },
+      { text: "누군가 결정을 못 하면 내가 나서서 정리한다", score: { senior: 3 } },
+      { text: "의견 없이 그냥 다수를 따른다", score: { observer: 2 } },
+      { text: "진지한 결정도 웃기게 만들어서 긴장을 푼다", score: { comedian: 2 } },
+      { text: "모두가 원하는 것을 물어보며 배려한다", score: { counselor: 3 } },
+    ]
+  },
+  {
+    text: "술자리 끝 무렵, 친구 한 명이 많이 취했을 때?",
+    choices: [
+      { text: "분위기가 이상해지지 않게 상황을 자연스럽게 마무리한다", score: { maker: 2 } },
+      { text: "제일 먼저 챙겨서 귀가를 돕는다", score: { senior: 3 } },
+      { text: "조용히 지켜보다 필요하면 나선다", score: { observer: 2 } },
+      { text: "취한 친구를 놀리며 웃음 포인트로 활용한다 (물론 나중에 챙기면서)", score: { comedian: 2 } },
+      { text: "옆에 앉아 등 토닥이며 \"괜찮아?\"를 반복한다", score: { counselor: 3 } },
+    ]
+  },
+  {
+    text: "그룹에서 갈등이 생겼을 때 나의 포지션은?",
+    choices: [
+      { text: "분위기가 나빠지면 무조건 분위기 전환을 시도한다", score: { maker: 3 } },
+      { text: "중재자로 나서서 양측 의견을 조율한다", score: { senior: 3 } },
+      { text: "한발 물러나서 상황을 냉정하게 관찰한다", score: { observer: 3 } },
+      { text: "웃긴 말로 분위기를 부드럽게 만들려 한다", score: { comedian: 2 } },
+      { text: "상처받은 쪽을 먼저 찾아가 위로한다", score: { counselor: 3 } },
+    ]
+  },
+  {
+    text: "친구가 나에게 \"오늘 심심해\"라고 문자를 보냈을 때?",
+    choices: [
+      { text: "바로 \"나도야! 어디서 만날까?\"라고 답한다", score: { maker: 3 } },
+      { text: "\"뭐 걱정 있어?\"라고 물으며 속사정을 파악한다", score: { senior: 2 } },
+      { text: "\"ㅋㅋ 나도\" 하고 짧게 공감한다", score: { observer: 1 } },
+      { text: "웃긴 밈이나 드립으로 반응한다", score: { comedian: 3 } },
+      { text: "\"무슨 일 있어? 힘들어?\"라고 걱정해준다", score: { counselor: 3 } },
+    ]
+  },
+  {
+    text: "모임이 끝나고 나서 나에 대한 이야기를 들었다면?",
+    choices: [
+      { text: "\"얘 없으면 재미없어, 진짜\"", score: { maker: 3 } },
+      { text: "\"역시 ○○이야, 믿음직해\"", score: { senior: 3 } },
+      { text: "\"걔 뭔가 다 알고 있는 것 같지 않아?\"", score: { observer: 3 } },
+      { text: "\"ㅋㅋㅋ 진짜 너무 웃겼어, 오늘\"", score: { comedian: 3 } },
+      { text: "\"나 오늘 고마워서 연락하려고 했어\"", score: { counselor: 3 } },
+    ]
+  },
+  {
+    text: "나는 친구들 사이에서 내 역할을 어떻게 표현하겠어요?",
+    choices: [
+      { text: "모임의 기름, 없으면 버벅거림", score: { maker: 3 } },
+      { text: "팀장은 아닌데 팀장 역할을 함", score: { senior: 3 } },
+      { text: "말은 없지만 제일 많이 알고 있는 사람", score: { observer: 3 } },
+      { text: "분위기 박살 직전에 항상 등장하는 소화기", score: { comedian: 3 } },
+      { text: "고민 생기면 자동으로 연락하게 되는 사람", score: { counselor: 3 } },
+    ]
+  },
+];
+
+const RESULTS = {
+  maker: {
+    emoji: '😄',
+    type: '분위기 메이커',
+    title: '분위기 메이커',
+    desc: '친구들이 보는 당신은 모임의 심장입니다. 당신이 오면 분위기가 달아오르고, 당신이 없으면 어딘가 허전한 느낌. 조용했던 자리도 당신이 도착하는 순간 웃음 소리가 커지는 걸 모두가 알고 있죠. 억지로 분위기를 띄우는 게 아니라, 자연스럽게 에너지를 전파하는 타입이에요.',
+    role: '단체 카톡방에 제일 먼저 짤이나 아이디어를 올리는 사람. 갑자기 침묵이 흘러도 0.5초 안에 뭔가를 꺼내는 사람.',
+    situations: ['모임 최고조에 항상 당신의 아이디어가 있었을 때', '\"얘 없었으면 이 자리 어떻게 됐어\" 말을 들었을 때'],
+    charm: '에너지가 넘치면서도 상대를 불편하게 만들지 않는 균형감. 남의 눈치를 보지 않아도 자연스럽게 모두가 웃게 되는 신기한 마력이 당신의 숨은 매력입니다.',
+  },
+  senior: {
+    emoji: '💪',
+    type: '든든한 맏형/맏언니',
+    title: '든든한 맏형/맏언니',
+    desc: '친구들이 보는 당신은 위기 때 가장 먼저 떠오르는 이름입니다. 나이와 상관없이 그 자리에서 가장 듬직한 포지션. 싸움이 나도, 취한 친구가 생겨도, 결정을 못 하고 있어도 — 자연스럽게 나서서 정리해주는 사람이죠. 챙겨주는 게 부담이 아니라 당연한 사람.',
+    role: '술자리가 끝날 때 모두가 집에 안전히 갔는지 확인하는 사람. 그룹 채팅방에서 중요한 결정을 내리는 사람.',
+    situations: ['\"야, 이럴 때 ○○이 있었어야 했는데\" 말을 들었을 때', '아무도 나서지 않는 상황에서 자연스럽게 내가 정리했을 때'],
+    charm: '강해 보이는 외면 아래 모두의 안녕을 조용히 챙기는 세심함. 당신이 챙겨준다는 걸 상대가 말하지 않아도 느끼는 것, 그게 당신의 숨은 매력입니다.',
+  },
+  observer: {
+    emoji: '🤫',
+    type: '조용한 관찰자',
+    title: '조용한 관찰자',
+    desc: '친구들이 보는 당신은 말은 없는데 다 알고 있는 사람입니다. 시끌벅적한 자리에서 조용히 앉아 있어도 아무것도 놓치지 않고, 나중에 누가 어떤 말을 했는지 정확히 기억하는 타입. 깊은 내면과 날카로운 관찰력이 있지만 함부로 드러내지 않는, 미스터리한 매력의 소유자입니다.',
+    role: '나중에 \"그때 걔가 그 말 할 때 표정 봤어?\"라며 모두가 몰랐던 디테일을 꺼내는 사람.',
+    situations: ['아무도 알아채지 못한 것을 내가 이미 파악하고 있었을 때', '\"어떻게 알았어?\"라는 말을 자주 들을 때'],
+    charm: '말수가 적어도 한마디 할 때 정확히 핵심을 찌르는 능력. 섣불리 판단하지 않아서 사람들이 오히려 당신의 말을 더 신뢰하게 되는 것이 당신의 숨은 매력입니다.',
+  },
+  comedian: {
+    emoji: '😂',
+    type: '웃긴 개그맨',
+    title: '웃긴 개그맨',
+    desc: '친구들이 보는 당신은 분위기 소화기입니다. 어색함이 피어오르는 그 찰나에 딱 등장해서 한마디로 모두를 폭소케 만드는 사람. 억지 드립이 아닌 타이밍과 상황을 읽는 개그 능력이 있어서, 당신의 유머는 대부분 먹힙니다. 친구들에게 당신은 같이 있으면 배가 아플 정도로 웃게 되는 존재예요.',
+    role: '진지한 회의 자리에서도 긴장을 풀어주는 타이밍 한마디를 가진 사람. 친구들이 힘들 때 결국 웃게 만들어주는 사람.',
+    situations: ['모두가 굳어있던 자리에서 내 한마디에 분위기가 풀렸을 때', '\"야 진짜 너 없었으면 오늘 어쩔 뻔했어\" 말을 들었을 때'],
+    charm: '웃기기만 한 게 아니라 상대의 상황을 정확히 파악하고 유머로 위로하는 능력. 당신의 농담이 아프지 않고 따뜻하게 느껴지는 이유는 그 안에 배려가 있기 때문이에요.',
+  },
+  counselor: {
+    emoji: '🫂',
+    type: '따뜻한 상담사',
+    title: '따뜻한 상담사',
+    desc: '친구들이 보는 당신은 고민이 생기면 자동으로 연락하게 되는 사람입니다. 해결책보다 공감이 먼저고, 판단보다 위로가 먼저인 사람. 친구들은 당신에게 말하고 나면 뭔가 해결된 것처럼 가벼워지는 경험을 했을 거예요. 조용하지만 따뜻한 에너지가 있는 사람입니다.',
+    role: '다른 친구들은 몰랐던 누군가의 힘듦을 먼저 알아채는 사람. 술자리 끝나고 일대일로 연락이 오는 사람.',
+    situations: ['\"너한테 말하니까 진짜 나아지는 것 같아\"라는 말을 들었을 때', '아무도 몰랐던 친구의 힘듦을 내가 먼저 알아챘을 때'],
+    charm: '적극적으로 나서지 않아도 사람들이 알아서 찾아오는 신뢰감. 당신이 들어주는 것 자체가 치유가 된다는 사실, 본인이 가장 모르고 있어요.',
+  },
+};
+
+let scores = { maker: 0, senior: 0, observer: 0, comedian: 0, counselor: 0 };
+let current = 0;
+
+function startTest() {
+  document.getElementById('introSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = QUESTIONS[i];
+  document.getElementById('questionNum').textContent = `Q${i + 1}`;
+  document.getElementById('questionText').textContent = q.text;
+  document.getElementById('progressText').textContent = `${i + 1} / ${QUESTIONS.length}`;
+  document.getElementById('progressFill').style.width = `${((i + 1) / QUESTIONS.length) * 100}%`;
+
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D', 'E'];
+  q.choices.forEach((c, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-letter">${letters[idx]}</span>${c.text}`;
+    btn.onclick = () => pick(c.score);
+    choicesEl.appendChild(btn);
+  });
+}
+
+function pick(score) {
+  Object.keys(score).forEach(k => { scores[k] += score[k]; });
+  current++;
+  if (current < QUESTIONS.length) {
+    showQ(current);
+  } else {
+    showAdThenResult(showResult);
+  }
+}
+
+function showResult() {
+  document.getElementById('quizSection').style.display = 'none';
+  const top = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const r = RESULTS[top];
+  const sec = document.getElementById('resultSection');
+  sec.style.display = 'block';
+  sec.innerHTML = `
+    <div class="result-card">
+      <span class="result-emoji">${r.emoji}</span>
+      <div class="result-type">친구들이 보는 나</div>
+      <div class="result-title">${r.title}</div>
+      <div class="result-desc">${r.desc}</div>
+      <div class="friend-call-box">
+        <div class="friend-call-title">👫 내가 모임에서 하는 역할</div>
+        <div class="friend-call-item">📌 ${r.role}</div>
+      </div>
+      <div class="friend-call-box">
+        <div class="friend-call-title">📣 친구들이 나를 부를 때 상황</div>
+        ${r.situations.map(s => `<div class="friend-call-item"><span>💬</span><span>${s}</span></div>`).join('')}
+      </div>
+      <div class="hidden-charm">
+        <strong>✨ 나의 숨은 매력</strong>
+        ${r.charm}
+      </div>
+      <div class="result-actions" style="margin-top:28px;">
+        <button class="btn-share" onclick="shareResult('${r.title}')">🔗 결과 공유하기</button>
+        <button class="btn-retry" onclick="retryTest()">🔄 다시하기</button>
+        <a href="../index.html" class="btn-back">← 포털로</a>
+      </div>
+    </div>`;
+}
+
+function retryTest() {
+  scores = { maker: 0, senior: 0, observer: 0, comedian: 0, counselor: 0 };
+  current = 0;
+  document.getElementById('resultSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  showQ(0);
+}
+
+function shareResult(type) {
+  const text = `친구들이 보는 나는 "${type}"! 너는?`;
+  if (navigator.share) {
+    navigator.share({ title: '친구들이 보는 나', text, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(() => alert('링크가 복사됐어요! 🎉'));
+  }
+}
+</script>
+</body>
+</html>

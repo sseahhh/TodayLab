@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>우리 아이 키 예측기 | 오늘연구소</title>
+  <meta name="description" content="우리 아이 키 예측기 — 오늘연구소에서 재미있게 즐겨보세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .height-display {
+      font-size: 72px;
+      font-weight: 900;
+      text-align: center;
+      margin: 24px 0 8px;
+      background: linear-gradient(135deg, #96fbc4 0%, #f9f586 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .height-unit { font-size: 28px; font-weight: 700; }
+    .range-info {
+      background: rgba(255,255,255,.05);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin: 20px 0;
+    }
+    .range-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: 14px;
+    }
+    .range-row:last-child { border-bottom: none; }
+    .range-val { font-weight: 700; color: #96fbc4; }
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .percentile-bar {
+      background: var(--bg3);
+      border-radius: 50px;
+      height: 12px;
+      margin: 12px 0 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .percentile-fill {
+      height: 100%;
+      border-radius: 50px;
+      background: linear-gradient(90deg, #96fbc4 0%, #f9f586 100%);
+      transition: width 1.5s cubic-bezier(.4,0,.2,1) .3s;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">📏</span>
+          <h1>우리 아이 키 예측기</h1>
+          <p>부모님의 키로 예측하는<br>우리 아이의 최종 성인 키!</p>
+          <div class="test-meta">
+            <span>👶 육아</span>
+            <span>⏱ 1분</span>
+            <span>👥 89,445명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-num">부모님 키 입력</div>
+          <div class="question-text" style="margin-bottom:24px;">아이의 성별을 선택해주세요</div>
+
+          <div class="chip-group" id="genderGroup" style="margin-bottom:28px;">
+            <button class="chip" data-gender="M" onclick="selectGender(this)">💙 아들</button>
+            <button class="chip" data-gender="F" onclick="selectGender(this)">🩷 딸</button>
+          </div>
+
+          <div class="input-row">
+            <div>
+              <label class="input-label">👨 아빠 키 (cm)</label>
+              <input type="number" class="input-field" id="dadHeight" placeholder="예: 175" min="140" max="210">
+            </div>
+            <div>
+              <label class="input-label">👩 엄마 키 (cm)</label>
+              <input type="number" class="input-field" id="momHeight" placeholder="예: 163" min="130" max="195">
+            </div>
+          </div>
+
+          <div style="margin-bottom:20px;">
+            <label class="input-label">아이의 현재 나이 (선택)</label>
+            <input type="number" class="input-field" id="childAge" placeholder="예: 7 (만 나이, 선택 입력)" min="0" max="17">
+          </div>
+
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;">
+            📏 키 예측하기
+          </button>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:16px 18px;margin-top:16px;">
+          <p style="font-size:12px;color:var(--gray3);line-height:1.7;">
+            📌 이 계산기는 <strong style="color:var(--gray2)">Tanner 유전 신장 공식</strong>을 기반으로 합니다.<br>
+            실제 키는 영양, 운동, 수면, 건강 상태에 따라 달라질 수 있으며, 재미로만 봐주세요 😊
+          </p>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+
+    </div>
+  </div>
+
+<script>
+let childGender = null;
+
+function selectGender(btn) {
+  document.querySelectorAll('#genderGroup .chip').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  childGender = btn.dataset.gender;
+}
+
+function calculate() {
+  if (!childGender) { alert('아이의 성별을 선택해주세요!'); return; }
+  const dad = parseFloat(document.getElementById('dadHeight').value);
+  const mom = parseFloat(document.getElementById('momHeight').value);
+  const age = parseInt(document.getElementById('childAge').value) || null;
+
+  if (!dad || !mom || dad < 140 || mom < 130) {
+    alert('부모님 키를 정확하게 입력해주세요!'); return;
+  }
+
+  // Tanner formula
+  let predicted;
+  if (childGender === 'M') {
+    predicted = (dad + mom + 13) / 2;
+  } else {
+    predicted = (dad + mom - 13) / 2;
+  }
+
+  const low  = (predicted - 8).toFixed(1);
+  const high = (predicted + 8).toFixed(1);
+  const avg  = predicted.toFixed(1);
+
+  const percentile = childGender === 'M'
+    ? Math.round(((predicted - 174) / 6) * 34 + 50)
+    : Math.round(((predicted - 161) / 5.5) * 34 + 50);
+  const pct = Math.max(5, Math.min(95, percentile));
+
+  const grade = predicted >= (childGender === 'M' ? 180 : 168) ? '키 큰 편이에요 🎉'
+              : predicted >= (childGender === 'M' ? 173 : 162) ? '평균 이상이에요 👍'
+              : predicted >= (childGender === 'M' ? 168 : 157) ? '평균 정도예요 😊'
+              : '노력하면 달라질 수 있어요 💪';
+
+  const tips = childGender === 'M' ? [
+    '🏃 점프 운동 (농구, 줄넘기)이 성장판 자극에 좋아요',
+    '😴 성장호르몬은 밤 10시~새벽 2시에 가장 많이 분비돼요',
+    '🥛 칼슘 섭취를 위해 우유, 멸치, 치즈를 챙겨주세요',
+    '🌞 비타민D 합성을 위해 적절한 야외 활동이 중요해요',
+  ] : [
+    '🤸 스트레칭과 요가가 자세 교정과 성장에 도움돼요',
+    '😴 충분한 수면은 성장의 기본! 9~10시간 권장해요',
+    '🥗 균형 잡힌 식사로 영양 불균형을 막아주세요',
+    '🏊 수영은 전신을 사용해 성장판 자극에 좋아요',
+  ];
+
+  let ageMsg = '';
+  if (age) {
+    const remaining = 18 - age;
+    if (remaining > 0) {
+      ageMsg = `<p style="color:var(--gray2);font-size:14px;margin-bottom:16px;">현재 ${age}세 기준, 약 <strong style="color:#96fbc4">${remaining}년</strong> 더 성장할 수 있어요!</p>`;
+    }
+  }
+
+  const sec = document.getElementById('resultSection');
+  showAdThenResult(() => {
+  document.getElementById('formSection').style.display = 'none';
+  sec.style.display = 'block';
+  sec.innerHTML = `
+    <div class="result-card">
+      <span class="result-emoji">📏</span>
+      <div class="result-type">예측 최종 키</div>
+      <div class="height-display">${avg}<span class="height-unit">cm</span></div>
+      <div style="text-align:center;color:var(--gray2);font-size:14px;margin-bottom:20px;">${grade}</div>
+
+      ${ageMsg}
+
+      <div class="range-info">
+        <div class="range-row">
+          <span>📊 예측 범위</span>
+          <span class="range-val">${low}cm ~ ${high}cm</span>
+        </div>
+        <div class="range-row">
+          <span>👨 아빠 키</span>
+          <span class="range-val">${dad}cm</span>
+        </div>
+        <div class="range-row">
+          <span>👩 엄마 키</span>
+          <span class="range-val">${mom}cm</span>
+        </div>
+        <div class="range-row">
+          <span>📈 또래 백분위</span>
+          <span class="range-val">상위 ${100-pct}%</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:28px;">
+        <div style="font-size:13px;color:var(--gray3);margin-bottom:6px;">또래 키 분포에서 위치</div>
+        <div class="percentile-bar">
+          <div class="percentile-fill" id="pctFill" style="width:0%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray3);">
+          <span>작은 키</span><span>평균</span><span>큰 키</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:18px;margin-bottom:28px;text-align:left;">
+        <div style="font-size:14px;font-weight:700;margin-bottom:14px;">📌 키 성장 팁</div>
+        ${tips.map(t => `<div style="font-size:13px;color:var(--gray2);line-height:1.7;margin-bottom:6px;">${t}</div>`).join('')}
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-share" onclick="shareResult('${avg}')">🔗 결과 공유하기</button>
+        <button class="btn-retry" onclick="location.reload()">🔄 다시 계산</button>
+        <a href="../index.html" class="btn-back">← 포털로</a>
+      </div>
+    </div>`;
+
+  setTimeout(() => {
+    document.getElementById('pctFill').style.width = `${pct}%`;
+  }, 200);
+  }); // showAdThenResult
+}
+
+function shareResult(height) {
+  const text = `우리 아이 예측 키는 ${height}cm! 우리 아이 키도 예측해봐 📏`;
+  if (navigator.share) {
+    navigator.share({ title:'우리 아이 키 예측기', text, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(text).then(() => alert('복사됐어요! 🎉'));
+  }
+}
+</script>
+</body>
+</html>

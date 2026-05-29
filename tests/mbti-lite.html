@@ -1,0 +1,527 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MBTI 간이 테스트 | 오늘연구소</title>
+  <meta name="description" content="MBTI 간이 테스트 — 16문항으로 빠르게 알아보는 나의 MBTI! 재미있는 한국식 MBTI 해석 | 오늘연구소">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .mbti-type-display {
+      font-size: 72px;
+      font-weight: 900;
+      letter-spacing: 6px;
+      line-height: 1;
+      margin: 8px 0 16px;
+      background: linear-gradient(135deg, #e50914, #ff6b6b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .mbti-nickname {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gray1);
+      margin-bottom: 20px;
+    }
+    .mbti-axes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 18px 0;
+    }
+    .mbti-axis-item {
+      background: var(--bg3);
+      border-radius: 10px;
+      padding: 12px 14px;
+      text-align: center;
+    }
+    .mbti-axis-label {
+      font-size: 11px;
+      color: var(--gray3);
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .mbti-axis-bar {
+      background: rgba(255,255,255,.06);
+      border-radius: 50px;
+      height: 8px;
+      margin: 6px 0;
+      overflow: hidden;
+    }
+    .mbti-axis-fill {
+      height: 100%;
+      border-radius: 50px;
+      transition: width 1.2s cubic-bezier(.4,0,.2,1) .3s;
+    }
+    .mbti-axis-letters {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .strength-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .strength-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 7px 0;
+      font-size: 14px;
+      color: var(--gray2);
+      line-height: 1.6;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .strength-item:last-child { border-bottom: none; }
+    .mbti-compat-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .compat-item {
+      border-radius: 10px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .compat-item.good {
+      background: rgba(70,211,105,.08);
+      border: 1px solid rgba(70,211,105,.2);
+    }
+    .compat-item.bad {
+      background: rgba(229,9,20,.07);
+      border: 1px solid rgba(229,9,20,.18);
+    }
+    .compat-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .compat-item.good .compat-label { color: #46d369; }
+    .compat-item.bad .compat-label { color: #ff6b6b; }
+    .compat-type {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+    .compat-item.good .compat-type { color: #6edd8a; }
+    .compat-item.bad .compat-type { color: #ff8a8a; }
+    .compat-name {
+      font-size: 12px;
+      color: var(--gray3);
+      margin-top: 4px;
+    }
+    .axis-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gray3);
+      margin: 18px 0 10px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <!-- INTRO -->
+      <div id="introSection">
+        <div class="test-header">
+          <span class="test-header-emoji">🧠</span>
+          <h1>MBTI 간이 테스트</h1>
+          <p>16가지 질문으로 알아보는 나의 MBTI 유형!<br>내 결과가 맞는지 확인해보세요</p>
+          <div class="test-meta">
+            <span>🧠 심리테스트</span>
+            <span>⏱ 약 5분</span>
+            <span>👥 523,445명 참여</span>
+          </div>
+        </div>
+        <div style="text-align:center;">
+          <button class="btn-primary" onclick="startTest()" style="font-size:18px; padding:16px 44px;">
+            ▶ 시작하기
+          </button>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div id="quizSection" style="display:none;">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progressFill" style="width:6.25%"></div>
+        </div>
+        <div class="progress-text" id="progressText">1 / 16</div>
+        <div class="question-card" id="questionCard">
+          <div class="question-num" id="questionNum">Q1</div>
+          <div class="question-text" id="questionText"></div>
+          <div class="choices" id="choices"></div>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="resultSection" style="display:none;"></div>
+
+    </div>
+  </div>
+
+<script>
+// Each question: 2 choices. choice[0] scores axis pole A (E/S/T/J), choice[1] scores pole B (I/N/F/P)
+const QUESTIONS = [
+  // E vs I (4 questions)
+  {
+    axis: 'EI',
+    text: "주말에 에너지를 충전하는 방법은?",
+    choices: [
+      { text: "친구들을 만나거나 모임에 나가서 에너지를 얻는다", pole: 'E' },
+      { text: "집에서 조용히 혼자 있어야 제대로 충전된다", pole: 'I' },
+    ]
+  },
+  {
+    axis: 'EI',
+    text: "처음 만나는 자리에서 나는?",
+    choices: [
+      { text: "먼저 말을 걸고 분위기에 자연스럽게 녹아든다", pole: 'E' },
+      { text: "상대가 먼저 다가오길 기다리며 천천히 적응한다", pole: 'I' },
+    ]
+  },
+  {
+    axis: 'EI',
+    text: "혼자 일하는 것과 팀으로 일하는 것 중?",
+    choices: [
+      { text: "팀원들과 소통하며 함께할 때 더 잘 된다", pole: 'E' },
+      { text: "혼자 집중할 때 훨씬 효율적이다", pole: 'I' },
+    ]
+  },
+  {
+    axis: 'EI',
+    text: "오래된 친구와 새 친구 중 어디에 더 에너지를 쓰나요?",
+    choices: [
+      { text: "새로운 사람들을 만나고 알아가는 것이 즐겁다", pole: 'E' },
+      { text: "깊이 아는 소수의 사람들과의 관계를 선호한다", pole: 'I' },
+    ]
+  },
+  // S vs N (4 questions)
+  {
+    axis: 'SN',
+    text: "여행 계획을 세울 때 나는?",
+    choices: [
+      { text: "구체적인 일정, 맛집, 교통편을 꼼꼼히 조사한다", pole: 'S' },
+      { text: "대략적인 방향만 정하고 현장에서 즉흥적으로 결정한다", pole: 'N' },
+    ]
+  },
+  {
+    axis: 'SN',
+    text: "문제를 해결할 때 나는?",
+    choices: [
+      { text: "이미 검증된 방식과 경험을 바탕으로 접근한다", pole: 'S' },
+      { text: "새로운 방법을 떠올리고 가능성을 먼저 탐색한다", pole: 'N' },
+    ]
+  },
+  {
+    axis: 'SN',
+    text: "대화할 때 나는 어떤 이야기를 더 좋아하나요?",
+    choices: [
+      { text: "실제로 있었던 일, 구체적인 정보와 사실", pole: 'S' },
+      { text: "아이디어, 가설, 미래에 대한 상상", pole: 'N' },
+    ]
+  },
+  {
+    axis: 'SN',
+    text: "나의 장점이라고 생각하는 것은?",
+    choices: [
+      { text: "현실적이고 세심하게 디테일을 챙기는 능력", pole: 'S' },
+      { text: "창의적이고 큰 그림을 빠르게 그리는 능력", pole: 'N' },
+    ]
+  },
+  // T vs F (4 questions)
+  {
+    axis: 'TF',
+    text: "친구가 고민을 털어놓을 때 나는?",
+    choices: [
+      { text: "원인을 분석하고 해결책을 제시하려 한다", pole: 'T' },
+      { text: "일단 충분히 공감하고 감정을 들어주는 게 우선이다", pole: 'F' },
+    ]
+  },
+  {
+    axis: 'TF',
+    text: "결정을 내릴 때 더 중요하게 여기는 것은?",
+    choices: [
+      { text: "논리적으로 옳은지, 효율적인지", pole: 'T' },
+      { text: "사람들의 감정과 관계에 어떤 영향을 미치는지", pole: 'F' },
+    ]
+  },
+  {
+    axis: 'TF',
+    text: "피드백을 받을 때 나는?",
+    choices: [
+      { text: "감정보다 내용의 정확성과 논리에 집중한다", pole: 'T' },
+      { text: "내용보다 전달 방식과 상대방의 의도에 민감하다", pole: 'F' },
+    ]
+  },
+  {
+    axis: 'TF',
+    text: "나를 더 잘 표현하는 것은?",
+    choices: [
+      { text: "공정하고 원칙적이며 솔직한 사람", pole: 'T' },
+      { text: "따뜻하고 공감 능력이 높으며 배려하는 사람", pole: 'F' },
+    ]
+  },
+  // J vs P (4 questions)
+  {
+    axis: 'JP',
+    text: "집 안 정리 상태는?",
+    choices: [
+      { text: "물건 위치가 정해져 있고 정리가 잘 돼 있다", pole: 'J' },
+      { text: "어디 뭐 있는지는 나만 아는 나름의 질서가 있다", pole: 'P' },
+    ]
+  },
+  {
+    axis: 'JP',
+    text: "마감 기한이 다가올 때 나는?",
+    choices: [
+      { text: "이미 일찍부터 준비해서 여유 있게 마친다", pole: 'J' },
+      { text: "마감이 가까워질수록 집중력이 폭발해서 해낸다", pole: 'P' },
+    ]
+  },
+  {
+    axis: 'JP',
+    text: "약속이나 계획 변경에 대해?",
+    choices: [
+      { text: "갑작스러운 변경이 생기면 꽤 불편하다", pole: 'J' },
+      { text: "어떻게 될지 모르는 게 오히려 더 재밌다", pole: 'P' },
+    ]
+  },
+  {
+    axis: 'JP',
+    text: "결정을 내리는 방식은?",
+    choices: [
+      { text: "충분히 고민한 후 결론을 내리고 바꾸지 않는다", pole: 'J' },
+      { text: "일단 선택하고 상황에 따라 유연하게 바꾼다", pole: 'P' },
+    ]
+  },
+];
+
+const TYPES = {
+  INTJ: { emoji: '🦅', nickname: '냉철한 전략가', desc: '당신은 조용하지만 가장 멀리 보는 사람입니다. 혼자서 치밀한 계획을 세우고, 남들이 보지 못하는 패턴을 꿰뚫어 보는 직관과 논리를 동시에 갖췄어요. 사람보다 목표를 중요하게 여기는 것처럼 보이지만, 자신이 가치 있다고 판단한 것에는 모든 에너지를 쏟아붓는 완벽주의자입니다. 겉은 냉정해 보여도 속에는 누구보다 강한 신념이 있어요.', strengths: ['장기적 전략과 복잡한 시스템 설계', '독립적으로 깊이 있게 사고하는 능력', '목표를 향한 철저한 실행력'], cautions: ['타인의 감정과 관계에 소홀해질 수 있어요', '완벽주의로 인한 과도한 자기비판'], good: 'ENFP', bad: 'ESFP' },
+  INTP: { emoji: '🔬', nickname: '논리의 화신', desc: '당신은 세상의 모든 것을 분해하고 원리를 이해하고 싶어하는 사람입니다. "왜?"라는 질문을 멈출 수가 없고, 어떤 분야든 한번 빠지면 그 누구보다 깊이 파고드는 집중력을 가졌어요. 대화보다 생각이 많은 편이지만, 한번 터지기 시작하면 밤새 이야기할 수 있는 아이디어의 보물창고입니다. 혼자만의 세계에서 가장 빛나는 타입이에요.', strengths: ['복잡한 이론과 개념을 빠르게 흡수하는 능력', '창의적이고 독창적인 문제 해결 방식', '어떤 주제든 깊이 파고드는 탐구심'], cautions: ['이론에 치우쳐 실행이 늦어질 수 있어요', '사회적 관계나 감정 표현을 어색해할 수 있어요'], good: 'ENTJ', bad: 'ESFJ' },
+  ENTJ: { emoji: '👑', nickname: '타고난 지휘관', desc: '당신이 방에 들어서면 자연스럽게 사람들의 시선이 모입니다. 목표를 세우고 사람들을 이끄는 것이 숨 쉬는 것처럼 자연스러운 타입이에요. 비효율을 용납하지 못하고, 항상 더 나은 방법을 찾아 빠르게 실행합니다. 때로는 너무 직설적이거나 강압적으로 보일 수 있지만, 그 안에는 진짜 일이 되게 만들겠다는 강한 책임감이 있습니다.', strengths: ['사람과 자원을 효율적으로 조직하는 리더십', '명확한 목표 설정과 신속한 의사결정', '어떤 환경에서도 기회를 발견하는 전략적 시각'], cautions: ['타인의 의견이나 감정을 간과할 수 있어요', '성과를 너무 중시하다 관계가 소원해질 수 있어요'], good: 'INTP', bad: 'INFP' },
+  ENTP: { emoji: '💡', nickname: '아이디어 폭발형', desc: '당신의 머릿속은 24시간 새로운 아이디어가 터지고 있습니다. 어떤 주제든 10분 안에 반론을 만들어낼 수 있는 논쟁의 달인이기도 하죠. 지루함을 못 견디고 항상 새로운 자극을 찾아다니며, 한 가지를 끝내기 전에 더 재밌는 것을 발견하는 건 늘 있는 일이에요. 세상에 불가능이라는 단어는 당신 사전에 없습니다.', strengths: ['독창적인 아이디어 발상과 혁신적인 사고', '논리와 창의를 결합한 설득 능력', '새로운 아이디어와 사람들을 연결하는 능력'], cautions: ['시작은 많은데 끝맺음이 약할 수 있어요', '상대방을 논쟁에서 이기려는 성향을 주의하세요'], good: 'INFJ', bad: 'ISFJ' },
+  INFJ: { emoji: '🔮', nickname: '신비로운 예언자', desc: '당신은 말없이도 사람들의 마음을 읽고, 아무도 보지 못한 미래를 그리는 사람입니다. 소수와 깊은 관계를 맺고, 진실과 의미를 추구하는 데 삶의 에너지를 씁니다. 겉으로는 조용해 보여도 내면에는 강렬한 신념과 열정이 흐르고 있어요. 사람들에게 영감을 주고 싶지만, 정작 본인은 주목받는 것을 불편해하는 역설적인 매력이 있습니다.', strengths: ['깊은 공감 능력과 사람에 대한 통찰력', '추상적인 아이디어를 의미 있는 것으로 만드는 능력', '장기적 비전과 이상을 향한 강한 추진력'], cautions: ['완벽주의와 번아웃에 주의하세요', '자신을 너무 희생하다 지칠 수 있어요'], good: 'ENTP', bad: 'ESTP' },
+  INFP: { emoji: '🌙', nickname: '감성 충만 몽상가', desc: '당신의 내면에는 다른 사람들이 쉽게 들어오지 못하는 깊고 아름다운 세계가 있습니다. 가치와 신념에 따라 살아가며, 진심이 없는 관계나 일에는 오래 에너지를 쏟지 못해요. 감수성이 풍부해서 사소한 것에도 크게 감동받고, 그만큼 깊이 상처받기도 합니다. 하지만 그 감수성이 바로 당신을 특별하게 만드는 힘이에요.', strengths: ['진심과 공감을 기반으로 한 깊은 관계 형성', '독창적이고 감성적인 창의성', '자신의 가치관에 충실한 강한 개인적 신념'], cautions: ['이상과 현실의 괴리에서 오는 좌절감을 주의하세요', '내향적 감정을 표현하지 않으면 오해를 살 수 있어요'], good: 'ENFJ', bad: 'ESTJ' },
+  ENFJ: { emoji: '🌟', nickname: '카리스마 선생님', desc: '당신이 있는 자리는 항상 따뜻합니다. 사람들의 장점을 발견하고 키워주는 것이 천성인 타입으로, 모두가 자기 잠재력을 발휘할 수 있도록 돕는 것에서 가장 큰 보람을 느낍니다. 사람들의 감정을 스펀지처럼 흡수하는 능력이 있어서 주변이 힘들면 본인도 힘들어지는 경향이 있어요. 가장 강한 리더이면서도 가장 섬세한 공감자입니다.', strengths: ['사람들을 자연스럽게 이끄는 카리스마와 공감 능력', '갈등을 중재하고 분위기를 조율하는 능력', '다양한 사람들에게서 최고를 이끌어내는 능력'], cautions: ['타인을 너무 챙기다 자신을 소홀히 할 수 있어요', '타인의 기대에 맞추려다 본인을 잃을 수 있어요'], good: 'INFP', bad: 'ISTP' },
+  ENFP: { emoji: '🦋', nickname: '열정 넘치는 자유영혼', desc: '당신은 모든 것에서 가능성을 보는 사람입니다. 어제와 오늘의 관심사가 다를 수 있고, 지루한 일상을 견디지 못하는 에너지 덩어리이죠. 하지만 당신이 진짜 중요하다고 느끼는 것에는 누구보다 뜨거운 열정을 쏟아냅니다. 처음 만나는 사람과도 10분 안에 친구가 되는 특별한 매력을 가진 사람이에요.', strengths: ['새로운 아이디어와 가능성을 포착하는 열린 시각', '사람들에게 영감과 에너지를 전파하는 능력', '어떤 상황에서도 창의적인 해결책을 찾는 능력'], cautions: ['관심사가 너무 빠르게 바뀌어 마무리가 약할 수 있어요', '감정 기복이 클 때 주변 사람들이 당황할 수 있어요'], good: 'INTJ', bad: 'ISTJ' },
+  ISTJ: { emoji: '📋', nickname: '철두철미 완벽주의자', desc: '당신은 신뢰의 화신입니다. 한 번 약속한 것은 반드시 지키고, 맡은 일은 완벽하게 끝내는 사람. 전통과 검증된 방법을 믿으며, 변화보다 안정을 선호합니다. 조용하지만 아주 많은 것을 기억하고 있고, 감정보다 원칙을 우선시하는 강직한 성격이에요. 조직의 기둥 같은 역할을 합니다.', strengths: ['높은 신뢰성과 일관성, 책임감', '세부 사항에 주의를 기울이는 완벽한 실행력', '어떤 상황에서도 흔들리지 않는 안정감'], cautions: ['변화나 새로운 방식에 지나치게 저항할 수 있어요', '감정 표현이 부족해 차갑게 보일 수 있어요'], good: 'ESFP', bad: 'ENFP' },
+  ISFJ: { emoji: '🏡', nickname: '따뜻한 수호자', desc: '당신은 모두가 알아채지 못해도 가장 많이 챙기고 있는 사람입니다. 큰 소리 내지 않고 조용히 행동으로 사랑을 표현하며, 중요한 사람들의 사소한 것들을 놀랍도록 잘 기억해요. 헌신적이고 안정감을 주는 당신 곁에 있으면 자연스럽게 안심이 됩니다. 스스로를 소홀히 하면서 남을 챙기는 경향이 있으니 본인을 먼저 사랑해주세요.', strengths: ['타인의 필요를 섬세하게 파악하고 충족시키는 능력', '중요한 사람들에 대한 깊은 기억력과 배려', '안정적이고 조화로운 환경을 만드는 능력'], cautions: ['자신의 필요와 감정을 억누르는 경향을 주의하세요', '변화보다 안전을 택하다 기회를 놓칠 수 있어요'], good: 'ESFP', bad: 'ENTP' },
+  ESTJ: { emoji: '💼', nickname: '엄격한 관리자', desc: '당신은 명확한 기준과 원칙을 가진 사람입니다. 무질서와 비효율을 용납하지 못하고, 어떤 환경에서든 빠르게 구조를 만들고 정리합니다. 맡은 역할에서 최선을 다하는 것이 당연하다고 생각하는 책임감의 소유자예요. 다소 딱딱하고 고집스럽게 보일 수 있지만, 그 뒤에는 진짜로 잘 되길 바라는 마음이 있습니다.', strengths: ['체계와 질서를 빠르게 확립하는 조직력', '명확하고 결단력 있는 리더십', '높은 책임감과 실행 능력'], cautions: ['융통성이 부족하고 자신의 방식을 강요할 수 있어요', '감정적인 면을 무시하다 관계가 경직될 수 있어요'], good: 'ISFP', bad: 'INFP' },
+  ESFJ: { emoji: '🥰', nickname: '인싸 중의 인싸', desc: '당신은 관계의 달인입니다. 모임에서 가장 많은 사람과 연결되어 있고, 사람들이 필요로 하는 것을 본능적으로 알아채 먼저 챙겨줍니다. 조화를 중요시하고 갈등을 극도로 싫어해서 모든 사람이 편안하도록 자신을 조금씩 맞추는 경향이 있어요. 모든 사람의 친구가 되려는 따뜻한 마음씨가 당신을 특별하게 만들어줍니다.', strengths: ['모든 상황에서 사람들을 편안하게 만드는 능력', '실용적으로 필요한 것을 챙기는 세심한 배려', '그룹의 화합을 이끄는 높은 사회성'], cautions: ['타인의 시선을 너무 의식하다 자신을 잃을 수 있어요', '갈등을 회피하다 문제를 키울 수 있어요'], good: 'ISFP', bad: 'INTP' },
+  ISTP: { emoji: '🔧', nickname: '조용한 만능 해결사', desc: '당신은 말보다 행동으로 보여주는 타입입니다. 어떤 문제가 생겨도 차분하게 분석하고 가장 효율적인 방법으로 해결하는 실용주의자예요. 규칙이나 형식보다 실제로 작동하는지가 더 중요하고, 자유롭게 혼자 움직일 때 가장 능력이 발휘됩니다. 감정 표현은 적지만 중요한 순간에 가장 먼저 실질적인 도움이 되는 사람이에요.', strengths: ['어떤 상황에서도 침착하고 효율적인 문제 해결 능력', '독립적이고 유연하게 행동하는 실용적 접근', '다양한 도구와 시스템을 빠르게 익히고 활용하는 능력'], cautions: ['감정 표현이 부족해 오해를 살 수 있어요', '장기 계획보다 당장의 문제에만 집중하는 경향'], good: 'ESTJ', bad: 'ENFJ' },
+  ISFP: { emoji: '🎨', nickname: '자유로운 예술 감성', desc: '당신은 말이 없어도 삶 자체로 아름다운 것을 표현하는 사람입니다. 조용하지만 내면에는 강렬한 감수성과 개인적인 가치관이 있으며, 틀에 박힌 삶을 거부하고 자유롭게 살아가는 것을 최우선으로 여깁니다. 경쟁보다 협력, 지위보다 진정성을 중요하게 여기고, 아름다운 것들에 즉각적으로 반응하는 풍부한 감성의 소유자예요.', strengths: ['현재 순간에 충실하고 감각적으로 아름다움을 감지하는 능력', '강요 없이 자연스럽게 주변을 배려하는 따뜻함', '자신의 가치관에 충실하게 살아가는 진정성'], cautions: ['갈등을 회피하다 중요한 문제를 미룰 수 있어요', '장기 계획보다 현재에 집중하다 미래 대비가 부족할 수 있어요'], good: 'ESTJ', bad: 'ENTJ' },
+  ESTP: { emoji: '⚡', nickname: '행동파 모험가', desc: '당신은 생각보다 행동이 먼저인 사람입니다. 이론보다 실제 경험을 통해 배우고, 위험한 상황에서도 냉정하게 기회를 포착하는 능력이 있어요. 에너지가 넘치고 현실감각이 탁월해서 어떤 환경에도 빠르게 적응합니다. 지루한 일상보다 자극적인 경험을 선호하고, 사람들과 함께 있을 때 폭발적인 에너지를 발산하는 매력을 가졌어요.', strengths: ['위기 상황에서 빠르게 판단하고 행동하는 담대함', '현실적이고 실용적인 문제 해결 능력', '사람들을 흥미롭게 만드는 타고난 에너지와 유머'], cautions: ['장기적인 결과보다 즉각적인 만족을 추구할 수 있어요', '세부 계획이나 준비를 건너뛰다 실수할 수 있어요'], good: 'ISFJ', bad: 'INFJ' },
+  ESFP: { emoji: '🎉', nickname: '타고난 엔터테이너', desc: '당신이 있는 곳은 어디든 파티가 됩니다. 사람들을 즐겁게 만드는 것이 천성이고, 어떤 상황에서도 긍정적인 에너지로 분위기를 살립니다. 지금 이 순간을 가장 완벽하게 즐길 줄 아는 타입으로, 계획보다 즉흥을 좋아하고 규칙보다 자유를 선호해요. 주변 사람들에게 당신은 삶을 더 재밌게 만들어주는 소중한 존재입니다.', strengths: ['어떤 상황에서도 즉각적으로 분위기를 만드는 능력', '사람들에게 즐거움과 에너지를 전파하는 존재감', '현재 순간에 충실하고 모든 것을 즐기는 능력'], cautions: ['장기적인 계획이나 미래 준비가 부족할 수 있어요', '자극을 너무 좋아해서 중요한 것을 흘려보낼 수 있어요'], good: 'ISTJ', bad: 'INTJ' },
+};
+
+// Axis scores: higher = first pole (E, S, T, J)
+let axisScores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+let current = 0;
+
+function startTest() {
+  document.getElementById('introSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = QUESTIONS[i];
+  document.getElementById('questionNum').textContent = `Q${i + 1}`;
+  document.getElementById('questionText').textContent = q.text;
+  document.getElementById('progressText').textContent = `${i + 1} / ${QUESTIONS.length}`;
+  document.getElementById('progressFill').style.width = `${((i + 1) / QUESTIONS.length) * 100}%`;
+
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  const letters = ['A', 'B'];
+  q.choices.forEach((c, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-letter">${letters[idx]}</span>${c.text}`;
+    btn.onclick = () => pick(c.pole);
+    choicesEl.appendChild(btn);
+  });
+}
+
+function pick(pole) {
+  axisScores[pole]++;
+  current++;
+  if (current < QUESTIONS.length) {
+    showQ(current);
+  } else {
+    showAdThenResult(showResult);
+  }
+}
+
+function showResult() {
+  document.getElementById('quizSection').style.display = 'none';
+
+  const e = axisScores['E'], i = axisScores['I'];
+  const s = axisScores['S'], n = axisScores['N'];
+  const t = axisScores['T'], f = axisScores['F'];
+  const j = axisScores['J'], p = axisScores['P'];
+
+  const mbti =
+    (e >= i ? 'E' : 'I') +
+    (s >= n ? 'S' : 'N') +
+    (t >= f ? 'T' : 'F') +
+    (j >= p ? 'J' : 'P');
+
+  const r = TYPES[mbti];
+  const totalEI = e + i || 1;
+  const totalSN = s + n || 1;
+  const totalTF = t + f || 1;
+  const totalJP = j + p || 1;
+
+  const ePct = Math.round((e / totalEI) * 100);
+  const sPct = Math.round((s / totalSN) * 100);
+  const tPct = Math.round((t / totalTF) * 100);
+  const jPct = Math.round((j / totalJP) * 100);
+
+  const sec = document.getElementById('resultSection');
+  sec.style.display = 'block';
+  sec.innerHTML = `
+    <div class="result-card">
+      <div class="result-type">나의 MBTI 유형</div>
+      <div class="mbti-type-display" id="mbtiDisplay">${mbti}</div>
+      <div class="mbti-nickname">${r.emoji} ${r.nickname}</div>
+      <div class="result-desc">${r.desc}</div>
+
+      <div class="axis-section-title">📊 성향 분석</div>
+      <div class="mbti-axes" id="mbtiAxes">
+        <div class="mbti-axis-item">
+          <div class="mbti-axis-label">에너지 방향</div>
+          <div class="mbti-axis-letters">
+            <span style="color:${e >= i ? '#e50914' : 'var(--gray3)'}">E</span>
+            <span style="color:${e < i ? '#e50914' : 'var(--gray3)'}">I</span>
+          </div>
+          <div class="mbti-axis-bar">
+            <div class="mbti-axis-fill" id="axisEI" style="width:0%;background:linear-gradient(90deg,#e50914,#ff6b6b);"></div>
+          </div>
+          <div style="font-size:12px;color:var(--gray3);text-align:center;">${e >= i ? `E ${ePct}%` : `I ${100-ePct}%`}</div>
+        </div>
+        <div class="mbti-axis-item">
+          <div class="mbti-axis-label">인식 방식</div>
+          <div class="mbti-axis-letters">
+            <span style="color:${s >= n ? '#e50914' : 'var(--gray3)'}">S</span>
+            <span style="color:${s < n ? '#e50914' : 'var(--gray3)'}">N</span>
+          </div>
+          <div class="mbti-axis-bar">
+            <div class="mbti-axis-fill" id="axisSN" style="width:0%;background:linear-gradient(90deg,#8b5cf6,#a78bfa);"></div>
+          </div>
+          <div style="font-size:12px;color:var(--gray3);text-align:center;">${s >= n ? `S ${sPct}%` : `N ${100-sPct}%`}</div>
+        </div>
+        <div class="mbti-axis-item">
+          <div class="mbti-axis-label">판단 방식</div>
+          <div class="mbti-axis-letters">
+            <span style="color:${t >= f ? '#e50914' : 'var(--gray3)'}">T</span>
+            <span style="color:${t < f ? '#e50914' : 'var(--gray3)'}">F</span>
+          </div>
+          <div class="mbti-axis-bar">
+            <div class="mbti-axis-fill" id="axisTF" style="width:0%;background:linear-gradient(90deg,#0ea5e9,#38bdf8);"></div>
+          </div>
+          <div style="font-size:12px;color:var(--gray3);text-align:center;">${t >= f ? `T ${tPct}%` : `F ${100-tPct}%`}</div>
+        </div>
+        <div class="mbti-axis-item">
+          <div class="mbti-axis-label">생활 방식</div>
+          <div class="mbti-axis-letters">
+            <span style="color:${j >= p ? '#e50914' : 'var(--gray3)'}">J</span>
+            <span style="color:${j < p ? '#e50914' : 'var(--gray3)'}">P</span>
+          </div>
+          <div class="mbti-axis-bar">
+            <div class="mbti-axis-fill" id="axisJP" style="width:0%;background:linear-gradient(90deg,#10b981,#34d399);"></div>
+          </div>
+          <div style="font-size:12px;color:var(--gray3);text-align:center;">${j >= p ? `J ${jPct}%` : `P ${100-jPct}%`}</div>
+        </div>
+      </div>
+
+      <div class="axis-section-title">💪 강점 3가지</div>
+      <ul class="strength-list">
+        ${r.strengths.map(s => `<li class="strength-item"><span>✅</span><span>${s}</span></li>`).join('')}
+      </ul>
+
+      <div class="axis-section-title">⚠️ 주의할 점</div>
+      <ul class="strength-list">
+        ${r.cautions.map(c => `<li class="strength-item"><span>⚡</span><span>${c}</span></li>`).join('')}
+      </ul>
+
+      <div class="mbti-compat-box" style="margin-top:16px;">
+        <div class="compat-item good">
+          <div class="compat-label">잘 맞는 유형</div>
+          <div class="compat-type">${r.good}</div>
+          <div class="compat-name">${TYPES[r.good] ? TYPES[r.good].nickname : ''}</div>
+        </div>
+        <div class="compat-item bad">
+          <div class="compat-label">조심할 유형</div>
+          <div class="compat-type">${r.bad}</div>
+          <div class="compat-name">${TYPES[r.bad] ? TYPES[r.bad].nickname : ''}</div>
+        </div>
+      </div>
+
+      <div class="result-actions" style="margin-top:28px;">
+        <button class="btn-share" onclick="shareResult('${mbti}')">🔗 결과 공유하기</button>
+        <button class="btn-retry" onclick="retryTest()">🔄 다시하기</button>
+        <a href="../index.html" class="btn-back">← 포털로</a>
+      </div>
+    </div>`;
+
+  // Animate axis bars
+  setTimeout(() => {
+    const eiEl = document.getElementById('axisEI');
+    const snEl = document.getElementById('axisSN');
+    const tfEl = document.getElementById('axisTF');
+    const jpEl = document.getElementById('axisJP');
+    if (eiEl) eiEl.style.width = ePct + '%';
+    if (snEl) snEl.style.width = sPct + '%';
+    if (tfEl) tfEl.style.width = tPct + '%';
+    if (jpEl) jpEl.style.width = jPct + '%';
+  }, 150);
+}
+
+function retryTest() {
+  axisScores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+  current = 0;
+  document.getElementById('resultSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  showQ(0);
+}
+
+function shareResult(mbti) {
+  const text = `나의 MBTI는 ${mbti}! 너는?`;
+  if (navigator.share) {
+    navigator.share({ title: 'MBTI 간이 테스트', text, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(() => alert('링크가 복사됐어요! 🎉'));
+  }
+}
+</script>
+</body>
+</html>

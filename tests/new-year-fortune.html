@@ -1,0 +1,320 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026 신년 운세 | 오늘연구소</title>
+  <meta name="description" content="2026 신년 운세 — 오늘연구소에서 재미있게 즐겨보세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .ny-hero {
+      background: linear-gradient(145deg, #0d0518 0%, #1a0535 50%, #2d0a5e 100%);
+      border-radius: 18px;
+      padding: 36px 28px;
+      text-align: center;
+      margin-bottom: 24px;
+      border: 1.5px solid rgba(255,215,0,.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .ny-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% -10%, rgba(255,215,0,.2) 0%, transparent 60%);
+    }
+    .ny-hero-year {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffd700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .ny-zodiac-emoji { font-size: 80px; display: block; margin-bottom: 10px; position: relative; }
+    .ny-zodiac-name { font-size: 26px; font-weight: 900; margin-bottom: 4px; position: relative; }
+    .ny-zodiac-years { font-size: 12px; color: var(--gray3); position: relative; }
+    .half-year-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .half-year-box {
+      border-radius: 12px;
+      padding: 16px 14px;
+      border: 1px solid rgba(255,255,255,.1);
+    }
+    .half-label { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+    .half-text { font-size: 13px; color: var(--gray2); line-height: 1.75; }
+    .total-fortune-box {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: var(--gray1);
+      line-height: 1.85;
+    }
+    .lucky-items-wrap {
+      background: rgba(255,215,0,.06);
+      border: 1px solid rgba(255,215,0,.18);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+    }
+    .lucky-items-wrap h4 { font-size: 14px; color: #ffd700; margin-bottom: 12px; }
+    .lucky-item-row { display: flex; gap: 12px; }
+    .lucky-item-chip {
+      background: rgba(255,215,0,.12);
+      border: 1px solid rgba(255,215,0,.25);
+      border-radius: 50px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffe082;
+    }
+    .month-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .month-box {
+      flex: 1;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+    }
+    .month-box-label { font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+    .month-box-val { font-size: 18px; font-weight: 900; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">🎊</span>
+          <h1>2026 신년 운세</h1>
+          <p>2026년 병오(丙午)년 새해 운세<br>재물 · 애정 · 건강 · 직업 완전 분석!</p>
+          <div class="test-meta">
+            <span>🔮 운세</span>
+            <span>⏱ 2분</span>
+            <span>👥 234,667명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-text" style="margin-bottom:20px;">태어난 연도를 입력해주세요</div>
+          <label class="input-label">출생 연도</label>
+          <input type="number" class="input-field" id="birthYear" placeholder="예: 1990" min="1930" max="2010">
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;margin-top:4px;">
+            🎊 2026년 신년 운세 보기
+          </button>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+
+    </div>
+  </div>
+
+<script>
+const NY_ZODIAC = [
+  { key:'monkey', emoji:'🐒', name:'원숭이띠', color:'#ffb74d',
+    fortune:'2026년은 원숭이띠에게 빠른 변화와 기회의 해입니다. 1월부터 예상치 못한 새로운 프로젝트나 인연이 찾아오며 초반부터 바쁘게 달리게 됩니다. 뛰어난 두뇌와 재치를 마음껏 발휘하면 경쟁에서 앞서나갈 수 있습니다. 특히 IT·미디어·콘텐츠 분야에서 큰 기회가 열리며, 해외와 연관된 일에서도 성과가 기대됩니다. 다만 너무 많은 일에 손을 대다 마무리가 약해질 수 있으니 선택과 집중이 필요합니다.',
+    h1:'상반기는 인간관계와 네트워크 확장에 집중하세요. 새로운 사람과의 연결이 생각지도 못한 기회로 이어집니다.',
+    h2:'하반기에는 금전적 결실이 찾아옵니다. 상반기에 뿌린 씨앗이 8~10월 사이에 수확기를 맞이합니다.',
+    money:84, love:77, health:70, career:91,
+    luckyItems:['황금 열쇠 장식품','오렌지색 아이템'], luckyMonth:'8월', unluckyMonth:'2월' },
+  { key:'rooster', emoji:'🐓', name:'닭띠', color:'#ef9a9a',
+    fortune:'2026년 닭띠는 정직과 꼼꼼함이 빛을 발하는 해입니다. 지난 몇 년간 쌓아온 경력과 전문성이 드디어 인정받는 시기가 왔습니다. 직업적으로는 승진이나 보직 변경 등 긍정적인 변화가 예상되며, 특히 4월과 9월에 중요한 전환점이 생깁니다. 재정적으로는 안정적인 흐름이 이어지며 계획적인 저축이 큰 힘을 발휘합니다. 건강은 특별히 큰 문제는 없으나 소화기 계통을 신경 써주세요.',
+    h1:'상반기는 실력을 검증받는 시기입니다. 완벽하게 준비된 모습을 보여주면 반드시 인정받습니다.',
+    h2:'하반기에는 가정과 사랑의 운이 강해집니다. 소중한 사람과의 관계에 더 많은 시간을 투자하세요.',
+    money:76, love:72, health:65, career:85,
+    luckyItems:['루비 또는 붉은 보석','수첩이나 다이어리'], luckyMonth:'9월', unluckyMonth:'5월' },
+  { key:'dog', emoji:'🐕', name:'개띠', color:'#bcaaa4',
+    fortune:'2026년 개띠는 신뢰와 충성이 가장 빛나는 한 해입니다. 오래된 인간관계에서 큰 행운이 찾아오며, 평소 성실하게 쌓아온 신뢰가 예상치 못한 형태로 보답을 받습니다. 직업에서는 팀워크와 협업이 중요하며, 단독 플레이보다 함께할 때 훨씬 좋은 결과를 냅니다. 연애운은 전반적으로 안정적이고 따뜻한 흐름입니다. 하반기에 큰 결정(결혼, 이직, 이사 등)을 내려도 좋은 시기입니다.',
+    h1:'상반기는 자기 계발과 내실을 다지는 시기입니다. 조용히 준비하면 하반기에 빛을 발합니다.',
+    h2:'하반기는 본격적인 활동의 시기입니다. 상반기에 준비한 것을 과감히 세상에 내놓으세요.',
+    money:78, love:88, health:75, career:80,
+    luckyItems:['가죽 소품','그린 에메랄드 아이템'], luckyMonth:'10월', unluckyMonth:'6월' },
+  { key:'pig', emoji:'🐷', name:'돼지띠', color:'#f48fb1',
+    fortune:'2026년 돼지띠는 풍요와 번영의 기운이 넘치는 최고의 해입니다! 재물운이 12띠 중 최상위권으로, 사업 확장이나 부동산 투자에 절호의 시기입니다. 좋은 음식과 즐거운 만남이 연달아 찾아오며 삶의 질이 눈에 띄게 높아집니다. 연애·결혼운도 매우 강하여 솔로라면 반드시 인연을 만날 것이며, 기혼자는 가정의 행복이 더욱 충만해집니다. 건강 관리에 유의해야 할 시기이므로 규칙적인 운동을 권장합니다.',
+    h1:'상반기부터 재물운이 폭발적으로 상승합니다. 오래 고민하던 투자나 사업 계획을 1~6월에 실행하세요.',
+    h2:'하반기에는 사랑과 인간관계가 더욱 풍요로워집니다. 소중한 사람들과 나누는 시간이 가장 큰 행복입니다.',
+    money:95, love:90, health:68, career:86,
+    luckyItems:['황금 돼지 장식품','둥근 황금 아이템'], luckyMonth:'3월', unluckyMonth:'11월' },
+  { key:'rat', emoji:'🐭', name:'쥐띠', color:'#90caf9',
+    fortune:'2026년 쥐띠는 지혜와 기민함으로 새로운 기회를 포착하는 해입니다. 작년의 시행착오를 발판 삼아 더 영리하게 나아갈 시기로, 정보 수집과 네트워크 활용이 중요한 키워드가 됩니다. 학업이나 자격증 취득에 도전하기 좋으며, 새로운 분야로의 진출도 좋은 결과를 가져옵니다. 재물운은 상반기보다 하반기에 눈에 띄게 좋아지며, 가을 이후 안정적인 수입 기반이 마련됩니다.',
+    h1:'상반기는 정보와 지식을 쌓는 준비의 시기입니다. 조급해하지 말고 기반을 다지세요.',
+    h2:'하반기에 기회가 쏟아집니다. 상반기에 준비한 것이 7월부터 본격적으로 결실을 맺습니다.',
+    money:80, love:74, health:82, career:87,
+    luckyItems:['파란색 수晶 아이템','메모장이나 수첩'], luckyMonth:'8월', unluckyMonth:'2월' },
+  { key:'ox', emoji:'🐮', name:'소띠', color:'#a5d6a7',
+    fortune:'2026년 소띠는 오랜 노력이 드디어 눈부신 결실로 이어지는 감동적인 해입니다. 묵묵히 걸어온 길이 올해 비로소 인정받고 보상받는 시기가 찾아옵니다. 직장에서는 주요 프로젝트를 성공적으로 이끌며 신뢰와 명성을 쌓게 됩니다. 재물운은 꾸준한 상승세를 보이며, 부동산이나 장기 투자에서 특히 유리합니다. 건강은 양호하지만 봄철 알레르기 등 계절성 건강 문제에 유의하세요.',
+    h1:'상반기는 결실의 시기입니다. 오래 기다려온 승인이나 합격 소식이 1~5월 중에 올 수 있습니다.',
+    h2:'하반기에는 풍요로움과 여유를 누리세요. 가족과 함께하는 시간을 충분히 만들어가시길 바랍니다.',
+    money:88, love:75, health:79, career:93,
+    luckyItems:['초록색 식물 화분','나무 소재 소품'], luckyMonth:'6월', unluckyMonth:'9월' },
+  { key:'tiger', emoji:'🐯', name:'호랑이띠', color:'#ff8a65',
+    fortune:'2026년 호랑이띠는 용기와 도전이 빛나는 한 해입니다. 두려움 없이 새로운 길을 개척하는 호랑이띠의 기질이 올해 최대로 발휘됩니다. 예상치 못한 큰 기회가 찾아올 수 있으며, 머뭇거리지 않고 과감히 잡는 결단력이 성패를 가릅니다. 연애에서는 강렬하고 드라마틱한 만남이 기다리고 있으며, 현재 연인과는 새로운 단계로의 도약이 가능합니다. 다만 충동적인 결정은 후반부에 후회를 낳을 수 있으니 큰일은 신중하게.',
+    h1:'상반기는 에너지가 폭발하는 시기입니다. 1~4월이 올해 중 가장 운세가 강하니 중요한 일을 이 시기에 집중하세요.',
+    h2:'하반기에는 속도를 조절하고 내실을 점검하세요. 무리하지 않고 현명하게 마무리하는 것이 중요합니다.',
+    money:70, love:92, health:84, career:81,
+    luckyItems:['범 모양 마스코트','황금색 지갑'], luckyMonth:'3월', unluckyMonth:'10월' },
+  { key:'rabbit', emoji:'🐰', name:'토끼띠', color:'#ce93d8',
+    fortune:'2026년 토끼띠는 섬세한 감수성이 빛나는 풍요로운 한 해입니다. 서두르지 않고 자신의 리듬으로 나아가면 원하는 것을 하나씩 이루어 나갈 수 있습니다. 예술, 디자인, 교육 등 창의적인 분야에서 뛰어난 성과가 기대되며, 주변의 인정과 칭찬이 동기 부여가 됩니다. 연애운이 특히 강하여 올해 아름다운 인연을 만날 가능성이 높습니다. 재물운은 전반적으로 안정적이지만 큰 투기성 도전은 피하는 것이 좋습니다.',
+    h1:'상반기는 창의적인 프로젝트에 집중하세요. 아이디어를 실행에 옮기면 예상보다 큰 반응을 얻습니다.',
+    h2:'하반기에 사랑의 기운이 가장 강합니다. 9~11월 사이에 중요한 만남이나 관계의 발전이 기대됩니다.',
+    money:75, love:95, health:86, career:74,
+    luckyItems:['라벤더색 아이템','크리스탈 장식품'], luckyMonth:'10월', unluckyMonth:'4월' },
+  { key:'dragon', emoji:'🐲', name:'용띠', color:'#ffd700',
+    fortune:'2026년은 용띠에게 전성기 중의 전성기입니다! 화(丙)의 기운과 용띠의 강렬한 에너지가 완벽하게 결합되어 거의 모든 분야에서 최상의 결과를 만들어냅니다. 사업, 투자, 승진, 연애 등 무엇을 시작해도 성공할 만큼 강한 운기가 흐릅니다. 특히 상반기의 기세가 대단하여 연초에 세운 계획이 놀라운 속도로 실현됩니다. 건강도 양호하고 에너지도 충만합니다. 자신감을 갖고 세상을 향해 크게 날개를 펼치세요!',
+    h1:'1~6월은 올해 최고의 운세 기간입니다. 가장 중요한 결정과 도전을 이 기간에 집중하세요.',
+    h2:'7~12월에도 좋은 흐름이 이어집니다. 상반기의 성과를 안정적으로 관리하고 다음 해를 준비하세요.',
+    money:97, love:88, health:92, career:99,
+    luckyItems:['황금 용 장식품','보석이 박힌 명함 지갑'], luckyMonth:'4월', unluckyMonth:'없음 (전 달 길운)' },
+  { key:'snake', emoji:'🐍', name:'뱀띠', color:'#80deea',
+    fortune:'2026년 뱀띠는 깊은 통찰력과 냉철한 판단력이 무기가 되는 한 해입니다. 겉으로 드러나지 않는 복잡한 상황들을 꿰뚫어 보며 남들이 놓친 기회를 발견할 것입니다. 재물운은 상반기에 다소 정체되다가 하반기에 서서히 상승합니다. 직업적으로는 전문성을 더욱 깊이 갈고닦는 것이 중요하며, 이 노력이 장기적으로 큰 보상을 가져옵니다. 건강은 마음의 건강이 특히 중요하므로 스트레스 해소에 집중하세요.',
+    h1:'상반기는 정보 수집과 내공을 쌓는 시기입니다. 다가올 기회를 위한 준비에 집중하세요.',
+    h2:'8월부터 본격적인 성과의 시기가 시작됩니다. 기회가 왔을 때 망설이지 말고 과감히 잡으세요.',
+    money:79, love:76, health:65, career:83,
+    luckyItems:['비취색 옥 장식품','심플한 은색 액세서리'], luckyMonth:'9월', unluckyMonth:'3월' },
+  { key:'horse', emoji:'🐴', name:'말띠', color:'#ffcc02',
+    fortune:'2026년 말띠는 화(丙)의 기운이 말띠의 에너지와 강하게 공명하는 중요한 한 해입니다. 자유를 향한 열망과 폭발적인 추진력이 직업적 도약으로 이어질 것입니다. 새로운 여행, 새로운 만남, 새로운 환경이 삶에 활력을 불어넣고 시야를 넓혀줍니다. 재물운은 능동적으로 움직일수록 상승하는 타입이니 가만히 기다리지 말고 적극적으로 기회를 창출하세요. 다만 건강, 특히 심장과 혈압 관리에 유의하세요.',
+    h1:'상반기는 에너지가 넘치는 활동의 시기입니다. 새로운 인연과 기회가 줄지어 찾아옵니다.',
+    h2:'하반기에는 성과를 구체화하고 내실을 다지는 것이 중요합니다. 재정 정리와 건강 체크를 잊지 마세요.',
+    money:83, love:87, health:67, career:88,
+    luckyItems:['말 마스코트','불꽃 모양 귀걸이·반지'], luckyMonth:'7월', unluckyMonth:'1월' },
+  { key:'goat', emoji:'🐑', name:'양띠', color:'#b2dfdb',
+    fortune:'2026년 양띠는 따뜻한 인간미와 예술적 감성이 빛을 발하는 한 해입니다. 사람들과의 정서적 교류에서 큰 행복을 찾고, 이 과정에서 자연스럽게 좋은 기회도 찾아옵니다. 창의적인 분야에서 두각을 나타내며 그동안 쌓아온 재능이 세상에 알려지기 시작하는 시기입니다. 재물운은 꾸준히 상승하며 하반기에 실질적인 소득 증가가 기대됩니다. 상반기에는 건강에 좀 더 세심한 주의가 필요하며 규칙적인 생활 패턴이 중요합니다.',
+    h1:'상반기는 관계와 창의성에 집중하세요. 진심 어린 교류가 예상치 못한 행운으로 돌아옵니다.',
+    h2:'하반기에 재물운과 직업운이 크게 상승합니다. 7월 이후 제안이나 협업 기회를 적극 활용하세요.',
+    money:78, love:93, health:62, career:76,
+    luckyItems:['파스텔 색상 아이템','꽃 관련 소품 또는 향수'], luckyMonth:'11월', unluckyMonth:'6월' },
+];
+
+function getZodiac2026(year) {
+  const cycle = ['monkey','rooster','dog','pig','rat','ox','tiger','rabbit','dragon','snake','horse','goat'];
+  // base: 1900 = rat, index 4 in the cycle array
+  // Let me re-map: 1900 = rat, cycle starting rat at index 4
+  const fullCycle = ['monkey','rooster','dog','pig','rat','ox','tiger','rabbit','dragon','snake','horse','goat'];
+  // 1900: monkey? No. Standard: 1900 = rat.
+  // Cycle: rat=1900, ox=1901, tiger=1902, rabbit=1903, dragon=1904, snake=1905, horse=1906, goat=1907, monkey=1908, rooster=1909, dog=1910, pig=1911
+  const keys2 = ['rat','ox','tiger','rabbit','dragon','snake','horse','goat','monkey','rooster','dog','pig'];
+  const idx = ((year - 1900) % 12 + 12) % 12;
+  const key = keys2[idx];
+  return NY_ZODIAC.find(z => z.key === key) || NY_ZODIAC[0];
+}
+
+function statBar(label, value, color) {
+  return `<div class="stat-row">
+    <div class="stat-label"><span>${label}</span><span style="color:${color}">${value}</span></div>
+    <div class="stat-bar-bg"><div class="stat-bar-fill" data-val="${value}" style="width:0%;background:${color}"></div></div>
+  </div>`;
+}
+
+function calculate() {
+  const year = parseInt(document.getElementById('birthYear').value);
+  if (!year || year < 1930 || year > 2010) { alert('1930~2010년 사이의 출생 연도를 입력해주세요!'); return; }
+
+  const z = getZodiac2026(year);
+
+  showAdThenResult(() => {
+    document.getElementById('formSection').style.display = 'none';
+    const sec = document.getElementById('resultSection');
+    sec.style.display = 'block';
+    sec.innerHTML = `<div class="result-card">
+      <div class="result-type">🎊 2026 신년 운세</div>
+
+      <div class="ny-hero">
+        <div class="ny-hero-year">🎊 2026년 병오(丙午)년</div>
+        <span class="ny-zodiac-emoji">${z.emoji}</span>
+        <div class="ny-zodiac-name" style="color:${z.color}">${z.name}</div>
+        <div class="ny-zodiac-years">${year}년생</div>
+      </div>
+
+      <div class="total-fortune-box">${z.fortune}</div>
+
+      <div class="half-year-grid">
+        <div class="half-year-box" style="background:rgba(255,255,255,.04);">
+          <div class="half-label" style="color:${z.color}">📅 상반기 운세</div>
+          <div class="half-text">${z.h1}</div>
+        </div>
+        <div class="half-year-box" style="background:rgba(255,255,255,.04);">
+          <div class="half-label" style="color:${z.color}">📅 하반기 운세</div>
+          <div class="half-text">${z.h2}</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:24px;">
+        ${statBar('재물운 💰', z.money, '#ffd700')}
+        ${statBar('애정운 💕', z.love, '#f06292')}
+        ${statBar('건강운 💪', z.health, '#46d369')}
+        ${statBar('직업운 🚀', z.career, '#4facfe')}
+      </div>
+
+      <div class="lucky-items-wrap">
+        <h4>🍀 올해의 행운 아이템</h4>
+        <div class="lucky-item-row">
+          ${z.luckyItems.map(item => `<div class="lucky-item-chip">✨ ${item}</div>`).join('')}
+        </div>
+      </div>
+
+      <div class="month-row">
+        <div class="month-box" style="background:rgba(70,211,105,.08);border:1px solid rgba(70,211,105,.2);">
+          <div class="month-box-label" style="color:#46d369;">🌟 행운의 달</div>
+          <div class="month-box-val" style="color:#46d369;">${z.luckyMonth}</div>
+        </div>
+        <div class="month-box" style="background:rgba(229,9,20,.07);border:1px solid rgba(229,9,20,.18);">
+          <div class="month-box-label" style="color:#ff6b6b;">⚠️ 주의할 달</div>
+          <div class="month-box-val" style="color:#ff6b6b;">${z.unluckyMonth}</div>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-share" onclick="shareResult()">🔗 결과 공유하기</button>
+        <button class="btn-retry" onclick="location.reload()">🔄 다시하기</button>
+        <a href="../index.html" class="btn-back">← 포털로</a>
+      </div>
+    </div>`;
+
+    setTimeout(() => {
+      document.querySelectorAll('.stat-bar-fill').forEach(el => {
+        el.style.width = el.dataset.val + '%';
+      });
+    }, 100);
+  });
+}
+
+function shareResult() {
+  const year = parseInt(document.getElementById('birthYear').value);
+  const z = getZodiac2026(year);
+  const text = `나는 ${z.emoji} ${z.name}! 2026년 신년 운세 확인해봤어 🎊 너도 해봐!`;
+  if (navigator.share) navigator.share({ title: '2026 신년 운세', text, url: window.location.href });
+  else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+}
+</script>
+</body>
+</html>

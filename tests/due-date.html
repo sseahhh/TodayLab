@@ -1,0 +1,304 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>예상 출산일 계산기 | 오늘연구소</title>
+  <meta name="description" content="예상 출산일 계산기 — 오늘연구소에서 재미있게 즐겨보세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .mode-section { display: none; }
+    .mode-section.active { display: block; }
+    .date-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .due-date-display {
+      font-size: 36px;
+      font-weight: 900;
+      text-align: center;
+      background: linear-gradient(135deg, #96fbc4, #f9f586);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 20px 0 8px;
+      line-height: 1.3;
+    }
+    .milestone-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: 14px;
+    }
+    .milestone-row:last-child { border-bottom: none; }
+    .milestone-val { font-weight: 700; color: #96fbc4; }
+    .trimester-badge {
+      display: inline-block;
+      padding: 6px 18px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 700;
+      margin: 12px auto;
+    }
+    .tri-1 { background: rgba(150, 251, 196, 0.15); color: #96fbc4; border: 1px solid rgba(150,251,196,.3); }
+    .tri-2 { background: rgba(249, 245, 134, 0.15); color: #f9f586; border: 1px solid rgba(249,245,134,.3); }
+    .tri-3 { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; border: 1px solid rgba(255,107,107,.3); }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">🤰</span>
+          <h1>예상 출산일 계산기</h1>
+          <p>마지막 생리일 또는 임신 확인일로<br>예상 출산일을 계산해드려요!</p>
+          <div class="test-meta">
+            <span>🤰 육아</span>
+            <span>⏱ 1분</span>
+            <span>👥 89,234명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-num">계산 방법 선택</div>
+          <div class="chip-group" id="modeGroup" style="margin-bottom:28px;">
+            <button class="chip selected" onclick="selectMode(this,'lmp')">🩸 마지막 생리 첫날</button>
+            <button class="chip" onclick="selectMode(this,'confirm')">✅ 임신 확인일</button>
+          </div>
+
+          <div id="lmpSection" class="mode-section active">
+            <label class="input-label">마지막 생리 첫날 날짜</label>
+            <div class="date-row">
+              <div>
+                <input type="number" class="input-field" id="lmpYear" placeholder="연도" min="2023" max="2026" style="margin-bottom:0;">
+              </div>
+              <div>
+                <input type="number" class="input-field" id="lmpMonth" placeholder="월" min="1" max="12" style="margin-bottom:0;">
+              </div>
+              <div>
+                <input type="number" class="input-field" id="lmpDay" placeholder="일" min="1" max="31" style="margin-bottom:0;">
+              </div>
+            </div>
+          </div>
+
+          <div id="confirmSection" class="mode-section">
+            <label class="input-label">임신 확인일 날짜</label>
+            <div class="date-row">
+              <div>
+                <input type="number" class="input-field" id="confirmYear" placeholder="연도" min="2023" max="2026" style="margin-bottom:0;">
+              </div>
+              <div>
+                <input type="number" class="input-field" id="confirmMonth" placeholder="월" min="1" max="12" style="margin-bottom:0;">
+              </div>
+              <div>
+                <input type="number" class="input-field" id="confirmDay" placeholder="일" min="1" max="31" style="margin-bottom:0;">
+              </div>
+            </div>
+            <div style="margin-top:16px;">
+              <label class="input-label">확인 당시 임신 주수 (4~12주)</label>
+              <input type="number" class="input-field" id="weeksAtConfirm" placeholder="예: 6" min="4" max="12">
+            </div>
+          </div>
+
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;margin-top:8px;">
+            🤰 출산일 계산하기
+          </button>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:16px 18px;margin-top:16px;">
+          <p style="font-size:12px;color:var(--gray3);line-height:1.7;">
+            📌 이 계산기는 <strong style="color:var(--gray2)">네겔레 공식(Naegele's Rule)</strong>을 기반으로 한 근사치입니다.<br>
+            실제 출산일은 ±2주 차이가 날 수 있으며, 정확한 날짜는 산부인과 초음파 검사로 확인해주세요 💕
+          </p>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+    </div>
+  </div>
+
+<script>
+let currentMode = 'lmp';
+
+function selectMode(btn, mode) {
+  document.querySelectorAll('#modeGroup .chip').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  currentMode = mode;
+  document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
+  document.getElementById(mode === 'lmp' ? 'lmpSection' : 'confirmSection').classList.add('active');
+}
+
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+function formatDate(date) {
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  const y = date.getFullYear();
+  const m = date.getMonth() + 1;
+  const d = date.getDate();
+  const w = days[date.getDay()];
+  return `${y}년 ${m}월 ${d}일 (${w}요일)`;
+}
+
+function formatShort(date) {
+  return `${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일`;
+}
+
+function calculate() {
+  let lmpDate;
+  if (currentMode === 'lmp') {
+    const y = parseInt(document.getElementById('lmpYear').value);
+    const m = parseInt(document.getElementById('lmpMonth').value);
+    const d = parseInt(document.getElementById('lmpDay').value);
+    if (!y || !m || !d || m < 1 || m > 12 || d < 1 || d > 31) {
+      alert('마지막 생리 첫날 날짜를 정확하게 입력해주세요!'); return;
+    }
+    lmpDate = new Date(y, m - 1, d);
+  } else {
+    const y = parseInt(document.getElementById('confirmYear').value);
+    const m = parseInt(document.getElementById('confirmMonth').value);
+    const d = parseInt(document.getElementById('confirmDay').value);
+    const weeks = parseInt(document.getElementById('weeksAtConfirm').value);
+    if (!y || !m || !d || m < 1 || m > 12 || d < 1 || d > 31) {
+      alert('임신 확인일 날짜를 정확하게 입력해주세요!'); return;
+    }
+    if (!weeks || weeks < 4 || weeks > 12) {
+      alert('확인 당시 임신 주수를 4~12 사이로 입력해주세요!'); return;
+    }
+    const confirmDate = new Date(y, m - 1, d);
+    lmpDate = addDays(confirmDate, -(weeks * 7));
+  }
+
+  if (isNaN(lmpDate.getTime())) {
+    alert('날짜를 다시 확인해주세요!'); return;
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const dueDate = addDays(lmpDate, 280);
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const daysSinceLmp = Math.floor((today - lmpDate) / msPerDay);
+  const currentWeek = Math.floor(daysSinceLmp / 7);
+  const currentDay = daysSinceLmp % 7;
+  const daysUntilDue = Math.ceil((dueDate - today) / msPerDay);
+
+  let trimester, triClass, triMsg;
+  if (currentWeek < 13) {
+    trimester = '임신 1기 (초기)';
+    triClass = 'tri-1';
+    triMsg = '임신 초기예요! 입덧이 힘드시겠지만 곧 지나갑니다 💕 엽산을 꼭 챙겨드세요!';
+  } else if (currentWeek < 27) {
+    trimester = '임신 2기 (중기)';
+    triClass = 'tri-2';
+    triMsg = '안정기에 접어들었어요 ✨ 태동을 느끼기 시작하는 시기! 태교도 시작해보세요~';
+  } else {
+    trimester = '임신 3기 (말기)';
+    triClass = 'tri-3';
+    triMsg = '거의 다 왔어요! 🎉 분만 준비와 입원가방을 미리 챙겨두세요. 화이팅!';
+  }
+
+  const milestone12 = addDays(lmpDate, 12 * 7);
+  const milestone20 = addDays(lmpDate, 20 * 7);
+  const milestone28 = addDays(lmpDate, 28 * 7);
+  const milestone37 = addDays(lmpDate, 37 * 7);
+
+  const weekDisplay = currentWeek > 0
+    ? `임신 ${currentWeek}주 ${currentDay}일`
+    : '아직 임신 전 또는 임신 직후';
+
+  showAdThenResult(() => {
+    document.getElementById('formSection').style.display = 'none';
+    const sec = document.getElementById('resultSection');
+    sec.style.display = 'block';
+    sec.innerHTML = `
+      <div class="result-card">
+        <span class="result-emoji">🤰</span>
+        <div class="result-type">예상 출산일</div>
+        <div class="due-date-display">${formatDate(dueDate)}</div>
+        <div style="text-align:center;margin-bottom:20px;">
+          <span class="trimester-badge ${triClass}">${trimester}</span>
+        </div>
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:16px 18px;margin-bottom:20px;text-align:left;">
+          <p style="font-size:14px;color:var(--gray2);line-height:1.7;">${triMsg}</p>
+        </div>
+
+        <div class="range-info">
+          <div class="milestone-row">
+            <span>📅 현재 임신 주수</span>
+            <span class="milestone-val">${weekDisplay}</span>
+          </div>
+          <div class="milestone-row">
+            <span>⏳ D-day</span>
+            <span class="milestone-val">${daysUntilDue > 0 ? 'D-' + daysUntilDue : daysUntilDue === 0 ? 'D-day!' : '이미 지났어요'}</span>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:14px;text-align:left;">📌 주요 임신 마일스톤</div>
+          <div class="range-info">
+            <div class="milestone-row">
+              <span>🔬 임신 12주 (1기 마무리)</span>
+              <span class="milestone-val">${formatShort(milestone12)}</span>
+            </div>
+            <div class="milestone-row">
+              <span>💓 임신 20주 (태동 시작)</span>
+              <span class="milestone-val">${formatShort(milestone20)}</span>
+            </div>
+            <div class="milestone-row">
+              <span>🛡️ 임신 28주 (3기 시작)</span>
+              <span class="milestone-val">${formatShort(milestone28)}</span>
+            </div>
+            <div class="milestone-row">
+              <span>🎯 임신 37주 (만삭)</span>
+              <span class="milestone-val">${formatShort(milestone37)}</span>
+            </div>
+            <div class="milestone-row">
+              <span>🎉 예정일</span>
+              <span class="milestone-val">${formatShort(dueDate)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-actions" style="margin-top:28px;">
+          <button class="btn-share" onclick="shareResult()">🔗 결과 공유하기</button>
+          <button class="btn-retry" onclick="location.reload()">🔄 다시 계산</button>
+          <a href="../index.html" class="btn-back">← 포털로</a>
+        </div>
+      </div>`;
+  });
+}
+
+function shareResult() {
+  const text = '우리 아기 예상 출산일 계산해봤어요! 🤰 같이 계산해봐요~';
+  if (navigator.share) navigator.share({ title: '예상 출산일 계산기', text, url: window.location.href });
+  else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>미래의 내 배우자상 | 오늘연구소</title>
+  <meta name="description" content="미래의 내 배우자상 — 나는 어떤 사람과 결혼할까? 5가지 배우자 유형으로 알아보는 이상형 | 오늘연구소">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .spouse-highlight {
+      background: rgba(229,9,20,.08);
+      border: 1px solid rgba(229,9,20,.2);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin: 18px 0;
+      text-align: left;
+    }
+    .spouse-highlight-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--red);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .spouse-highlight ul {
+      list-style: none;
+      padding: 0;
+    }
+    .spouse-highlight ul li {
+      font-size: 14px;
+      color: var(--gray2);
+      padding: 5px 0;
+      padding-left: 18px;
+      position: relative;
+      line-height: 1.6;
+    }
+    .spouse-highlight ul li::before {
+      content: '✦';
+      color: var(--red);
+      position: absolute;
+      left: 0;
+      font-size: 10px;
+      top: 7px;
+    }
+    .warning-box {
+      background: rgba(255,180,0,.07);
+      border: 1px solid rgba(255,180,0,.2);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #ffd060;
+      margin-top: 14px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <!-- INTRO -->
+      <div id="introSection">
+        <div class="test-header">
+          <span class="test-header-emoji">💍</span>
+          <h1>미래의 내 배우자상</h1>
+          <p>내가 진짜 원하는 파트너는 어떤 사람일까?<br>10가지 질문으로 알아보는 나의 이상적인 배우자 유형</p>
+          <div class="test-meta">
+            <span>💍 심리테스트</span>
+            <span>⏱ 약 3분</span>
+            <span>👥 245,678명 참여</span>
+          </div>
+        </div>
+        <div style="text-align:center;">
+          <button class="btn-primary" onclick="startTest()" style="font-size:18px; padding:16px 44px;">
+            ▶ 시작하기
+          </button>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div id="quizSection" style="display:none;">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progressFill" style="width:10%"></div>
+        </div>
+        <div class="progress-text" id="progressText">1 / 10</div>
+        <div class="question-card" id="questionCard">
+          <div class="question-num" id="questionNum">Q1</div>
+          <div class="question-text" id="questionText"></div>
+          <div class="choices" id="choices"></div>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="resultSection" style="display:none;"></div>
+
+    </div>
+  </div>
+
+<script>
+const QUESTIONS = [
+  {
+    text: "주말 오전, 파트너와 함께 있을 때 가장 행복한 장면은?",
+    choices: [
+      { text: "소파에 나란히 누워 각자 책 읽거나 넷플릭스 보기", score: { home: 2 } },
+      { text: "즉흥적으로 드라이브하다 맛집 발견하기", score: { free: 2 } },
+      { text: "카페에서 커피 마시며 깊은 대화 나누기", score: { talk: 2 } },
+      { text: "함께 배낭 싸고 당일치기 여행 떠나기", score: { adventure: 2 } },
+      { text: "파트너가 아침밥 차려주는 걸 기다리기", score: { stable: 2 } },
+    ]
+  },
+  {
+    text: "파트너가 내 고민을 들어줄 때 가장 원하는 반응은?",
+    choices: [
+      { text: "\"힘들었겠다, 고생했어\" 공감만 해줘도 충분해", score: { home: 2, stable: 1 } },
+      { text: "같이 웃어가며 가볍게 털어버리게 도와줬으면", score: { free: 2 } },
+      { text: "원인을 같이 분석하고 해결책을 찾아줬으면", score: { talk: 2 } },
+      { text: "\"그럼 여행 가자!\" 분위기 전환 제안", score: { adventure: 2 } },
+      { text: "조용히 옆에 앉아서 든든하게 버텨줬으면", score: { stable: 2 } },
+    ]
+  },
+  {
+    text: "파트너의 가장 중요한 덕목을 고른다면?",
+    choices: [
+      { text: "경제적으로 안정되고 책임감이 강한 사람", score: { stable: 3 } },
+      { text: "예측할 수 없을 만큼 매력적이고 자유로운 사람", score: { free: 3 } },
+      { text: "집안일을 자연스럽게 나눠 하는 가정적인 사람", score: { home: 3 } },
+      { text: "어떤 주제로든 나를 지적으로 자극하는 사람", score: { talk: 3 } },
+      { text: "나와 함께라면 어디든 떠날 수 있는 모험적인 사람", score: { adventure: 3 } },
+    ]
+  },
+  {
+    text: "연인과의 첫 번째 싸움 후, 어떻게 화해하길 원하나요?",
+    choices: [
+      { text: "서로 충분히 감정 정리 후 차분하게 대화", score: { stable: 2 } },
+      { text: "\"미안해\" 한마디에 바로 털고 웃으며 넘기기", score: { free: 2 } },
+      { text: "집에서 같이 요리하면서 자연스럽게 화해", score: { home: 2 } },
+      { text: "왜 그랬는지 깊게 이야기하고 서로 이해하기", score: { talk: 2 } },
+      { text: "어디든 훌쩍 나가서 걷고 바람 쐬며 풀기", score: { adventure: 2 } },
+    ]
+  },
+  {
+    text: "파트너가 나에게 보내줬으면 하는 메시지는?",
+    choices: [
+      { text: "\"오늘 뭐 먹고 싶어? 내가 만들어줄게\"", score: { home: 3 } },
+      { text: "\"갑자기 어디 가고 싶다, 지금 나올 수 있어?\"", score: { free: 3 } },
+      { text: "\"오늘 읽은 책에서 네 생각 나는 문장 발견했어\"", score: { talk: 3 } },
+      { text: "\"다음 달 여행 일정 짜봤는데 같이 볼래?\"", score: { adventure: 3 } },
+      { text: "\"힘들면 말해. 항상 여기 있을게\"", score: { stable: 3 } },
+    ]
+  },
+  {
+    text: "이상적인 데이트 장소를 고른다면?",
+    choices: [
+      { text: "집에서 영화 보고 배달음식 먹기", score: { home: 2 } },
+      { text: "즉흥적으로 정한 낯선 동네 골목 탐험", score: { free: 2, adventure: 1 } },
+      { text: "분위기 좋은 카페에서 몇 시간 이야기하기", score: { talk: 2 } },
+      { text: "계획 잡아둔 해외 여행지", score: { adventure: 2 } },
+      { text: "조용한 공원 산책 후 단골 맛집", score: { stable: 2 } },
+    ]
+  },
+  {
+    text: "파트너의 친구들과의 관계에서 어떤 모습을 원하나요?",
+    choices: [
+      { text: "내 친구들과도 잘 어울리는 사교적인 사람", score: { free: 2 } },
+      { text: "친구는 많아도 나에게 가장 집중하는 사람", score: { stable: 2 } },
+      { text: "친구와의 시간보다 집에서 나와 함께하길 좋아하는 사람", score: { home: 2 } },
+      { text: "친구들도 지적으로 자극하는 대화를 즐기는 사람", score: { talk: 2 } },
+      { text: "친구들과 같이 여행 다니자고 제안하는 사람", score: { adventure: 2 } },
+    ]
+  },
+  {
+    text: "파트너의 어떤 모습에 가장 설레나요?",
+    choices: [
+      { text: "아무 말 없이 묵묵히 뭔가를 해결해주는 모습", score: { stable: 3 } },
+      { text: "갑자기 특이한 것을 제안하며 눈 빛내는 모습", score: { free: 3 } },
+      { text: "앞치마 두르고 요리하는 살림 잘하는 모습", score: { home: 3 } },
+      { text: "어떤 주제든 깊게 파고드는 몰입력 있는 모습", score: { talk: 3 } },
+      { text: "배낭 메고 지도 들여다보며 다음 여행 계획하는 모습", score: { adventure: 3 } },
+    ]
+  },
+  {
+    text: "10년 후 파트너와 어떤 모습이고 싶나요?",
+    choices: [
+      { text: "서로를 믿고 기댈 수 있는 든든한 파트너십", score: { stable: 2 } },
+      { text: "여전히 서로에게 설레고 새로운 걸 발견하는 관계", score: { free: 2 } },
+      { text: "집이라는 공간에서 함께 쌓아온 소소한 행복", score: { home: 2 } },
+      { text: "10년이 지나도 매일 새로운 이야기를 나누는 관계", score: { talk: 2 } },
+      { text: "지구 곳곳을 함께 누빈 추억이 가득한 커플", score: { adventure: 2 } },
+    ]
+  },
+  {
+    text: "파트너가 절대 하지 않았으면 하는 행동은?",
+    choices: [
+      { text: "경제적으로 무책임하거나 불안정한 모습", score: { stable: 2 } },
+      { text: "모든 게 루틴화되어 전혀 새로운 시도를 안 하는 것", score: { free: 2 } },
+      { text: "집을 엉망으로 하거나 살림에 전혀 관심 없는 것", score: { home: 2 } },
+      { text: "대화를 기피하거나 속을 절대 안 드러내는 것", score: { talk: 2 } },
+      { text: "항상 안전지대만 고집하며 새로운 경험을 거부하는 것", score: { adventure: 2 } },
+    ]
+  },
+];
+
+const RESULTS = {
+  stable: {
+    emoji: '🏔️',
+    type: '든든한 버팀목형',
+    summary: '흔들릴 때마다 잡아주는 반석 같은 파트너',
+    title: '든든한 버팀목형',
+    desc: '당신이 원하는 사람은 화려하진 않아도 절대 흔들리지 않는 사람입니다. 세상이 아무리 뒤집어져도 "내 옆에는 이 사람이 있다"는 확신 하나로 버틸 수 있는 그런 파트너를 원하죠. 경제적으로 안정되고 말보다 행동으로 증명하는 스타일, 그리고 위기의 순간에 가장 먼저 나타나는 사람. 당신에게 연애는 설레는 롤러코스터보다 따뜻하고 안전한 집 같은 느낌이에요.',
+    good: ['힘든 하루를 보내고 집에 왔을 때 파트너가 말없이 밥을 차려준 순간', '중요한 결정 앞에서 흔들릴 때 "난 네가 뭘 선택해도 괜찮아"라는 한마디'],
+    caution: '안정감을 너무 강조하다 보면 관계가 무료하게 느껴질 수도 있어요. 가끔은 먼저 새로운 것을 제안해보세요.',
+  },
+  free: {
+    emoji: '🦋',
+    type: '설레는 자유영혼형',
+    summary: '다음에 무슨 말을 할지 모르는 예측불가 매력의 파트너',
+    title: '설레는 자유영혼형',
+    desc: '당신은 "오늘 뭐 해?"에 항상 같은 대답이 돌아오는 관계가 두렵습니다. 예측할 수 없는 에너지, 갑자기 "지금 바다 가자"고 말하는 충동성, 지루할 틈을 주지 않는 매력. 이런 자유로운 영혼이 당신 곁에 있을 때 당신의 삶 자체가 훨씬 풍요로워진다고 느끼죠. 다소 종잡을 수 없어도 그게 오히려 매일 설레게 만드는 이유입니다.',
+    good: ['아무 계획 없이 시작한 주말이 인생 최고의 날이 됐을 때', '파트너가 완전히 예상 밖의 선물이나 이벤트를 준비했을 때'],
+    caution: '자유로운 사람은 때로 책임감이나 일관성이 부족할 수 있어요. 감정 기복에 흔들리지 않을 내 중심이 필요합니다.',
+  },
+  home: {
+    emoji: '🏠',
+    type: '다정한 살림왕형',
+    summary: '집에 있는 시간이 세상 어디보다 행복해지게 만드는 파트너',
+    title: '다정한 살림왕형',
+    desc: '당신이 원하는 건 화려한 데이트보다 집에서 보내는 소소한 일상입니다. 함께 장보고, 요리하고, 청소하면서 쌓이는 그 잔잔한 행복들이 진짜 사랑이라고 느끼죠. 앞치마 두른 파트너가 주방에서 "다 됐어, 먹으러 와"라는 말 한마디에 세상 행복할 수 있는 사람. 집이라는 공간을 진짜 쉼터로 만들어주는 파트너가 당신의 이상형입니다.',
+    good: ['비 오는 날 파트너가 끓여준 국물 요리 한 그릇', '같이 집 꾸미기 하다가 의견 충돌 후 더 예쁜 집이 완성됐을 때'],
+    caution: '집 중심적인 관계는 외부 자극이 부족해질 수 있어요. 가끔은 밖으로 나가 새로운 경험을 함께 쌓아보세요.',
+  },
+  talk: {
+    emoji: '📚',
+    type: '지적인 토론왕형',
+    summary: '10시간을 이야기해도 할 말이 남아있는 대화가 끊이지 않는 파트너',
+    title: '지적인 토론왕형',
+    desc: '당신에게 최고의 데이트는 카페에서 커피 한 잔을 시켜놓고 세 시간째 이야기를 나누는 것입니다. 어떤 주제든 자기 생각이 있고, 나와 의견이 달라도 논리적으로 설득하려는 파트너. 상대의 지식이 나를 자극하고, 대화 후에 오늘 새로운 걸 배웠다는 느낌이 드는 관계를 꿈꿉니다. 지적 호기심이 맞는 사람과의 연애가 당신을 가장 빛나게 해요.',
+    good: ['오래된 논쟁 주제로 밤새 토론하다 둘 다 생각이 바뀐 새벽', '파트너가 보낸 아티클을 읽고 "이거 완전 내 얘기잖아"라고 느꼈을 때'],
+    caution: '지적인 연결이 너무 강조되면 감정적인 표현이 부족해질 수 있어요. 가끔은 분석 말고 그냥 느끼는 시간도 필요합니다.',
+  },
+  adventure: {
+    emoji: '🌍',
+    type: '열정적인 모험가형',
+    summary: '함께라면 어디든 갈 수 있고 무엇이든 도전하는 파트너',
+    title: '열정적인 모험가형',
+    desc: '당신의 이상적인 관계는 앨범 속 사진들이 모두 낯선 곳에서 찍혀 있는 그런 관계입니다. "이번 달에 어디 갈까?"가 기본 대화인 파트너, 새로운 음식이나 경험 앞에서 절대 겁내지 않는 사람. 함께 있으면 삶이 훨씬 넓어지는 느낌, 내가 혼자였다면 절대 못 했을 것들을 같이 해낸다는 성취감이 이 관계의 핵심입니다.',
+    good: ['처음 방문한 나라에서 길을 잃었는데 오히려 더 재밌어진 순간', '파트너 덕에 처음 도전한 것이 생각보다 너무 잘 됐을 때'],
+    caution: '모험과 자극만 추구하면 정작 일상의 안정감이 부족할 수 있어요. 돌아올 집도 함께 가꿔나가는 균형이 중요합니다.',
+  },
+};
+
+let scores = { stable: 0, free: 0, home: 0, talk: 0, adventure: 0 };
+let current = 0;
+
+function startTest() {
+  document.getElementById('introSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  showQ(0);
+}
+
+function showQ(i) {
+  const q = QUESTIONS[i];
+  document.getElementById('questionNum').textContent = `Q${i + 1}`;
+  document.getElementById('questionText').textContent = q.text;
+  document.getElementById('progressText').textContent = `${i + 1} / ${QUESTIONS.length}`;
+  document.getElementById('progressFill').style.width = `${((i + 1) / QUESTIONS.length) * 100}%`;
+
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D', 'E'];
+  q.choices.forEach((c, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-letter">${letters[idx]}</span>${c.text}`;
+    btn.onclick = () => pick(c.score);
+    choicesEl.appendChild(btn);
+  });
+}
+
+function pick(score) {
+  Object.keys(score).forEach(k => { scores[k] += score[k]; });
+  current++;
+  if (current < QUESTIONS.length) {
+    showQ(current);
+  } else {
+    showAdThenResult(showResult);
+  }
+}
+
+function showResult() {
+  document.getElementById('quizSection').style.display = 'none';
+  const top = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const r = RESULTS[top];
+  const sec = document.getElementById('resultSection');
+  sec.style.display = 'block';
+  sec.innerHTML = `
+    <div class="result-card">
+      <span class="result-emoji">${r.emoji}</span>
+      <div class="result-type">나의 배우자상</div>
+      <div class="result-title">${r.title}</div>
+      <div style="background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.25);border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;color:#ff8a8a;margin:12px 0 20px;">
+        💬 ${r.summary}
+      </div>
+      <div class="result-desc">${r.desc}</div>
+      <div class="spouse-highlight">
+        <div class="spouse-highlight-title">✦ 잘 맞는 상황</div>
+        <ul>
+          ${r.good.map(g => `<li>${g}</li>`).join('')}
+        </ul>
+      </div>
+      <div class="warning-box">⚠️ 주의할 점: ${r.caution}</div>
+      <div class="result-actions" style="margin-top:28px;">
+        <button class="btn-share" onclick="shareResult('${r.title}')">🔗 결과 공유하기</button>
+        <button class="btn-retry" onclick="retryTest()">🔄 다시하기</button>
+        <a href="../index.html" class="btn-back">← 포털로</a>
+      </div>
+    </div>`;
+}
+
+function retryTest() {
+  scores = { stable: 0, free: 0, home: 0, talk: 0, adventure: 0 };
+  current = 0;
+  document.getElementById('resultSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  showQ(0);
+}
+
+function shareResult(type) {
+  const text = `나의 배우자상은 "${type}"! 너는 어떤 유형?`;
+  if (navigator.share) {
+    navigator.share({ title: '미래의 내 배우자상', text, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(() => alert('링크가 복사됐어요! 🎉'));
+  }
+}
+</script>
+</body>
+</html>

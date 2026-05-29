@@ -1,0 +1,295 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>적정 수면 계산기 | 오늘연구소</title>
+  <meta name="description" content="적정 수면 계산기 — 오늘연구소에서 재미있게 즐겨보세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .time-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .sleep-time-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sleep-time-card.best {
+      background: rgba(150,251,196,.08);
+      border-color: rgba(150,251,196,.25);
+    }
+    .sleep-time-label { font-size: 13px; color: var(--gray2); }
+    .sleep-time-value { font-size: 20px; font-weight: 800; color: #96fbc4; }
+    .sleep-time-cycles { font-size: 12px; color: var(--gray3); }
+    .best-badge {
+      background: #96fbc4;
+      color: #141414;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 8px;
+    }
+    .tip-item {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0;
+      font-size: 14px;
+      color: var(--gray2);
+      line-height: 1.6;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .tip-item:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">😴</span>
+          <h1>적정 수면 계산기</h1>
+          <p>수면 사이클 기반으로 최적의<br>취침 시각 또는 기상 시각을 알려드려요!</p>
+          <div class="test-meta">
+            <span>💪 건강</span>
+            <span>⏱ 1분</span>
+            <span>👥 267,445명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-num">계산 방법 선택</div>
+          <div class="chip-group" id="modeGroup" style="margin-bottom:24px;">
+            <button class="chip selected" onclick="selectMode(this,'sleep')">🛌 지금 잠들면?</button>
+            <button class="chip" onclick="selectMode(this,'wake')">⏰ 몇 시에 일어나야?</button>
+          </div>
+
+          <div id="sleepModeSection">
+            <label class="input-label">잠드는 시각</label>
+            <div class="time-row">
+              <div>
+                <select class="input-field" id="sleepHour" style="margin-bottom:0;">
+                  <option value="">시</option>
+                </select>
+              </div>
+              <div>
+                <select class="input-field" id="sleepMin" style="margin-bottom:0;">
+                  <option value="0">00분</option>
+                  <option value="15">15분</option>
+                  <option value="30">30분</option>
+                  <option value="45">45분</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div id="wakeModeSection" style="display:none;">
+            <label class="input-label">일어나야 하는 시각</label>
+            <div class="time-row">
+              <div>
+                <select class="input-field" id="wakeHour" style="margin-bottom:0;">
+                  <option value="">시</option>
+                </select>
+              </div>
+              <div>
+                <select class="input-field" id="wakeMin" style="margin-bottom:0;">
+                  <option value="0">00분</option>
+                  <option value="15">15분</option>
+                  <option value="30">30분</option>
+                  <option value="45">45분</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;margin-top:8px;">
+            😴 최적 수면 시각 계산하기
+          </button>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:16px 18px;margin-top:16px;">
+          <p style="font-size:12px;color:var(--gray3);line-height:1.7;">
+            📌 수면 사이클은 약 <strong style="color:var(--gray2)">90분</strong>이며, 잠드는 데 약 <strong style="color:var(--gray2)">15분</strong>이 걸린다고 가정합니다.<br>
+            개인차가 있으며 이 계산기는 참고용으로만 사용해주세요 😊
+          </p>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+    </div>
+  </div>
+
+<script>
+let currentMode = 'sleep';
+
+// Populate hour dropdowns
+function populateHours() {
+  const hours = ['sleepHour', 'wakeHour'];
+  hours.forEach(id => {
+    const sel = document.getElementById(id);
+    for (let h = 0; h < 24; h++) {
+      const opt = document.createElement('option');
+      opt.value = h;
+      opt.textContent = h + '시';
+      sel.appendChild(opt);
+    }
+  });
+}
+populateHours();
+
+function selectMode(btn, mode) {
+  document.querySelectorAll('#modeGroup .chip').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  currentMode = mode;
+  document.getElementById('sleepModeSection').style.display = mode === 'sleep' ? 'block' : 'none';
+  document.getElementById('wakeModeSection').style.display = mode === 'wake' ? 'block' : 'none';
+}
+
+function formatTime(totalMinutes) {
+  const h = Math.floor(((totalMinutes % 1440) + 1440) % 1440 / 60);
+  const m = ((totalMinutes % 1440) + 1440) % 1440 % 60;
+  const ampm = h < 12 ? '오전' : '오후';
+  const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${ampm} ${h12}:${m.toString().padStart(2,'0')}`;
+}
+
+function calculate() {
+  const FALL_ASLEEP = 15; // 분
+  const CYCLE = 90;       // 분
+
+  let baseMinutes;
+  if (currentMode === 'sleep') {
+    const h = document.getElementById('sleepHour').value;
+    const m = document.getElementById('sleepMin').value;
+    if (h === '') { alert('잠드는 시각을 선택해주세요!'); return; }
+    baseMinutes = parseInt(h) * 60 + parseInt(m) + FALL_ASLEEP;
+  } else {
+    const h = document.getElementById('wakeHour').value;
+    const m = document.getElementById('wakeMin').value;
+    if (h === '') { alert('일어나야 하는 시각을 선택해주세요!'); return; }
+    baseMinutes = parseInt(h) * 60 + parseInt(m);
+  }
+
+  const cycles = [3, 4, 5, 6];
+  const times = cycles.map(c => {
+    if (currentMode === 'sleep') {
+      return { cycles: c, hours: (c * CYCLE / 60).toFixed(1), time: formatTime(baseMinutes + c * CYCLE) };
+    } else {
+      return { cycles: c, hours: (c * CYCLE / 60).toFixed(1), time: formatTime(baseMinutes - c * CYCLE - FALL_ASLEEP) };
+    }
+  });
+
+  const modeLabel = currentMode === 'sleep' ? '최적 기상 시각' : '최적 취침 시각';
+  const inputLabel = currentMode === 'sleep' ? '취침 시각' : '기상 시각';
+  const inputH = currentMode === 'sleep' ? document.getElementById('sleepHour').value : document.getElementById('wakeHour').value;
+  const inputM = currentMode === 'sleep' ? document.getElementById('sleepMin').value : document.getElementById('wakeMin').value;
+  const inputTime = formatTime(parseInt(inputH) * 60 + parseInt(inputM));
+
+  showAdThenResult(() => {
+    document.getElementById('formSection').style.display = 'none';
+    const sec = document.getElementById('resultSection');
+    sec.style.display = 'block';
+
+    const timesHTML = times.map((t, i) => `
+      <div class="sleep-time-card ${i === 1 ? 'best' : ''}">
+        <div>
+          <div class="sleep-time-label">${t.cycles}사이클 (${t.hours}시간)</div>
+          <div class="sleep-time-value">${t.time}${i === 1 ? '<span class="best-badge">추천</span>' : ''}</div>
+        </div>
+        <div class="sleep-time-cycles">${t.cycles * CYCLE / 60}h</div>
+      </div>`).join('');
+
+    sec.innerHTML = `
+      <div class="result-card">
+        <span class="result-emoji">😴</span>
+        <div class="result-type">${modeLabel}</div>
+
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:12px 16px;margin:20px 0 8px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;color:var(--gray3);">${inputLabel}</span>
+          <span style="font-size:16px;font-weight:700;color:#f9f586;">${inputTime}</span>
+        </div>
+
+        <div style="margin-bottom:24px;">
+          ${timesHTML}
+        </div>
+
+        <div class="range-info" style="margin-bottom:24px;">
+          <div class="range-row">
+            <span>👶 영아 (0~3개월) 권장</span>
+            <span class="range-val">14~17시간</span>
+          </div>
+          <div class="range-row">
+            <span>🧒 어린이 (6~13세) 권장</span>
+            <span class="range-val">9~11시간</span>
+          </div>
+          <div class="range-row">
+            <span>🧑 청소년 (14~17세) 권장</span>
+            <span class="range-val">8~10시간</span>
+          </div>
+          <div class="range-row">
+            <span>🧑‍💼 성인 (18~64세) 권장</span>
+            <span class="range-val">7~9시간</span>
+          </div>
+          <div class="range-row">
+            <span>👴 노인 (65세+) 권장</span>
+            <span class="range-val">7~8시간</span>
+          </div>
+        </div>
+
+        <div style="text-align:left;margin-bottom:20px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px;">💡 수면의 질을 높이는 팁</div>
+          <div class="range-info">
+            <div class="tip-item">🌙 잠자리에 들기 1시간 전 스마트폰과 TV를 끄고 블루라이트를 차단해요.</div>
+            <div class="tip-item">🌡️ 침실 온도는 18~20°C, 어둡고 조용한 환경을 유지해요.</div>
+            <div class="tip-item">☕ 오후 2시 이후 카페인 섭취를 피해요. 홍차, 초콜릿도 포함이에요!</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,80,80,.06);border:1px solid rgba(255,80,80,.15);border-radius:12px;padding:16px 18px;margin-bottom:20px;text-align:left;">
+          <div style="font-size:13px;font-weight:700;color:#ff9999;margin-bottom:8px;">⚠️ 수면 부족 시 나타나는 증상</div>
+          <p style="font-size:13px;color:var(--gray2);line-height:1.8;">집중력 저하, 기억력 감소, 면역력 약화, 감정 조절 어려움, 식욕 증가, 피로감 누적. 만성 수면 부족은 심혈관 질환과 당뇨 위험을 높인답니다!</p>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn-share" onclick="shareResult()">🔗 결과 공유하기</button>
+          <button class="btn-retry" onclick="location.reload()">🔄 다시 계산</button>
+          <a href="../index.html" class="btn-back">← 포털로</a>
+        </div>
+      </div>`;
+  });
+}
+
+function shareResult() {
+  const text = '수면 사이클 계산해봤어요! 😴 최적 수면 시간 함께 알아봐요~';
+  if (navigator.share) navigator.share({ title: '적정 수면 계산기', text, url: window.location.href });
+  else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+}
+</script>
+</body>
+</html>

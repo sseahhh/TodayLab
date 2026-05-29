@@ -1,0 +1,234 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>칼로리 소모 계산기 | 오늘연구소</title>
+  <meta name="description" content="칼로리 소모 계산기 — 오늘연구소에서 재미있게 즐겨보세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .calorie-big {
+      font-size: 72px;
+      font-weight: 900;
+      text-align: center;
+      background: linear-gradient(135deg, #ff6b35, #f9f586);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 20px 0 4px;
+    }
+    .food-compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .food-card {
+      background: rgba(255,255,255,.04);
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+    .food-emoji { font-size: 28px; margin-bottom: 4px; }
+    .food-label { font-size: 12px; color: var(--gray3); margin-bottom: 2px; }
+    .food-amount { font-size: 16px; font-weight: 700; color: #f9f586; }
+    .activity-select {
+      width: 100%;
+      background: var(--bg3);
+      border: 1.5px solid rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: var(--white);
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
+    .activity-select:focus { border-color: var(--red); }
+    .activity-select option { background: #242424; }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">🔥</span>
+          <h1>칼로리 소모 계산기</h1>
+          <p>운동 종류와 시간을 입력하면<br>소모 칼로리를 계산해드려요!</p>
+          <div class="test-meta">
+            <span>💪 건강</span>
+            <span>⏱ 1분</span>
+            <span>👥 178,334명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <label class="input-label">체중 (kg)</label>
+          <input type="number" class="input-field" id="weight" placeholder="예: 65" min="20" max="200">
+
+          <label class="input-label">운동 종류</label>
+          <select class="activity-select" id="activity">
+            <option value="">운동을 선택해주세요</option>
+            <option value="3.5">🚶 걷기 (보통 속도)</option>
+            <option value="5.0">🚶‍♂️ 빠르게 걷기</option>
+            <option value="8.0">🏃 달리기</option>
+            <option value="6.0">🚴 자전거</option>
+            <option value="7.0">🏊 수영</option>
+            <option value="6.5">🏔️ 등산</option>
+            <option value="2.5">🧘 요가 / 스트레칭</option>
+            <option value="10.0">🪃 줄넘기</option>
+            <option value="5.5">🏋️ 헬스 / 웨이트</option>
+            <option value="8.5">⚽ 축구 / 농구</option>
+          </select>
+
+          <label class="input-label">운동 시간 (분)</label>
+          <input type="number" class="input-field" id="duration" placeholder="예: 30" min="1" max="480">
+
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;">
+            🔥 칼로리 계산하기
+          </button>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:16px 18px;margin-top:16px;">
+          <p style="font-size:12px;color:var(--gray3);line-height:1.7;">
+            📌 MET(대사당량) 공식 기반 근사치이며, 개인 체력과 운동 강도에 따라 다를 수 있어요.<br>
+            정확한 칼로리는 심박수 기반 기기를 활용해보세요 😊
+          </p>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+    </div>
+  </div>
+
+<script>
+const activityInfo = {
+  '3.5': { name: '걷기 (보통 속도)', emoji: '🚶', tip: '걷기는 관절에 무리가 적은 최고의 운동이에요. 꾸준히 하루 30분씩 걸으면 심혈관 건강에 큰 도움이 됩니다!' },
+  '5.0': { name: '빠르게 걷기', emoji: '🚶‍♂️', tip: '빠른 걷기는 걷기와 달리기의 장점을 모두 가져요. 경사진 길을 이용하면 칼로리 소모가 더 높아집니다.' },
+  '8.0': { name: '달리기', emoji: '🏃', tip: '달리기는 칼로리 소모가 높고 심폐 기능 향상에 탁월해요. 시작할 때는 1km씩 늘려가세요.' },
+  '6.0': { name: '자전거', emoji: '🚴', tip: '자전거는 하체 근육을 단련하고 무릎 부담이 달리기보다 적어요. 야외 라이딩은 기분 전환에도 최고!' },
+  '7.0': { name: '수영', emoji: '🏊', tip: '수영은 전신 운동으로 관절에 부담 없이 근력과 유산소를 동시에 키울 수 있어요.' },
+  '6.5': { name: '등산', emoji: '🏔️', tip: '등산은 유산소와 근력 운동이 결합된 복합 운동이에요. 자연 속에서 스트레스도 함께 태워버려요!' },
+  '2.5': { name: '요가 / 스트레칭', emoji: '🧘', tip: '요가는 유연성과 정신 건강에 탁월해요. 꾸준히 하면 자세 교정과 스트레스 해소에 도움이 됩니다.' },
+  '10.0': { name: '줄넘기', emoji: '🪃', tip: '줄넘기는 짧은 시간에 높은 칼로리를 소모하는 고강도 운동이에요. 집에서 간편하게 할 수 있어요!' },
+  '5.5': { name: '헬스 / 웨이트', emoji: '🏋️', tip: '근력 운동은 근육량을 늘려 기초대사량을 높여요. 운동 후에도 칼로리가 소모되는 "애프터번 효과"가 있습니다!' },
+  '8.5': { name: '축구 / 농구', emoji: '⚽', tip: '구기 종목은 즐거움과 운동 효과를 동시에! 친구들과 함께하면 더 오래 할 수 있어요.' },
+};
+
+function calculate() {
+  const weight = parseFloat(document.getElementById('weight').value);
+  const activityEl = document.getElementById('activity');
+  const met = activityEl.value;
+  const duration = parseFloat(document.getElementById('duration').value);
+
+  if (!weight || weight < 20 || weight > 200) { alert('체중을 정확하게 입력해주세요! (20~200kg)'); return; }
+  if (!met) { alert('운동 종류를 선택해주세요!'); return; }
+  if (!duration || duration < 1 || duration > 480) { alert('운동 시간을 1~480분 사이로 입력해주세요!'); return; }
+
+  const calories = parseFloat(met) * weight * (duration / 60);
+  const info = activityInfo[met];
+
+  // 음식 비교
+  const rice = (calories / 300).toFixed(1);       // 공기밥 1그릇 약 300kcal
+  const americano = (calories / 10).toFixed(0);    // 아메리카노 약 10kcal
+  const chicken = (calories / 200).toFixed(1);     // 치킨 1조각 약 200kcal
+
+  // 주간 목표 (주 5회 기준)
+  const weeklyCalories = Math.round(calories * 5);
+  const weeklyTip = calories >= 300
+    ? `이 운동을 주 5회 하면 한 주에 약 ${weeklyCalories.toLocaleString('ko-KR')}kcal! 꾸준히 하면 한 달에 지방 약 ${(weeklyCalories * 4 / 7700).toFixed(1)}kg 감량 효과를 기대할 수 있어요.`
+    : `운동 시간을 늘리거나 강도를 높여보세요. 일반적으로 하루 300kcal 이상 소모가 체중 관리에 도움이 됩니다.`;
+
+  showAdThenResult(() => {
+    document.getElementById('formSection').style.display = 'none';
+    const sec = document.getElementById('resultSection');
+    sec.style.display = 'block';
+    sec.innerHTML = `
+      <div class="result-card">
+        <span class="result-emoji">${info.emoji}</span>
+        <div class="result-type">${info.name} ${duration}분</div>
+        <div class="calorie-big">${Math.round(calories).toLocaleString('ko-KR')}</div>
+        <div style="text-align:center;color:var(--gray3);font-size:13px;margin-bottom:24px;">kcal 소모</div>
+
+        <div class="range-info" style="margin-bottom:24px;">
+          <div class="range-row">
+            <span>⚖️ 체중</span>
+            <span class="range-val">${weight}kg</span>
+          </div>
+          <div class="range-row">
+            <span>⏱️ 운동 시간</span>
+            <span class="range-val">${duration}분</span>
+          </div>
+          <div class="range-row">
+            <span>⚡ MET (강도)</span>
+            <span class="range-val">${met}</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom:24px;text-align:left;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🍽️ 이만큼 먹은 것과 같아요</div>
+          <div class="food-compare-grid">
+            <div class="food-card">
+              <div class="food-emoji">🍚</div>
+              <div class="food-label">공기밥</div>
+              <div class="food-amount">${rice}그릇</div>
+            </div>
+            <div class="food-card">
+              <div class="food-emoji">☕</div>
+              <div class="food-label">아메리카노</div>
+              <div class="food-amount">${americano}잔</div>
+            </div>
+            <div class="food-card">
+              <div class="food-emoji">🍗</div>
+              <div class="food-label">치킨</div>
+              <div class="food-amount">${chicken}조각</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:16px 18px;margin-bottom:16px;text-align:left;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:8px;">💡 이 운동의 효과</div>
+          <p style="font-size:14px;color:var(--gray2);line-height:1.7;">${info.tip}</p>
+        </div>
+
+        <div style="background:rgba(150,251,196,.06);border:1px solid rgba(150,251,196,.15);border-radius:12px;padding:16px 18px;margin-bottom:20px;text-align:left;">
+          <div style="font-size:14px;font-weight:700;color:#96fbc4;margin-bottom:8px;">🎯 주간 목표 달성 팁</div>
+          <p style="font-size:13px;color:var(--gray2);line-height:1.7;">${weeklyTip}</p>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn-share" onclick="shareResult(${Math.round(calories)}, '${info.name}')">🔗 결과 공유하기</button>
+          <button class="btn-retry" onclick="location.reload()">🔄 다시 계산</button>
+          <a href="../index.html" class="btn-back">← 포털로</a>
+        </div>
+      </div>`;
+  });
+}
+
+function shareResult(cal, activity) {
+  const text = `${activity} ${cal.toLocaleString('ko-KR')}kcal 소모! 🔥 너도 계산해봐~`;
+  if (navigator.share) navigator.share({ title: '칼로리 소모 계산기', text, url: window.location.href });
+  else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>대출 이자 계산기 | 오늘연구소</title>
+  <meta name="description" content="대출 이자 계산기 — 원리금균등·원금균등·만기일시 상환별 월 납입금과 총 이자 계산 | 오늘연구소">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .loan-big {
+      font-size: 52px;
+      font-weight: 900;
+      text-align: center;
+      background: linear-gradient(135deg, #96fbc4, #f9f586);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 20px 0 4px;
+    }
+    .interest-highlight {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ff8c00;
+    }
+    .period-toggle {
+      display: flex;
+      gap: 0;
+      margin-bottom: 16px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1.5px solid rgba(255,255,255,.1);
+    }
+    .period-btn {
+      flex: 1;
+      padding: 12px;
+      background: var(--bg3);
+      border: none;
+      color: var(--gray2);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .2s;
+    }
+    .period-btn.active {
+      background: rgba(229,9,20,.2);
+      color: white;
+    }
+    .amort-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .amort-row {
+      display: grid;
+      grid-template-columns: 0.5fr 1fr 1fr 1fr;
+      gap: 4px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: 13px;
+      min-width: 280px;
+    }
+    .amort-row:last-child { border-bottom: none; }
+    .amort-header { color: var(--gray3); font-size: 12px; }
+    .amort-val { color: var(--gray2); text-align: right; }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+      <div id="formSection">
+        <div class="test-header">
+          <span class="test-header-emoji">🏦</span>
+          <h1>대출 이자 계산기</h1>
+          <p>대출 금액, 이자율, 기간을 입력하면<br>월 상환액과 총 이자를 계산해드려요!</p>
+          <div class="test-meta">
+            <span>💳 금융</span>
+            <span>⏱ 2분</span>
+            <span>👥 234,667명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <label class="input-label">대출 금액 (만원)</label>
+          <input type="number" class="input-field" id="principal" placeholder="예: 10000 (1억원)" min="100" max="1000000">
+
+          <label class="input-label">연 이자율 (%)</label>
+          <input type="number" class="input-field" id="rate" placeholder="예: 4.5" min="0.1" max="30" step="0.01">
+
+          <label class="input-label">대출 기간</label>
+          <div class="period-toggle" style="margin-bottom:8px;">
+            <button class="period-btn active" id="btnYears" onclick="setPeriodMode('years')">년</button>
+            <button class="period-btn" id="btnMonths" onclick="setPeriodMode('months')">개월</button>
+          </div>
+          <input type="number" class="input-field" id="period" placeholder="예: 5 (5년 또는 60개월)">
+
+          <label class="input-label">상환 방식</label>
+          <div class="chip-group" id="repayGroup">
+            <button class="chip selected" onclick="selectRepay(this,'equal')">원리금균등</button>
+            <button class="chip" onclick="selectRepay(this,'principal')">원금균등</button>
+            <button class="chip" onclick="selectRepay(this,'balloon')">만기일시</button>
+          </div>
+
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;margin-top:8px;">
+            🏦 이자 계산하기
+          </button>
+        </div>
+
+        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:16px 18px;margin-top:16px;">
+          <p style="font-size:12px;color:var(--gray3);line-height:1.7;">
+            📌 실제 대출 조건은 <strong style="color:var(--gray2)">금융기관마다 다를 수 있습니다</strong>.<br>
+            중도상환 수수료, 우대금리, 취급 수수료 등이 추가로 발생할 수 있으니 반드시 은행에 확인하세요 😊
+          </p>
+        </div>
+      </div>
+
+      <div id="resultSection" style="display:none;"></div>
+    </div>
+  </div>
+
+<script>
+let periodMode = 'years';
+let repayMethod = 'equal';
+
+function setPeriodMode(mode) {
+  periodMode = mode;
+  document.getElementById('btnYears').classList.toggle('active', mode === 'years');
+  document.getElementById('btnMonths').classList.toggle('active', mode === 'months');
+  document.getElementById('period').placeholder = mode === 'years' ? '예: 5 (5년)' : '예: 60 (60개월)';
+}
+
+function selectRepay(btn, method) {
+  document.querySelectorAll('#repayGroup .chip').forEach(c => c.classList.remove('selected'));
+  btn.classList.add('selected');
+  repayMethod = method;
+}
+
+function calculate() {
+  const P = parseFloat(document.getElementById('principal').value) * 10000;
+  const annualRate = parseFloat(document.getElementById('rate').value);
+  const periodVal = parseFloat(document.getElementById('period').value);
+
+  if (!P || P < 1000000) { alert('대출 금액을 100만원 이상으로 입력해주세요!'); return; }
+  if (!annualRate || annualRate < 0.1 || annualRate > 30) { alert('이자율을 0.1~30% 사이로 입력해주세요!'); return; }
+  if (!periodVal || periodVal < 1) { alert('대출 기간을 입력해주세요!'); return; }
+
+  const n = periodMode === 'years' ? Math.round(periodVal * 12) : Math.round(periodVal);
+  const r = annualRate / 12 / 100;
+
+  let monthlyPayment, totalPayment, totalInterest;
+  let firstMonthPrincipal, firstMonthInterest, firstMonthBalance;
+  let lastMonthPrincipal, lastMonthInterest;
+  let methodLabel, methodDesc;
+
+  if (repayMethod === 'equal') {
+    // 원리금균등
+    methodLabel = '원리금균등';
+    methodDesc = '매달 원금과 이자를 합해 동일한 금액을 납부해요. 예산 계획이 쉬워요.';
+    monthlyPayment = P * (r * Math.pow(1+r, n)) / (Math.pow(1+r, n) - 1);
+    totalPayment = monthlyPayment * n;
+    totalInterest = totalPayment - P;
+
+    // 첫 달
+    firstMonthInterest = P * r;
+    firstMonthPrincipal = monthlyPayment - firstMonthInterest;
+    firstMonthBalance = P - firstMonthPrincipal;
+
+    // 마지막 달
+    let balance = P;
+    for (let i = 0; i < n - 1; i++) {
+      const intPart = balance * r;
+      const prinPart = monthlyPayment - intPart;
+      balance -= prinPart;
+    }
+    lastMonthInterest = balance * r;
+    lastMonthPrincipal = balance;
+
+  } else if (repayMethod === 'principal') {
+    // 원금균등
+    methodLabel = '원금균등';
+    methodDesc = '매달 원금을 균등하게 나눠 납부하고, 이자는 점점 줄어요. 총 이자 부담이 원리금균등보다 적어요.';
+    const monthlyPrincipal = P / n;
+    firstMonthInterest = P * r;
+    firstMonthPrincipal = monthlyPrincipal;
+    firstMonthBalance = P - monthlyPrincipal;
+    monthlyPayment = monthlyPrincipal + firstMonthInterest; // 첫 달 기준
+    totalInterest = 0;
+    for (let i = 0; i < n; i++) {
+      totalInterest += (P - monthlyPrincipal * i) * r;
+    }
+    totalPayment = P + totalInterest;
+    lastMonthPrincipal = monthlyPrincipal;
+    lastMonthInterest = monthlyPrincipal * r; // 마지막 달은 원금만큼만 남음
+
+  } else {
+    // 만기일시
+    methodLabel = '만기일시';
+    methodDesc = '매달 이자만 납부하고 만기에 원금을 한꺼번에 납부해요. 월 부담은 낮지만 총 이자가 가장 많아요.';
+    const monthlyInterestPayment = P * r;
+    monthlyPayment = monthlyInterestPayment;
+    totalInterest = monthlyInterestPayment * n;
+    totalPayment = P + totalInterest;
+    firstMonthInterest = monthlyInterestPayment;
+    firstMonthPrincipal = 0;
+    firstMonthBalance = P;
+    lastMonthInterest = monthlyInterestPayment;
+    lastMonthPrincipal = P;
+  }
+
+  const interestRatio = ((totalInterest / P) * 100).toFixed(1);
+  const yearsDisplay = Math.floor(n / 12) > 0 ? `${Math.floor(n/12)}년 ${n%12 > 0 ? n%12+'개월' : ''}` : `${n}개월`;
+
+  const paymentDisplay = repayMethod === 'principal'
+    ? `${Math.round(P/n + P*r).toLocaleString('ko-KR')}원 ~ ${Math.round(P/n + P/n*r).toLocaleString('ko-KR')}원`
+    : `${Math.round(monthlyPayment).toLocaleString('ko-KR')}원`;
+
+  showAdThenResult(() => {
+    document.getElementById('formSection').style.display = 'none';
+    const sec = document.getElementById('resultSection');
+    sec.style.display = 'block';
+    sec.innerHTML = `
+      <div class="result-card">
+        <span class="result-emoji">🏦</span>
+        <div class="result-type">${methodLabel} 대출 계산 결과</div>
+        <div class="loan-big">${paymentDisplay}</div>
+        <div style="text-align:center;color:var(--gray3);font-size:13px;margin-bottom:8px;">월 상환액</div>
+        <div style="text-align:center;margin-bottom:24px;font-size:13px;color:var(--gray2);">${methodDesc}</div>
+
+        <div class="range-info" style="margin-bottom:20px;">
+          <div class="range-row">
+            <span>🏦 대출 원금</span>
+            <span class="range-val">${P.toLocaleString('ko-KR')}원</span>
+          </div>
+          <div class="range-row">
+            <span>📅 대출 기간</span>
+            <span class="range-val">${yearsDisplay}</span>
+          </div>
+          <div class="range-row">
+            <span>📊 연 이자율</span>
+            <span class="range-val">${annualRate}%</span>
+          </div>
+          <div class="range-row">
+            <span>💵 총 상환액</span>
+            <span class="range-val">${Math.round(totalPayment).toLocaleString('ko-KR')}원</span>
+          </div>
+          <div class="range-row">
+            <span>🔥 총 이자액</span>
+            <span><span class="interest-highlight">${Math.round(totalInterest).toLocaleString('ko-KR')}원</span></span>
+          </div>
+          <div class="range-row">
+            <span>📈 이자 비율</span>
+            <span class="range-val">${interestRatio}%</span>
+          </div>
+        </div>
+
+        <div style="text-align:left;margin-bottom:20px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:10px;">📋 상환 일정 요약</div>
+          <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:10px 14px;">
+            <div class="amort-row">
+              <span class="amort-header">회차</span>
+              <span class="amort-header" style="text-align:right;">납부액</span>
+              <span class="amort-header" style="text-align:right;">이자</span>
+              <span class="amort-header" style="text-align:right;">원금</span>
+            </div>
+            <div class="amort-row">
+              <span style="color:var(--gray2);">1회차</span>
+              <span class="amort-val">${Math.round(firstMonthPrincipal + firstMonthInterest).toLocaleString('ko-KR')}원</span>
+              <span class="amort-val" style="color:#ff9999;">${Math.round(firstMonthInterest).toLocaleString('ko-KR')}원</span>
+              <span class="amort-val">${Math.round(firstMonthPrincipal).toLocaleString('ko-KR')}원</span>
+            </div>
+            <div class="amort-row">
+              <span style="color:var(--gray2);">${n}회차</span>
+              <span class="amort-val">${Math.round(lastMonthPrincipal + lastMonthInterest).toLocaleString('ko-KR')}원</span>
+              <span class="amort-val" style="color:#ff9999;">${Math.round(lastMonthInterest).toLocaleString('ko-KR')}원</span>
+              <span class="amort-val">${Math.round(lastMonthPrincipal).toLocaleString('ko-KR')}원</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn-share" onclick="shareResult(${Math.round(totalInterest)})">🔗 결과 공유하기</button>
+          <button class="btn-retry" onclick="location.reload()">🔄 다시 계산</button>
+          <a href="../index.html" class="btn-back">← 포털로</a>
+        </div>
+      </div>`;
+  });
+}
+
+function shareResult(interest) {
+  const text = `대출 이자 계산해봤더니 총 이자가 ${interest.toLocaleString('ko-KR')}원이나 돼요! 🏦 너도 확인해봐~`;
+  if (navigator.share) navigator.share({ title: '대출 이자 계산기', text, url: window.location.href });
+  else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오늘 점심 추천 | 오늘연구소</title>
+  <meta name="description" content="오늘 점심 추천 — 오늘연구소에서 재미있게 즐겨보세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="../ad.js"></script>
+  <style>
+    .menu-card {
+      background: var(--bg2);
+      border-radius: 16px;
+      padding: 36px 28px;
+      border: 1.5px solid rgba(255,255,255,.06);
+      text-align: center;
+      animation: fadeInUp .5s ease;
+    }
+    .menu-emoji { font-size: 88px; display:block; margin-bottom: 20px; }
+    .menu-name { font-size: 36px; font-weight: 900; margin-bottom: 12px; }
+    .menu-desc { color: var(--gray2); font-size: 15px; line-height: 1.7; margin-bottom: 28px; }
+    .menu-tags { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:32px; }
+    .menu-tag {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--gray2);
+      font-size:13px; padding:5px 14px; border-radius:50px;
+    }
+    .nearby-section { margin-top: 28px; }
+    .nearby-title { font-size:15px; font-weight:700; color:var(--gray2); margin-bottom:14px; text-align:left; }
+    .nearby-list { display:flex; flex-direction:column; gap:10px; }
+    .nearby-item {
+      background: rgba(255,255,255,.04);
+      border-radius:10px; padding:12px 16px;
+      display:flex; justify-content:space-between; align-items:center;
+      font-size:14px;
+    }
+    .nearby-item span:last-child { color:var(--gray3); font-size:13px; }
+    .spin-btn {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white; border: none;
+      padding: 18px 0; width: 100%;
+      border-radius: 12px; font-size: 20px; font-weight: 900;
+      cursor: pointer; transition: var(--transition);
+      font-family: inherit; margin-top: 8px;
+    }
+    .spin-btn:hover { transform: scale(1.02); opacity: .92; }
+    .spinning { animation: spin .6s ease; }
+    @keyframes spin { 0%{transform:scale(.8) rotate(-10deg)} 50%{transform:scale(1.1) rotate(5deg)} 100%{transform:scale(1) rotate(0)} }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="../index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="../index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-wrap">
+    <div class="test-inner">
+
+      <!-- STEP 1: mood -->
+      <div id="step1">
+        <div class="test-header">
+          <span class="test-header-emoji">🍱</span>
+          <h1>오늘 점심 추천</h1>
+          <p>지금 기분에 맞는 점심 메뉴를 찾아드려요!</p>
+          <div class="test-meta">
+            <span>🎲 추천</span>
+            <span>⏱ 1분</span>
+            <span>👥 256,128명 참여</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-num">STEP 1</div>
+          <div class="question-text">지금 기분이 어때요?</div>
+          <div class="chip-group" id="moodGroup">
+            <button class="chip" data-mood="든든">🍖 든든하게 먹고 싶어</button>
+            <button class="chip" data-mood="가벼운">🥗 가볍게 먹고 싶어</button>
+            <button class="chip" data-mood="매콤">🌶 매콤한 게 당겨</button>
+            <button class="chip" data-mood="시원한">❄ 시원한 게 먹고 싶어</button>
+            <button class="chip" data-mood="달콤">🍮 달콤한 게 땡겨</button>
+            <button class="chip" data-mood="아무거나">🎲 아무거나 상관없어</button>
+          </div>
+          <button class="btn-primary" onclick="goStep2()" style="width:100%;padding:15px;font-size:16px;margin-top:4px;">
+            다음 →
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2: cuisine -->
+      <div id="step2" style="display:none;">
+        <div class="question-card">
+          <div class="question-num">STEP 2</div>
+          <div class="question-text">원하는 음식 종류는?</div>
+          <div class="chip-group" id="cuisineGroup">
+            <button class="chip" data-cuisine="한식">🇰🇷 한식</button>
+            <button class="chip" data-cuisine="중식">🥢 중식</button>
+            <button class="chip" data-cuisine="일식">🍣 일식</button>
+            <button class="chip" data-cuisine="양식">🍝 양식</button>
+            <button class="chip" data-cuisine="분식">🍲 분식</button>
+            <button class="chip" data-cuisine="아무거나">🎲 다 좋아</button>
+          </div>
+          <button class="btn-primary" onclick="recommend()" style="width:100%;padding:15px;font-size:16px;margin-top:4px;">
+            🍽 메뉴 추천받기
+          </button>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="resultSection" style="display:none;"></div>
+
+    </div>
+  </div>
+
+<script>
+const MENU = [
+  { name:'삼겹살', emoji:'🥓', mood:['든든','아무거나'], cuisine:['한식','아무거나'], desc:'두툼한 삼겹살을 상추에 싸 먹는 한국의 맛! 쌈장, 마늘, 파채까지 곁들이면 완벽한 점심', tags:['#고기', '#든든', '#한식'] },
+  { name:'된장찌개 정식', emoji:'🍲', mood:['든든','가벼운','아무거나'], cuisine:['한식','아무거나'], desc:'구수한 된장찌개에 반찬이 가득한 정식. 집밥 생각날 때 최고의 선택', tags:['#정식', '#집밥', '#한식'] },
+  { name:'김치찌개', emoji:'🥘', mood:['매콤','든든','아무거나'], cuisine:['한식','아무거나'], desc:'칼칼하게 끓인 돼지고기 김치찌개. 든든한 한 끼로 딱 맞아요', tags:['#매콤', '#칼칼', '#한식'] },
+  { name:'냉면', emoji:'🍜', mood:['시원한','가벼운','아무거나'], cuisine:['한식','아무거나'], desc:'시원하고 쫄깃한 면발! 물냉면과 비빔냉면 중 오늘의 선택은?', tags:['#시원', '#여름', '#한식'] },
+  { name:'짜장면', emoji:'🍝', mood:['든든','아무거나'], cuisine:['중식','아무거나'], desc:'달콤 짭짤한 짜장 소스가 면에 코팅! 군만두 추가하면 더 든든해요', tags:['#중식', '#짜장', '#든든'] },
+  { name:'탕수육', emoji:'🍖', mood:['든든','달콤','아무거나'], cuisine:['중식','아무거나'], desc:'바삭한 탕수육에 달콤 새콤한 소스! 부먹 vs 찍먹, 선택은 당신에게', tags:['#중식', '#탕수육', '#바삭'] },
+  { name:'짬뽕', emoji:'🌶️', mood:['매콤','시원한','아무거나'], cuisine:['중식','아무거나'], desc:'얼큰하고 시원한 국물! 해물 가득한 짬뽕 한 그릇으로 속을 달래요', tags:['#매콤', '#중식', '#얼큰'] },
+  { name:'초밥', emoji:'🍣', mood:['가벼운','아무거나'], cuisine:['일식','아무거나'], desc:'신선한 재료로 만든 초밥. 가볍고 깔끔하게 즐기는 점심', tags:['#일식', '#신선', '#가벼운'] },
+  { name:'라멘', emoji:'🍜', mood:['든든','아무거나'], cuisine:['일식','아무거나'], desc:'진한 국물의 라멘 한 그릇. 돼지뼈 육수의 깊은 맛에 빠져봐요', tags:['#일식', '#라멘', '#든든'] },
+  { name:'돈까스', emoji:'🍛', mood:['든든','아무거나'], cuisine:['일식','아무거나'], desc:'바삭바삭 황금빛 돈까스! 두툼한 고기와 소스의 조화가 일품', tags:['#일식', '#돈까스', '#바삭'] },
+  { name:'파스타', emoji:'🍝', mood:['가벼운','달콤','아무거나'], cuisine:['양식','아무거나'], desc:'크리미한 크림파스타 or 깔끔한 오일파스타. 오늘의 기분에 맞게 선택!', tags:['#양식', '#파스타', '#이탈리안'] },
+  { name:'피자', emoji:'🍕', mood:['든든','달콤','아무거나'], cuisine:['양식','아무거나'], desc:'도우부터 치즈까지 풍성한 피자 한 판! 혼자 다 먹어도 OK', tags:['#양식', '#피자', '#치즈'] },
+  { name:'버거', emoji:'🍔', mood:['든든','아무거나'], cuisine:['양식','아무거나'], desc:'두툼한 패티와 신선한 채소의 조화! 감자튀김과 함께라면 완벽한 세트', tags:['#양식', '#버거', '#든든'] },
+  { name:'떡볶이', emoji:'🌶️', mood:['매콤','달콤','아무거나'], cuisine:['분식','아무거나'], desc:'달콤 매콤한 떡볶이! 튀김이나 순대와 함께 먹으면 더 맛있어요', tags:['#분식', '#매콤', '#떡볶이'] },
+  { name:'순대국밥', emoji:'🥣', mood:['든든','아무거나'], cuisine:['분식','한식','아무거나'], desc:'뜨끈한 국밥 한 그릇으로 속을 든든하게! 새우젓으로 간 맞추는 것 잊지 마요', tags:['#국밥', '#든든', '#한식'] },
+  { name:'샌드위치 & 샐러드', emoji:'🥗', mood:['가벼운','아무거나'], cuisine:['양식','아무거나'], desc:'신선한 채소와 단백질로 가득 찬 건강한 점심! 다이어트 중이라면 이걸로', tags:['#건강', '#다이어트', '#가벼운'] },
+  { name:'김밥', emoji:'🍙', mood:['가벼운','아무거나'], cuisine:['분식','한식','아무거나'], desc:'간편하고 든든한 김밥! 참치, 불고기, 야채 등 다양한 선택이 있어요', tags:['#분식', '#간편', '#김밥'] },
+  { name:'설렁탕', emoji:'🥛', mood:['가벼운','시원한','아무거나'], cuisine:['한식','아무거나'], desc:'뽀얗고 깊은 설렁탕 국물. 소면이나 밥을 넣어 든든하게 즐겨요', tags:['#한식', '#국밥', '#설렁탕'] },
+];
+
+let selectedMood = null;
+let selectedCuisine = null;
+
+document.querySelectorAll('#moodGroup .chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#moodGroup .chip').forEach(c => c.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedMood = btn.dataset.mood;
+  });
+});
+
+function goStep2() {
+  if (!selectedMood) { alert('기분을 선택해주세요! 😊'); return; }
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('step2').style.display = 'block';
+  document.querySelectorAll('#cuisineGroup .chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#cuisineGroup .chip').forEach(c => c.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedCuisine = btn.dataset.cuisine;
+    });
+  });
+}
+
+function recommend() {
+  if (!selectedCuisine) { alert('음식 종류를 선택해주세요! 😊'); return; }
+  let pool = MENU.filter(m =>
+    (m.mood.includes(selectedMood) || selectedMood === '아무거나') &&
+    (m.cuisine.some(c => c === selectedCuisine || c === '아무거나' || selectedCuisine === '아무거나'))
+  );
+  if (!pool.length) pool = MENU;
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  showAdThenResult(() => showResult(pick));
+}
+
+function showResult(item) {
+  document.getElementById('step2').style.display = 'none';
+  const sec = document.getElementById('resultSection');
+  sec.style.display = 'block';
+
+  const restaurants = [
+    { name: '근처 식당 A', info: '도보 3분 · ⭐ 4.5' },
+    { name: '근처 식당 B', info: '도보 5분 · ⭐ 4.3' },
+    { name: '배달 주문 가능', info: '30~40분 예상' },
+  ];
+
+  sec.innerHTML = `
+    <div class="menu-card">
+      <span class="menu-emoji">${item.emoji}</span>
+      <div style="font-size:13px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:8px;">오늘의 추천 메뉴</div>
+      <div class="menu-name">${item.name}</div>
+      <div class="menu-desc">${item.desc}</div>
+      <div class="menu-tags">${item.tags.map(t => `<span class="menu-tag">${t}</span>`).join('')}</div>
+
+      <div class="nearby-section">
+        <div class="nearby-title">🗺 주변에서 먹을 수 있어요</div>
+        <div class="nearby-list">
+          ${restaurants.map(r => `
+            <div class="nearby-item">
+              <span>${r.name}</span>
+              <span>${r.info}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="result-actions" style="margin-top:28px;">
+        <button class="spin-btn" onclick="reRoll()">🎲 다른 메뉴 추천</button>
+      </div>
+      <div class="result-actions" style="margin-top:14px;">
+        <button class="btn-share" onclick="shareResult('${item.name}')">🔗 공유하기</button>
+        <button class="btn-retry" onclick="location.reload()">🔄 처음부터</button>
+        <a href="../index.html" class="btn-back">← 포털로</a>
+      </div>
+    </div>`;
+}
+
+function reRoll() {
+  let pool = MENU.filter(m =>
+    (m.mood.includes(selectedMood) || selectedMood === '아무거나') &&
+    (m.cuisine.some(c => c === selectedCuisine || c === '아무거나' || selectedCuisine === '아무거나'))
+  );
+  if (!pool.length) pool = MENU;
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  showResult(pick);
+  setTimeout(() => document.querySelector('.menu-emoji')?.classList.add('spinning'), 100);
+  setTimeout(() => document.querySelector('.menu-emoji')?.classList.remove('spinning'), 700);
+}
+
+function shareResult(name) {
+  const text = `오늘 점심은 ${name}! 너도 뭐 먹을지 고민이라면? 🍱`;
+  if (navigator.share) {
+    navigator.share({ title: '오늘 점심 추천', text, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(text).then(() => alert('복사됐어요! 🎉'));
+  }
+}
+</script>
+</body>
+</html>

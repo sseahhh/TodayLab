@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>사이트 소개 | 오늘연구소</title>
+  <meta name="description" content="오늘연구소 소개 — 심리테스트·운세·계산기를 한곳에 모아 일상에 작은 즐거움을 드리는 포털입니다">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    .about-wrap {
+      min-height: 100vh;
+      background: var(--bg);
+      padding: calc(var(--nav-h) + 48px) 20px 80px;
+    }
+    .about-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .about-hero {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .about-hero-emoji { font-size: 64px; display: block; margin-bottom: 20px; }
+    .about-hero h1 { font-size: 36px; font-weight: 900; margin-bottom: 14px; }
+    .about-hero p { font-size: 16px; color: var(--gray2); line-height: 1.8; }
+    .about-section {
+      background: var(--bg2);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      border: 1.5px solid rgba(255,255,255,.06);
+    }
+    .about-section h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .about-section p, .about-section li {
+      font-size: 15px;
+      color: var(--gray2);
+      line-height: 1.9;
+    }
+    .about-section ul {
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+    .about-section li { margin-bottom: 6px; }
+    .category-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .category-pill {
+      background: rgba(229,9,20,.12);
+      border: 1px solid rgba(229,9,20,.25);
+      color: #ff6b6b;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 50px;
+    }
+    .disclaimer-box {
+      background: rgba(255,255,255,.03);
+      border-left: 3px solid var(--red);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--gray3);
+      line-height: 1.7;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 48px;
+      font-size: 13px;
+    }
+    .footer-links a { color: var(--gray3); text-decoration: none; }
+    .footer-links a:hover { color: var(--gray2); }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="about-wrap">
+    <div class="about-inner">
+
+      <div class="about-hero">
+        <span class="about-hero-emoji">🔬</span>
+        <h1>오늘연구소 소개</h1>
+        <p>재미있는 심리테스트·운세·계산기를 한곳에 모아<br>일상에 작은 즐거움을 드리는 포털입니다.</p>
+      </div>
+
+      <div class="about-section">
+        <h2>💡 운영 목적</h2>
+        <p>오늘연구소는 <strong style="color:var(--gray1)">재미와 흥미를 위한 비공식 테스트 포털</strong>입니다. 심리테스트, 운세, 육아·생활·금융 계산기 등 다양한 콘텐츠를 통해 일상에서 가볍게 즐길 수 있는 경험을 제공합니다.</p>
+        <p style="margin-top:12px;">모든 결과는 오락 목적으로만 제작되었으며, 전문적인 심리 상담·의료·금융 조언을 대체하지 않습니다.</p>
+      </div>
+
+      <div class="about-section">
+        <h2>🗂️ 제공 콘텐츠</h2>
+        <p>현재 아래 카테고리의 테스트 및 계산기를 제공하고 있습니다.</p>
+        <div class="category-pills">
+          <span class="category-pill">🔮 운세</span>
+          <span class="category-pill">🧠 심리</span>
+          <span class="category-pill">💕 연애</span>
+          <span class="category-pill">👶 육아</span>
+          <span class="category-pill">💪 건강</span>
+          <span class="category-pill">💰 금융</span>
+          <span class="category-pill">🎲 추천</span>
+        </div>
+        <ul style="margin-top:18px;">
+          <li>혈액형 궁합, 별자리 운세, 타로, 사주 간이 분석 등 운세 콘텐츠</li>
+          <li>MBTI 간이, 전생 테스트, 배우자상, 스트레스 지수 등 심리 콘텐츠</li>
+          <li>월급 실수령액, 대출 이자, 복리 적금 등 금융 계산기</li>
+          <li>BMI, 칼로리 소모, 적정 수면, 아이 발달 체크 등 건강·육아 계산기</li>
+        </ul>
+      </div>
+
+      <div class="about-section">
+        <h2>📢 광고 운영 안내</h2>
+        <p>오늘연구소는 광고 수익을 통해 운영됩니다. 테스트 결과 확인 전 짧은 광고가 표시될 수 있으며, Google AdSense 또는 Kakao Adfit 광고가 게재됩니다. 광고 내용은 오늘연구소와 무관합니다.</p>
+      </div>
+
+      <div class="about-section">
+        <h2>⚠️ 이용 시 주의사항</h2>
+        <div class="disclaimer-box">
+          본 사이트의 모든 테스트 결과는 <strong>순수하게 재미 목적</strong>으로 제작되었습니다. 운세·심리 결과를 실제 의사결정에 활용하지 마세요. 금융 계산기 결과는 참고용 근사치이며, 실제 금융 거래 전 전문가와 상담하시기 바랍니다.
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <a href="contact.html">문의</a>
+        <a href="privacy.html">개인정보처리방침</a>
+        <a href="index.html">홈으로</a>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

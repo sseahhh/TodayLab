@@ -1,0 +1,389 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>핫딜공유방 🔥 | 오늘연구소</title>
+  <meta name="description" content="오늘연구소 핫딜공유방 — 최신 핫딜 정보를 실시간으로 공유하고 확인하세요">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    .board-wrap { min-height: 100vh; background: var(--bg); padding: calc(var(--nav-h) + 32px) 20px 80px; }
+    .board-inner { max-width: 860px; margin: 0 auto; }
+    .board-header { margin-bottom: 28px; }
+    .board-header h1 { font-size: 26px; font-weight: 900; margin-bottom: 6px; }
+    .board-header p { font-size: 14px; color: var(--gray3); }
+    .board-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .cat-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .cat-chip {
+      padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 600;
+      border: 1.5px solid rgba(255,255,255,.1); background: var(--bg2);
+      color: var(--gray2); cursor: pointer; transition: all .2s;
+    }
+    .cat-chip.active, .cat-chip:hover { background: var(--red); border-color: var(--red); color: #fff; }
+    .btn-write {
+      padding: 10px 22px; background: var(--red); color: #fff; border: none;
+      border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer;
+      font-family: inherit; white-space: nowrap; transition: opacity .2s;
+    }
+    .btn-write:hover { opacity: .85; }
+    .post-list { display: flex; flex-direction: column; gap: 10px; }
+    .post-item {
+      background: var(--bg2); border-radius: 12px; padding: 16px 20px;
+      border: 1.5px solid rgba(255,255,255,.06);
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 12px; cursor: pointer; transition: border-color .2s;
+      text-decoration: none; color: inherit;
+    }
+    .post-item:hover { border-color: rgba(229,9,20,.35); }
+    .post-left { min-width: 0; }
+    .post-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+    .post-cat {
+      font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+      white-space: nowrap;
+    }
+    .post-title { font-size: 16px; font-weight: 700; line-height: 1.4; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .post-price { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .price-sale { font-size: 20px; font-weight: 900; color: #ff4d4d; }
+    .price-orig { font-size: 13px; color: var(--gray3); text-decoration: line-through; }
+    .price-dc { font-size: 13px; font-weight: 700; color: #46d369; }
+    .post-meta { display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--gray3); flex-wrap: wrap; }
+    .post-store { color: var(--gray2); font-weight: 600; }
+    .post-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; }
+    .like-btn {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 2px; background: none; border: 1.5px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: 8px 12px; cursor: pointer;
+      color: var(--gray3); font-size: 11px; font-weight: 600;
+      transition: all .2s; font-family: inherit; min-width: 48px;
+    }
+    .like-btn:hover, .like-btn.liked { border-color: #ff4d4d; color: #ff4d4d; }
+    .like-btn .like-icon { font-size: 18px; }
+    .post-date { font-size: 11px; color: var(--gray3); text-align: right; }
+    .new-badge {
+      font-size: 10px; font-weight: 800; color: #ff4d4d;
+      background: rgba(255,77,77,.12); border: 1px solid rgba(255,77,77,.3);
+      padding: 1px 6px; border-radius: 4px;
+    }
+    .hot-badge {
+      font-size: 10px; font-weight: 800; color: #ffd700;
+      background: rgba(255,215,0,.1); border: 1px solid rgba(255,215,0,.25);
+      padding: 1px 6px; border-radius: 4px;
+    }
+    .empty-msg { text-align: center; padding: 60px 0; color: var(--gray3); font-size: 15px; }
+    .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 28px; }
+    .page-btn {
+      width: 36px; height: 36px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,.1);
+      background: var(--bg2); color: var(--gray2); font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: all .2s;
+    }
+    .page-btn.active, .page-btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
+    /* Modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.8);
+      z-index: 2000; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--bg2); border-radius: 16px; padding: 28px;
+      width: 100%; max-width: 540px; border: 1.5px solid rgba(255,255,255,.1);
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-box h2 { font-size: 20px; font-weight: 800; margin-bottom: 22px; }
+    .modal-label { font-size: 13px; font-weight: 600; color: var(--gray2); margin-bottom: 6px; display: block; }
+    .modal-input, .modal-select, .modal-textarea {
+      width: 100%; background: var(--bg3); border: 1.5px solid rgba(255,255,255,.1);
+      border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 14px;
+      font-family: inherit; outline: none; margin-bottom: 14px;
+    }
+    .modal-input:focus, .modal-select:focus, .modal-textarea:focus { border-color: var(--red); }
+    .modal-select option { background: #242424; }
+    .modal-textarea { min-height: 100px; resize: vertical; }
+    .modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 6px; }
+    .btn-submit {
+      flex: 1; padding: 13px; background: var(--red); color: #fff; border: none;
+      border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
+    }
+    .btn-submit:hover { opacity: .85; }
+    .btn-cancel {
+      padding: 13px 22px; background: var(--bg3); color: var(--gray2);
+      border: 1.5px solid rgba(255,255,255,.1); border-radius: 8px;
+      font-size: 14px; cursor: pointer; font-family: inherit;
+    }
+    @media (max-width: 600px) {
+      .post-item { grid-template-columns: 1fr; }
+      .post-right { flex-direction: row; align-items: center; margin-top: 8px; }
+      .modal-row { grid-template-columns: 1fr; }
+      .price-sale { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar scrolled">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="index.html" class="logo">
+          <span class="logo-emoji">🔬</span>
+          <span class="logo-text">오늘연구소</span>
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="board-free.html" style="color:var(--gray2);text-decoration:none;font-size:13px;margin-right:16px;">💬 자유게시판</a>
+        <a href="index.html" class="btn-back">← 포털로 돌아가기</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="board-wrap">
+    <div class="board-inner">
+      <div class="board-header">
+        <h1>🔥 핫딜공유방</h1>
+        <p>좋은 딜을 발견했다면 함께 나눠요! 실시간 최저가 · 할인 정보 공유</p>
+      </div>
+
+      <div class="board-toolbar">
+        <div class="cat-chips" id="catChips">
+          <button class="cat-chip active" data-cat="전체">전체</button>
+          <button class="cat-chip" data-cat="식품/음료">🍱 식품/음료</button>
+          <button class="cat-chip" data-cat="패션/뷰티">👗 패션/뷰티</button>
+          <button class="cat-chip" data-cat="전자기기">📱 전자기기</button>
+          <button class="cat-chip" data-cat="생활용품">🏠 생활용품</button>
+          <button class="cat-chip" data-cat="육아">👶 육아</button>
+          <button class="cat-chip" data-cat="기타">📦 기타</button>
+        </div>
+        <button class="btn-write" onclick="openModal()">✏️ 딜 공유하기</button>
+      </div>
+
+      <div class="post-list" id="postList"></div>
+      <div class="empty-msg" id="emptyMsg" style="display:none;">등록된 딜이 없습니다 😥</div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+
+  <!-- Write Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <h2>✏️ 핫딜 공유하기</h2>
+      <label class="modal-label">제목 *</label>
+      <input class="modal-input" id="mTitle" placeholder="예: 쿠팡 에어팟 프로 역대급 할인!">
+      <label class="modal-label">카테고리</label>
+      <select class="modal-select" id="mCat">
+        <option>식품/음료</option>
+        <option>패션/뷰티</option>
+        <option>전자기기</option>
+        <option>생활용품</option>
+        <option>육아</option>
+        <option>기타</option>
+      </select>
+      <div class="modal-row">
+        <div>
+          <label class="modal-label">원가 (원)</label>
+          <input class="modal-input" id="mOrigPrice" type="number" placeholder="199000">
+        </div>
+        <div>
+          <label class="modal-label">할인가 (원) *</label>
+          <input class="modal-input" id="mSalePrice" type="number" placeholder="149000">
+        </div>
+      </div>
+      <label class="modal-label">쇼핑몰</label>
+      <input class="modal-input" id="mStore" placeholder="예: 쿠팡, 올리브영, G마켓">
+      <label class="modal-label">딜 링크 (선택)</label>
+      <input class="modal-input" id="mLink" placeholder="https://...">
+      <label class="modal-label">설명 (선택)</label>
+      <textarea class="modal-textarea" id="mDesc" placeholder="딜 상세 내용, 유의사항 등을 적어주세요"></textarea>
+      <div class="modal-actions">
+        <button class="btn-submit" onclick="submitPost()">공유하기</button>
+        <button class="btn-cancel" onclick="closeModal()">취소</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const CAT_COLORS = {
+  '식품/음료': { bg: 'rgba(255,171,0,.15)', color: '#ffab00' },
+  '패션/뷰티': { bg: 'rgba(240,98,146,.15)', color: '#f06292' },
+  '전자기기':  { bg: 'rgba(79,172,254,.15)', color: '#4facfe' },
+  '생활용품':  { bg: 'rgba(67,233,123,.15)', color: '#43e97b' },
+  '육아':      { bg: 'rgba(252,182,159,.15)', color: '#fcb69f' },
+  '기타':      { bg: 'rgba(255,255,255,.08)', color: '#b3b3b3' },
+};
+
+const SAMPLE = [
+  { id:1, title:'GS25 삼각김밥 + 컵라면 1+1 행사 중', cat:'식품/음료', origPrice:2400, salePrice:1200, store:'GS25', link:'', desc:'행사기간 한정. 매장 확인 필수.', views:1423, likes:187, date:'2025-06-25', isHot:true },
+  { id:2, title:'에어팟 4세대 최저가 경신 — 쿠팡 로켓배송', cat:'전자기기', origPrice:219000, salePrice:161000, store:'쿠팡', link:'', desc:'쿠팡 단독 특가. 재고 소진 시 종료.', views:3821, likes:542, date:'2025-06-25', isHot:true },
+  { id:3, title:'올리브영 선크림 50% 타임특가 (오늘 자정 마감)', cat:'패션/뷰티', origPrice:28000, salePrice:14000, store:'올리브영', link:'', desc:'인기 선크림 3종. 자정에 종료 예정.', views:2145, likes:321, date:'2025-06-24', isHot:true },
+  { id:4, title:'다이슨 청소기 공식몰 여름 특가', cat:'생활용품', origPrice:699000, salePrice:489000, store:'다이슨 공식몰', link:'', desc:'V12 한정 수량 할인. 멤버십 추가 5% 혜택.', views:1876, likes:234, date:'2025-06-24', isHot:false },
+  { id:5, title:'카카오페이 결제 시 스벅 아메리카노 무료', cat:'식품/음료', origPrice:5100, salePrice:0, store:'스타벅스', link:'', desc:'선착순 10만명. 카카오페이 앱에서 쿠폰 발급.', views:5201, likes:893, date:'2025-06-23', isHot:true },
+  { id:6, title:'나이키 공식 사이트 여름 세일 최대 40%', cat:'패션/뷰티', origPrice:129000, salePrice:77400, store:'나이키 공식', link:'', desc:'러닝화·트레이닝화 대다수 포함. 7/2까지.', views:2341, likes:312, date:'2025-06-23', isHot:false },
+  { id:7, title:'마켓컬리 첫 주문 3만원 쿠폰', cat:'식품/음료', origPrice:30000, salePrice:0, store:'마켓컬리', link:'', desc:'신규 가입 후 3만원 이상 주문 시 즉시 할인.', views:987, likes:145, date:'2025-06-22', isHot:false },
+  { id:8, title:'삼성 갤럭시 버즈3 프로 쿠팡 특가', cat:'전자기기', origPrice:249000, salePrice:169000, store:'쿠팡', link:'', desc:'공식 박스. 로켓배송 당일 도착 가능.', views:1654, likes:198, date:'2025-06-22', isHot:false },
+  { id:9, title:'이케아 여름 클리어런스 최대 50%', cat:'생활용품', origPrice:0, salePrice:0, store:'이케아', link:'', desc:'매장 및 온라인 동시 진행. 조명·가구 포함.', views:1123, likes:167, date:'2025-06-21', isHot:false },
+  { id:10, title:'쿠팡 기저귀 5팩 묶음 최저가', cat:'육아', origPrice:62000, salePrice:41000, store:'쿠팡', link:'', desc:'하기스 신생아·S 사이즈 해당. 와우회원 추가 할인.', views:2876, likes:445, date:'2025-06-21', isHot:false },
+  { id:11, title:'지마켓 슈퍼딜 — 닌텐도 스위치 오리지널 30%', cat:'전자기기', origPrice:359000, salePrice:251300, store:'G마켓', link:'', desc:'주말 한정. 구성품 정품 보증.', views:4312, likes:678, date:'2025-06-20', isHot:true },
+  { id:12, title:'CGV 주중 2인 1만8천원 패키지 (팝콘 포함)', cat:'기타', origPrice:32000, salePrice:18000, store:'CGV', link:'', desc:'월~목 상영관 한정. CGV 앱 예매 시 적용.', views:1876, likes:289, date:'2025-06-20', isHot:false },
+];
+
+const STORE_KEY = 'ft_hotdeals';
+let currentCat = '전체';
+let currentPage = 1;
+const PER_PAGE = 8;
+
+function getPosts() {
+  const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+  return saved || SAMPLE;
+}
+function savePosts(posts) { localStorage.setItem(STORE_KEY, JSON.stringify(posts)); }
+
+function getFiltered() {
+  const posts = getPosts();
+  return currentCat === '전체' ? posts : posts.filter(p => p.cat === currentCat);
+}
+
+function formatPrice(n) { return n ? n.toLocaleString('ko-KR') + '원' : '-'; }
+function calcDc(orig, sale) {
+  if (!orig || !sale) return null;
+  return Math.round((1 - sale / orig) * 100);
+}
+function timeAgo(dateStr) {
+  const d = new Date(dateStr), now = new Date();
+  const diff = Math.floor((now - d) / 86400000);
+  if (diff === 0) return '오늘';
+  if (diff === 1) return '1일 전';
+  if (diff < 7) return diff + '일 전';
+  return dateStr.slice(5).replace('-', '/');
+}
+
+function renderPosts() {
+  const list = getFiltered();
+  const total = list.length;
+  const start = (currentPage - 1) * PER_PAGE;
+  const page  = list.slice(start, start + PER_PAGE);
+
+  const el = document.getElementById('postList');
+  const empty = document.getElementById('emptyMsg');
+  el.innerHTML = '';
+  empty.style.display = total ? 'none' : 'block';
+
+  page.forEach(p => {
+    const dc = calcDc(p.origPrice, p.salePrice);
+    const col = CAT_COLORS[p.cat] || CAT_COLORS['기타'];
+    const item = document.createElement('div');
+    item.className = 'post-item';
+    item.innerHTML = `
+      <div class="post-left">
+        <div class="post-top">
+          <span class="post-cat" style="background:${col.bg};color:${col.color}">${p.cat}</span>
+          ${p.isHot ? '<span class="hot-badge">🔥 HOT</span>' : ''}
+          ${p.id > 100 ? '<span class="new-badge">NEW</span>' : ''}
+        </div>
+        <div class="post-title">${p.title}</div>
+        <div class="post-price">
+          <span class="price-sale">${p.salePrice ? formatPrice(p.salePrice) : '무료/혜택'}</span>
+          ${p.origPrice ? `<span class="price-orig">${formatPrice(p.origPrice)}</span>` : ''}
+          ${dc ? `<span class="price-dc">↓${dc}%</span>` : ''}
+        </div>
+        <div class="post-meta">
+          <span class="post-store">🏪 ${p.store}</span>
+          <span>👁 ${p.views.toLocaleString()}</span>
+          <span>${timeAgo(p.date)}</span>
+          ${p.link ? `<a href="${p.link}" target="_blank" rel="noopener" style="color:#4facfe;font-size:12px;" onclick="event.stopPropagation()">🔗 링크</a>` : ''}
+        </div>
+      </div>
+      <div class="post-right">
+        <button class="like-btn ${p.liked ? 'liked' : ''}" onclick="toggleLike(${p.id}, event)">
+          <span class="like-icon">🔥</span>
+          <span>${p.likes}</span>
+        </button>
+        <span class="post-date">${p.date.slice(5).replace('-', '/')}</span>
+      </div>`;
+    el.appendChild(item);
+  });
+
+  renderPagination(total);
+}
+
+function renderPagination(total) {
+  const pages = Math.ceil(total / PER_PAGE);
+  const el = document.getElementById('pagination');
+  el.innerHTML = '';
+  for (let i = 1; i <= pages; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+    btn.textContent = i;
+    btn.onclick = () => { currentPage = i; renderPosts(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    el.appendChild(btn);
+  }
+}
+
+function toggleLike(id, e) {
+  e.stopPropagation();
+  const posts = getPosts();
+  const p = posts.find(x => x.id === id);
+  if (!p) return;
+  p.liked = !p.liked;
+  p.likes += p.liked ? 1 : -1;
+  savePosts(posts);
+  renderPosts();
+}
+
+// Category filter
+document.getElementById('catChips').addEventListener('click', e => {
+  const chip = e.target.closest('.cat-chip');
+  if (!chip) return;
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  currentCat = chip.dataset.cat;
+  currentPage = 1;
+  renderPosts();
+});
+
+// Modal
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  ['mTitle','mOrigPrice','mSalePrice','mStore','mLink','mDesc'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('mCat').selectedIndex = 0;
+}
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+});
+
+function submitPost() {
+  const title = document.getElementById('mTitle').value.trim();
+  const salePrice = parseInt(document.getElementById('mSalePrice').value) || 0;
+  if (!title) { alert('제목을 입력해주세요!'); return; }
+  const posts = getPosts();
+  posts.unshift({
+    id: Date.now(),
+    title,
+    cat: document.getElementById('mCat').value,
+    origPrice: parseInt(document.getElementById('mOrigPrice').value) || 0,
+    salePrice,
+    store: document.getElementById('mStore').value.trim() || '미입력',
+    link: document.getElementById('mLink').value.trim(),
+    desc: document.getElementById('mDesc').value.trim(),
+    views: 1, likes: 0, liked: false,
+    date: new Date().toISOString().slice(0, 10),
+    isHot: false,
+  });
+  savePosts(posts);
+  closeModal();
+  currentCat = '전체';
+  document.querySelector('.cat-chip[data-cat="전체"]').click();
+  alert('딜이 공유됐어요! 🔥');
+}
+
+// Init
+renderPosts();
+</script>
+</body>
+</html>
