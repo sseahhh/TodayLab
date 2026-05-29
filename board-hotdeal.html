@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -31,29 +31,50 @@
       font-family: inherit; white-space: nowrap; transition: opacity .2s;
     }
     .btn-write:hover { opacity: .85; }
+
+    /* Post card */
     .post-list { display: flex; flex-direction: column; gap: 10px; }
     .post-item {
-      background: var(--bg2); border-radius: 12px; padding: 16px 20px;
+      background: var(--bg2); border-radius: 12px;
       border: 1.5px solid rgba(255,255,255,.06);
-      display: grid; grid-template-columns: 1fr auto;
-      gap: 12px; cursor: pointer; transition: border-color .2s;
-      text-decoration: none; color: inherit;
+      display: grid; grid-template-columns: auto 1fr auto;
+      gap: 0; overflow: hidden; transition: border-color .2s;
     }
     .post-item:hover { border-color: rgba(229,9,20,.35); }
-    .post-left { min-width: 0; }
+    .post-thumb {
+      width: 120px; min-height: 100px; object-fit: cover;
+      display: block; flex-shrink: 0;
+    }
+    .post-thumb-empty {
+      width: 120px; min-height: 100px; background: var(--bg3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; flex-shrink: 0;
+    }
+    .post-body { padding: 14px 16px; min-width: 0; }
     .post-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
     .post-cat {
-      font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
-      white-space: nowrap;
+      font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; white-space: nowrap;
     }
-    .post-title { font-size: 16px; font-weight: 700; line-height: 1.4; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .post-price { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-    .price-sale { font-size: 20px; font-weight: 900; color: #ff4d4d; }
-    .price-orig { font-size: 13px; color: var(--gray3); text-decoration: line-through; }
-    .price-dc { font-size: 13px; font-weight: 700; color: #46d369; }
+    .hot-badge {
+      font-size: 10px; font-weight: 800; color: #ffd700;
+      background: rgba(255,215,0,.1); border: 1px solid rgba(255,215,0,.25);
+      padding: 1px 6px; border-radius: 4px;
+    }
+    .new-badge {
+      font-size: 10px; font-weight: 800; color: #ff4d4d;
+      background: rgba(255,77,77,.12); border: 1px solid rgba(255,77,77,.3);
+      padding: 1px 6px; border-radius: 4px;
+    }
+    .post-title { font-size: 15px; font-weight: 700; line-height: 1.4; margin-bottom: 6px; }
+    .post-desc { font-size: 13px; color: var(--gray2); line-height: 1.6; margin-bottom: 8px;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .post-meta { display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--gray3); flex-wrap: wrap; }
-    .post-store { color: var(--gray2); font-weight: 600; }
-    .post-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; }
+    .post-link { color: #4facfe; text-decoration: none; font-weight: 600; }
+    .post-link:hover { text-decoration: underline; }
+    .post-right {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 14px 16px; gap: 6px; border-left: 1px solid rgba(255,255,255,.05);
+    }
     .like-btn {
       display: flex; flex-direction: column; align-items: center;
       gap: 2px; background: none; border: 1.5px solid rgba(255,255,255,.1);
@@ -63,17 +84,8 @@
     }
     .like-btn:hover, .like-btn.liked { border-color: #ff4d4d; color: #ff4d4d; }
     .like-btn .like-icon { font-size: 18px; }
-    .post-date { font-size: 11px; color: var(--gray3); text-align: right; }
-    .new-badge {
-      font-size: 10px; font-weight: 800; color: #ff4d4d;
-      background: rgba(255,77,77,.12); border: 1px solid rgba(255,77,77,.3);
-      padding: 1px 6px; border-radius: 4px;
-    }
-    .hot-badge {
-      font-size: 10px; font-weight: 800; color: #ffd700;
-      background: rgba(255,215,0,.1); border: 1px solid rgba(255,215,0,.25);
-      padding: 1px 6px; border-radius: 4px;
-    }
+    .post-date { font-size: 11px; color: var(--gray3); }
+
     .empty-msg { text-align: center; padding: 60px 0; color: var(--gray3); font-size: 15px; }
     .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 28px; }
     .page-btn {
@@ -82,6 +94,7 @@
       cursor: pointer; font-family: inherit; transition: all .2s;
     }
     .page-btn.active, .page-btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
+
     /* Modal */
     .modal-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,.8);
@@ -90,7 +103,7 @@
     .modal-overlay.open { display: flex; }
     .modal-box {
       background: var(--bg2); border-radius: 16px; padding: 28px;
-      width: 100%; max-width: 540px; border: 1.5px solid rgba(255,255,255,.1);
+      width: 100%; max-width: 500px; border: 1.5px solid rgba(255,255,255,.1);
       max-height: 90vh; overflow-y: auto;
     }
     .modal-box h2 { font-size: 20px; font-weight: 800; margin-bottom: 22px; }
@@ -98,13 +111,24 @@
     .modal-input, .modal-select, .modal-textarea {
       width: 100%; background: var(--bg3); border: 1.5px solid rgba(255,255,255,.1);
       border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 14px;
-      font-family: inherit; outline: none; margin-bottom: 14px;
+      font-family: inherit; outline: none; margin-bottom: 16px;
     }
     .modal-input:focus, .modal-select:focus, .modal-textarea:focus { border-color: var(--red); }
     .modal-select option { background: #242424; }
-    .modal-textarea { min-height: 100px; resize: vertical; }
-    .modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .modal-actions { display: flex; gap: 10px; margin-top: 6px; }
+    .modal-textarea { min-height: 90px; resize: vertical; }
+
+    /* Image upload */
+    .img-upload-area {
+      width: 100%; border: 2px dashed rgba(255,255,255,.15); border-radius: 10px;
+      padding: 24px; text-align: center; cursor: pointer; margin-bottom: 16px;
+      transition: border-color .2s; position: relative;
+    }
+    .img-upload-area:hover, .img-upload-area.drag { border-color: var(--red); }
+    .img-upload-area input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .img-upload-area p { font-size: 13px; color: var(--gray3); margin-top: 6px; }
+    .img-preview { width: 100%; max-height: 180px; object-fit: cover; border-radius: 8px; display: none; margin-bottom: 16px; }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 4px; }
     .btn-submit {
       flex: 1; padding: 13px; background: var(--red); color: #fff; border: none;
       border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
@@ -115,11 +139,11 @@
       border: 1.5px solid rgba(255,255,255,.1); border-radius: 8px;
       font-size: 14px; cursor: pointer; font-family: inherit;
     }
+
     @media (max-width: 600px) {
       .post-item { grid-template-columns: 1fr; }
-      .post-right { flex-direction: row; align-items: center; margin-top: 8px; }
-      .modal-row { grid-template-columns: 1fr; }
-      .price-sale { font-size: 18px; }
+      .post-thumb, .post-thumb-empty { width: 100%; height: 160px; }
+      .post-right { flex-direction: row; justify-content: space-between; border-left: none; border-top: 1px solid rgba(255,255,255,.05); }
     }
   </style>
 </head>
@@ -169,8 +193,10 @@
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal-box">
       <h2>✏️ 핫딜 공유하기</h2>
+
       <label class="modal-label">제목 *</label>
-      <input class="modal-input" id="mTitle" placeholder="예: 쿠팡 에어팟 프로 역대급 할인!">
+      <input class="modal-input" id="mTitle" placeholder="예: [쿠팡] 핫초코 2개 100원">
+
       <label class="modal-label">카테고리</label>
       <select class="modal-select" id="mCat">
         <option>식품/음료</option>
@@ -180,22 +206,23 @@
         <option>육아</option>
         <option>기타</option>
       </select>
-      <div class="modal-row">
-        <div>
-          <label class="modal-label">원가 (원)</label>
-          <input class="modal-input" id="mOrigPrice" type="number" placeholder="199000">
-        </div>
-        <div>
-          <label class="modal-label">할인가 (원) *</label>
-          <input class="modal-input" id="mSalePrice" type="number" placeholder="149000">
+
+      <label class="modal-label">딜 링크</label>
+      <input class="modal-input" id="mLink" placeholder="https://...">
+
+      <label class="modal-label">설명</label>
+      <textarea class="modal-textarea" id="mDesc" placeholder="할인 내용, 유의사항 등을 간단히 적어주세요"></textarea>
+
+      <label class="modal-label">스크린샷 첨부</label>
+      <div class="img-upload-area" id="uploadArea">
+        <input type="file" id="mImage" accept="image/*">
+        <div id="uploadPlaceholder">
+          <div style="font-size:32px;">📷</div>
+          <p>클릭하거나 이미지를 드래그해서 올려주세요</p>
         </div>
       </div>
-      <label class="modal-label">쇼핑몰</label>
-      <input class="modal-input" id="mStore" placeholder="예: 쿠팡, 올리브영, G마켓">
-      <label class="modal-label">딜 링크 (선택)</label>
-      <input class="modal-input" id="mLink" placeholder="https://...">
-      <label class="modal-label">설명 (선택)</label>
-      <textarea class="modal-textarea" id="mDesc" placeholder="딜 상세 내용, 유의사항 등을 적어주세요"></textarea>
+      <img id="imgPreview" class="img-preview" alt="미리보기">
+
       <div class="modal-actions">
         <button class="btn-submit" onclick="submitPost()">공유하기</button>
         <button class="btn-cancel" onclick="closeModal()">취소</button>
@@ -213,25 +240,22 @@ const CAT_COLORS = {
   '기타':      { bg: 'rgba(255,255,255,.08)', color: '#b3b3b3' },
 };
 
+const CAT_EMOJI = { '식품/음료':'🍱', '패션/뷰티':'👗', '전자기기':'📱', '생활용품':'🏠', '육아':'👶', '기타':'📦' };
+
 const SAMPLE = [
-  { id:1, title:'GS25 삼각김밥 + 컵라면 1+1 행사 중', cat:'식품/음료', origPrice:2400, salePrice:1200, store:'GS25', link:'', desc:'행사기간 한정. 매장 확인 필수.', views:1423, likes:187, date:'2025-06-25', isHot:true },
-  { id:2, title:'에어팟 4세대 최저가 경신 — 쿠팡 로켓배송', cat:'전자기기', origPrice:219000, salePrice:161000, store:'쿠팡', link:'', desc:'쿠팡 단독 특가. 재고 소진 시 종료.', views:3821, likes:542, date:'2025-06-25', isHot:true },
-  { id:3, title:'올리브영 선크림 50% 타임특가 (오늘 자정 마감)', cat:'패션/뷰티', origPrice:28000, salePrice:14000, store:'올리브영', link:'', desc:'인기 선크림 3종. 자정에 종료 예정.', views:2145, likes:321, date:'2025-06-24', isHot:true },
-  { id:4, title:'다이슨 청소기 공식몰 여름 특가', cat:'생활용품', origPrice:699000, salePrice:489000, store:'다이슨 공식몰', link:'', desc:'V12 한정 수량 할인. 멤버십 추가 5% 혜택.', views:1876, likes:234, date:'2025-06-24', isHot:false },
-  { id:5, title:'카카오페이 결제 시 스벅 아메리카노 무료', cat:'식품/음료', origPrice:5100, salePrice:0, store:'스타벅스', link:'', desc:'선착순 10만명. 카카오페이 앱에서 쿠폰 발급.', views:5201, likes:893, date:'2025-06-23', isHot:true },
-  { id:6, title:'나이키 공식 사이트 여름 세일 최대 40%', cat:'패션/뷰티', origPrice:129000, salePrice:77400, store:'나이키 공식', link:'', desc:'러닝화·트레이닝화 대다수 포함. 7/2까지.', views:2341, likes:312, date:'2025-06-23', isHot:false },
-  { id:7, title:'마켓컬리 첫 주문 3만원 쿠폰', cat:'식품/음료', origPrice:30000, salePrice:0, store:'마켓컬리', link:'', desc:'신규 가입 후 3만원 이상 주문 시 즉시 할인.', views:987, likes:145, date:'2025-06-22', isHot:false },
-  { id:8, title:'삼성 갤럭시 버즈3 프로 쿠팡 특가', cat:'전자기기', origPrice:249000, salePrice:169000, store:'쿠팡', link:'', desc:'공식 박스. 로켓배송 당일 도착 가능.', views:1654, likes:198, date:'2025-06-22', isHot:false },
-  { id:9, title:'이케아 여름 클리어런스 최대 50%', cat:'생활용품', origPrice:0, salePrice:0, store:'이케아', link:'', desc:'매장 및 온라인 동시 진행. 조명·가구 포함.', views:1123, likes:167, date:'2025-06-21', isHot:false },
-  { id:10, title:'쿠팡 기저귀 5팩 묶음 최저가', cat:'육아', origPrice:62000, salePrice:41000, store:'쿠팡', link:'', desc:'하기스 신생아·S 사이즈 해당. 와우회원 추가 할인.', views:2876, likes:445, date:'2025-06-21', isHot:false },
-  { id:11, title:'지마켓 슈퍼딜 — 닌텐도 스위치 오리지널 30%', cat:'전자기기', origPrice:359000, salePrice:251300, store:'G마켓', link:'', desc:'주말 한정. 구성품 정품 보증.', views:4312, likes:678, date:'2025-06-20', isHot:true },
-  { id:12, title:'CGV 주중 2인 1만8천원 패키지 (팝콘 포함)', cat:'기타', origPrice:32000, salePrice:18000, store:'CGV', link:'', desc:'월~목 상영관 한정. CGV 앱 예매 시 적용.', views:1876, likes:289, date:'2025-06-20', isHot:false },
+  { id:1, title:'GS25 삼각김밥 + 컵라면 1+1 행사 중', cat:'식품/음료', link:'', desc:'행사기간 한정. 매장 확인 필수.', likes:187, date:'2025-06-25', isHot:true, img:'' },
+  { id:2, title:'에어팟 4세대 최저가 경신 — 쿠팡 로켓배송', cat:'전자기기', link:'', desc:'쿠팡 단독 특가. 재고 소진 시 종료.', likes:542, date:'2025-06-25', isHot:true, img:'' },
+  { id:3, title:'올리브영 선크림 50% 타임특가 (오늘 자정 마감)', cat:'패션/뷰티', link:'', desc:'인기 선크림 3종. 자정에 종료 예정.', likes:321, date:'2025-06-24', isHot:true, img:'' },
+  { id:4, title:'다이슨 청소기 공식몰 여름 특가', cat:'생활용품', link:'', desc:'V12 한정 수량 할인. 멤버십 추가 5% 혜택.', likes:234, date:'2025-06-24', isHot:false, img:'' },
+  { id:5, title:'카카오페이 결제 시 스벅 아메리카노 무료', cat:'식품/음료', link:'', desc:'선착순 10만명. 카카오페이 앱에서 쿠폰 발급.', likes:893, date:'2025-06-23', isHot:true, img:'' },
+  { id:6, title:'나이키 공식 사이트 여름 세일 최대 40%', cat:'패션/뷰티', link:'', desc:'러닝화·트레이닝화 대다수 포함. 7/2까지.', likes:312, date:'2025-06-23', isHot:false, img:'' },
 ];
 
-const STORE_KEY = 'ft_hotdeals';
+const STORE_KEY = 'ft_hotdeals_v2';
 let currentCat = '전체';
 let currentPage = 1;
 const PER_PAGE = 8;
+let pendingImg = '';
 
 function getPosts() {
   const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
@@ -244,14 +268,8 @@ function getFiltered() {
   return currentCat === '전체' ? posts : posts.filter(p => p.cat === currentCat);
 }
 
-function formatPrice(n) { return n ? n.toLocaleString('ko-KR') + '원' : '-'; }
-function calcDc(orig, sale) {
-  if (!orig || !sale) return null;
-  return Math.round((1 - sale / orig) * 100);
-}
 function timeAgo(dateStr) {
-  const d = new Date(dateStr), now = new Date();
-  const diff = Math.floor((now - d) / 86400000);
+  const diff = Math.floor((new Date() - new Date(dateStr)) / 86400000);
   if (diff === 0) return '오늘';
   if (diff === 1) return '1일 전';
   if (diff < 7) return diff + '일 전';
@@ -260,38 +278,32 @@ function timeAgo(dateStr) {
 
 function renderPosts() {
   const list = getFiltered();
-  const total = list.length;
-  const start = (currentPage - 1) * PER_PAGE;
-  const page  = list.slice(start, start + PER_PAGE);
-
+  const page = list.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
   const el = document.getElementById('postList');
-  const empty = document.getElementById('emptyMsg');
   el.innerHTML = '';
-  empty.style.display = total ? 'none' : 'block';
+  document.getElementById('emptyMsg').style.display = list.length ? 'none' : 'block';
 
   page.forEach(p => {
-    const dc = calcDc(p.origPrice, p.salePrice);
     const col = CAT_COLORS[p.cat] || CAT_COLORS['기타'];
+    const emoji = CAT_EMOJI[p.cat] || '📦';
+    const isNew = p.id > 100;
     const item = document.createElement('div');
     item.className = 'post-item';
     item.innerHTML = `
-      <div class="post-left">
+      ${p.img
+        ? `<img class="post-thumb" src="${p.img}" alt="딜 이미지">`
+        : `<div class="post-thumb-empty">${emoji}</div>`}
+      <div class="post-body">
         <div class="post-top">
           <span class="post-cat" style="background:${col.bg};color:${col.color}">${p.cat}</span>
           ${p.isHot ? '<span class="hot-badge">🔥 HOT</span>' : ''}
-          ${p.id > 100 ? '<span class="new-badge">NEW</span>' : ''}
+          ${isNew ? '<span class="new-badge">NEW</span>' : ''}
         </div>
         <div class="post-title">${p.title}</div>
-        <div class="post-price">
-          <span class="price-sale">${p.salePrice ? formatPrice(p.salePrice) : '무료/혜택'}</span>
-          ${p.origPrice ? `<span class="price-orig">${formatPrice(p.origPrice)}</span>` : ''}
-          ${dc ? `<span class="price-dc">↓${dc}%</span>` : ''}
-        </div>
+        ${p.desc ? `<div class="post-desc">${p.desc}</div>` : ''}
         <div class="post-meta">
-          <span class="post-store">🏪 ${p.store}</span>
-          <span>👁 ${p.views.toLocaleString()}</span>
           <span>${timeAgo(p.date)}</span>
-          ${p.link ? `<a href="${p.link}" target="_blank" rel="noopener" style="color:#4facfe;font-size:12px;" onclick="event.stopPropagation()">🔗 링크</a>` : ''}
+          ${p.link ? `<a class="post-link" href="${p.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🔗 링크 바로가기</a>` : ''}
         </div>
       </div>
       <div class="post-right">
@@ -304,7 +316,7 @@ function renderPosts() {
     el.appendChild(item);
   });
 
-  renderPagination(total);
+  renderPagination(list.length);
 }
 
 function renderPagination(total) {
@@ -331,7 +343,6 @@ function toggleLike(id, e) {
   renderPosts();
 }
 
-// Category filter
 document.getElementById('catChips').addEventListener('click', e => {
   const chip = e.target.closest('.cat-chip');
   if (!chip) return;
@@ -342,6 +353,41 @@ document.getElementById('catChips').addEventListener('click', e => {
   renderPosts();
 });
 
+// Image upload
+const imageInput = document.getElementById('mImage');
+const imgPreview = document.getElementById('imgPreview');
+const uploadArea = document.getElementById('uploadArea');
+
+imageInput.addEventListener('change', () => {
+  const file = imageInput.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    pendingImg = e.target.result;
+    imgPreview.src = pendingImg;
+    imgPreview.style.display = 'block';
+    document.getElementById('uploadPlaceholder').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+});
+
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag'));
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadArea.classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    pendingImg = ev.target.result;
+    imgPreview.src = pendingImg;
+    imgPreview.style.display = 'block';
+    document.getElementById('uploadPlaceholder').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+});
+
 // Modal
 function openModal() {
   document.getElementById('modalOverlay').classList.add('open');
@@ -350,8 +396,13 @@ function openModal() {
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   document.body.style.overflow = '';
-  ['mTitle','mOrigPrice','mSalePrice','mStore','mLink','mDesc'].forEach(id => document.getElementById(id).value = '');
+  ['mTitle','mLink','mDesc'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('mCat').selectedIndex = 0;
+  pendingImg = '';
+  imgPreview.src = '';
+  imgPreview.style.display = 'none';
+  imageInput.value = '';
+  document.getElementById('uploadPlaceholder').style.display = 'block';
 }
 document.getElementById('modalOverlay').addEventListener('click', e => {
   if (e.target === document.getElementById('modalOverlay')) closeModal();
@@ -359,19 +410,16 @@ document.getElementById('modalOverlay').addEventListener('click', e => {
 
 function submitPost() {
   const title = document.getElementById('mTitle').value.trim();
-  const salePrice = parseInt(document.getElementById('mSalePrice').value) || 0;
   if (!title) { alert('제목을 입력해주세요!'); return; }
   const posts = getPosts();
   posts.unshift({
     id: Date.now(),
     title,
     cat: document.getElementById('mCat').value,
-    origPrice: parseInt(document.getElementById('mOrigPrice').value) || 0,
-    salePrice,
-    store: document.getElementById('mStore').value.trim() || '미입력',
     link: document.getElementById('mLink').value.trim(),
     desc: document.getElementById('mDesc').value.trim(),
-    views: 1, likes: 0, liked: false,
+    img: pendingImg,
+    likes: 0, liked: false,
     date: new Date().toISOString().slice(0, 10),
     isHot: false,
   });
@@ -382,7 +430,6 @@ function submitPost() {
   alert('딜이 공유됐어요! 🔥');
 }
 
-// Init
 renderPosts();
 </script>
 </body>

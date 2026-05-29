@@ -1,49 +1,156 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>내 이름 점수 | 오늘연구소</title>
-  <meta name="description" content="내 이름 점수 — 오늘연구소에서 재미있게 즐겨보세요">
+  <meta name="description" content="이름과 생년월일로 알아보는 성명학 분석! 사주 오행, 이름 보완, 수리 운격까지 완전 분석 | 오늘연구소">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
   <link rel="stylesheet" href="../style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <script src="../ad.js"></script>
   <style>
-    .score-circle {
-      width: 160px; height: 160px;
-      border-radius: 50%;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      margin: 0 auto 28px;
+    /* ── 공통 섹션 ── */
+    .ns-block {
+      background: var(--bg2);
+      border: 1.5px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding: 22px 20px;
+      margin-bottom: 14px;
+    }
+    .ns-block-title {
+      font-size: 15px; font-weight: 800; color: #fff;
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* ── 사주 3주 표 ── */
+    .pillar-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 10px; margin-bottom: 18px;
+    }
+    .pillar-card {
+      background: var(--bg3); border-radius: 12px; padding: 12px 10px;
+      text-align: center; border: 1.5px solid rgba(255,255,255,.07);
+    }
+    .pillar-label {
+      font-size: 11px; color: #b3b3b3; font-weight: 700;
+      margin-bottom: 10px; letter-spacing: 1px;
+    }
+    .pillar-stem, .pillar-branch {
+      font-size: 22px; font-weight: 900; line-height: 1.2;
+    }
+    .pillar-ohang-tag {
+      display: inline-block; font-size: 10px; font-weight: 800;
+      padding: 2px 7px; border-radius: 4px; margin-top: 4px;
+      margin-bottom: 6px;
+    }
+
+    /* ── 오행 카드 ── */
+    .ohang-row {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 8px; margin: 12px 0;
+    }
+    .ohang-card {
+      border-radius: 12px; padding: 12px 6px 10px;
+      text-align: center; border: 2px solid;
       position: relative;
     }
-    .score-circle-num {
-      font-size: 52px;
-      font-weight: 900;
-      line-height: 1;
+    .ohang-card-emoji { font-size: 22px; display:block; margin-bottom:5px; }
+    .ohang-card-label { font-size: 11px; font-weight: 800; margin-bottom: 6px; }
+    .ohang-card-count {
+      font-size: 26px; font-weight: 900; line-height: 1;
     }
-    .score-circle-label {
-      font-size: 14px;
-      font-weight: 600;
-      opacity: .8;
-      margin-top: 4px;
+    .ohang-card-attr { font-size: 9px; margin-top: 5px; color: #b3b3b3; }
+    .ohang-card.zero { opacity: .4; }
+    .ohang-card .lack-badge {
+      position: absolute; top: -8px; right: -6px;
+      background: #ef5350; color: #fff;
+      font-size: 9px; font-weight: 800; padding: 2px 5px;
+      border-radius: 4px;
     }
-    .fortune-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 28px;
+
+    /* ── 이름 글자 오행 ── */
+    .name-chars { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0; }
+    .name-char-card {
+      background: var(--bg3); border-radius: 10px; padding: 12px 14px;
+      text-align: center; min-width: 64px; flex: 1;
+      border: 1.5px solid rgba(255,255,255,.08);
     }
+    .name-char { font-size: 28px; font-weight: 900; display: block; margin-bottom: 4px; }
+    .name-char-ohang {
+      font-size: 12px; font-weight: 800; padding: 2px 8px;
+      border-radius: 4px; display: inline-block;
+    }
+    .name-char-stroke { font-size: 10px; color: #757575; margin-top: 4px; }
+
+    /* ── 보완 결과 ── */
+    .supplement-row {
+      display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0;
+    }
+    .supplement-chip {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 700;
+    }
+    .supplement-chip.covered {
+      background: rgba(102,187,106,.15); border: 1.5px solid rgba(102,187,106,.4);
+      color: #81c784;
+    }
+    .supplement-chip.missing {
+      background: rgba(239,83,80,.12); border: 1.5px solid rgba(239,83,80,.3);
+      color: #ef9a9a;
+    }
+    .supplement-chip.none {
+      background: rgba(255,255,255,.05); border: 1.5px solid rgba(255,255,255,.1);
+      color: #9e9e9e;
+    }
+
+    /* ── 수리 격 ── */
+    .suri-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .suri-card {
+      background: var(--bg3); border-radius: 12px; padding: 14px;
+      border: 1.5px solid rgba(255,255,255,.07);
+    }
+    .suri-card-title { font-size: 11px; color: #9e9e9e; margin-bottom: 2px; font-weight: 600; }
+    .suri-card-sub   { font-size: 10px; color: #616161; margin-bottom: 8px; }
+    .suri-card-num   { font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+    .suri-badge {
+      display: inline-block; font-size: 10px; font-weight: 800;
+      padding: 2px 8px; border-radius: 4px; margin-bottom: 6px;
+    }
+    .suri-desc { font-size: 11px; color: #9e9e9e; line-height: 1.6; }
+
+    /* ── 운별 점수 ── */
+    .fortune-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .fortune-item {
-      background: rgba(255,255,255,.05);
-      border-radius: 10px;
-      padding: 14px;
-      text-align: center;
+      background: var(--bg3); border-radius: 12px; padding: 14px;
+      text-align: center; border: 1.5px solid rgba(255,255,255,.07);
     }
-    .fortune-item-icon { font-size: 28px; margin-bottom: 6px; display: block; }
-    .fortune-item-label { font-size: 12px; color: var(--gray3); margin-bottom: 6px; }
-    .fortune-item-val { font-size: 18px; font-weight: 700; }
+    .fortune-item-icon { font-size: 26px; display: block; margin-bottom: 6px; }
+    .fortune-item-label { font-size: 12px; color: #9e9e9e; margin-bottom: 4px; }
+    .fortune-item-val { font-size: 20px; font-weight: 900; }
+    .fortune-bar-wrap { height: 6px; background: rgba(255,255,255,.08); border-radius: 3px; margin-top: 8px; }
+    .fortune-bar { height: 6px; border-radius: 3px; }
+
+    /* ── 총점 링 ── */
+    .score-ring-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
+    .score-ring {
+      width: 150px; height: 150px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 10px;
+    }
+    .score-ring-inner {
+      width: 112px; height: 112px; background: var(--bg2); border-radius: 50%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .score-num  { font-size: 40px; font-weight: 900; line-height: 1; }
+    .score-unit { font-size: 11px; color: #757575; margin-top: 2px; }
+    .score-grade { font-size: 17px; font-weight: 800; }
+
+    /* ── date row ── */
+    .date-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .date-row input { margin-bottom: 0; }
+
+    .divider { height: 1px; background: rgba(255,255,255,.06); margin: 4px 0 16px; }
   </style>
 </head>
 <body>
@@ -65,35 +172,39 @@
   <div class="test-wrap">
     <div class="test-inner">
 
-      <!-- INTRO -->
       <div id="introSection">
         <div class="test-header">
           <span class="test-header-emoji">✨</span>
           <h1>내 이름 점수</h1>
-          <p>이름 획수와 수리(數理)로 알아보는<br>숨겨진 이름의 운세와 점수!</p>
+          <p>사주 오행 분석 → 이름 보완 분석<br>성명학으로 알아보는 이름의 진짜 힘</p>
           <div class="test-meta">
-            <span>🔮 운세</span>
-            <span>⏱ 1분</span>
-            <span>👥 287,443명 참여</span>
+            <span>🔮 운세</span><span>⏱ 1분</span><span>👥 287,443명 참여</span>
           </div>
         </div>
 
         <div class="question-card">
-          <div class="question-text" style="margin-bottom:20px;">이름을 입력해주세요</div>
-          <label class="input-label">이름 (한글)</label>
-          <input type="text" class="input-field" id="nameInput" placeholder="예: 김민준" maxlength="6">
+          <label class="input-label">이름 (한글 2~4글자)</label>
+          <input type="text" class="input-field" id="nameInput" placeholder="예: 김민준" maxlength="5">
+
           <label class="input-label" style="margin-top:4px;">성별</label>
           <div class="chip-group">
-            <button class="chip" data-gender="M" onclick="selectGender(this)">👦 남자</button>
+            <button class="chip selected" data-gender="M" onclick="selectGender(this)">👦 남자</button>
             <button class="chip" data-gender="F" onclick="selectGender(this)">👧 여자</button>
           </div>
-          <button class="btn-primary" onclick="calculate()" style="width:100%; margin-top:8px; font-size:16px; padding:15px;">
-            ✨ 점수 계산하기
+
+          <label class="input-label" style="margin-top:4px;">생년월일</label>
+          <div class="date-row">
+            <input type="number" class="input-field" id="birthYear"  placeholder="출생연도 (예: 1995)" min="1930" max="2024">
+            <input type="number" class="input-field" id="birthMonth" placeholder="월" min="1" max="12">
+            <input type="number" class="input-field" id="birthDay"   placeholder="일" min="1" max="31">
+          </div>
+
+          <button class="btn-primary" onclick="calculate()" style="width:100%;margin-top:4px;font-size:16px;padding:15px;">
+            ✨ 사주 + 이름 분석하기
           </button>
         </div>
       </div>
 
-      <!-- RESULT -->
       <div id="resultSection" style="display:none;"></div>
 
     </div>
@@ -101,118 +212,465 @@
 
 <script>
 let gender = 'M';
-
 function selectGender(btn) {
   document.querySelectorAll('.chip[data-gender]').forEach(c => c.classList.remove('selected'));
   btn.classList.add('selected');
   gender = btn.dataset.gender;
 }
 
-// 한글 획수 테이블 (대략적 수리용)
-const STROKE = {
-  '가':7,'나':5,'다':5,'라':5,'마':6,'바':7,'사':6,'아':4,'자':5,'차':7,'카':6,'타':5,'파':9,'하':5,
-  '김':7,'이':6,'박':9,'최':12,'정':11,'강':11,'조':7,'윤':4,'장':11,'임':9,'한':5,'오':5,'서':6,
-  '신':10,'권':15,'황':12,'안':6,'송':7,'류':10,'전':9,'홍':9,'고':10,'문':4,'양':11,'손':10,
-  '배':10,'백':5,'허':11,'유':6,'남':9,'심':9,'노':9,'하':5,'곽':11,'성':8,'차':7,'주':5,
-  '우':4,'구':5,'민':5,'준':9,'영':8,'수':4,'진':10,'지':6,'현':11,'재':6,'호':7,'석':11,
-  '기':4,'동':6,'원':10,'형':7,'태':5,'경':11,'찬':14,'혁':16,'범':9,'승':10,
+/* ═══════════════════════════════════
+   오행 기본 데이터
+═══════════════════════════════════ */
+const OHANG = {
+  목: { label:'목(木)', emoji:'🌱', color:'#66bb6a', bg:'rgba(102,187,106,.18)', border:'rgba(102,187,106,.45)', attr:'창의·성장·추진', desc:'나무의 기운. 창의성과 성장, 추진력을 상징합니다.', advice:'초록색 식물을 가까이 두고, 새것을 시작하고 배우는 활동을 늘려보세요.' },
+  화: { label:'화(火)', emoji:'🔥', color:'#ef5350', bg:'rgba(239,83,80,.18)',   border:'rgba(239,83,80,.45)',   attr:'열정·표현·사교', desc:'불의 기운. 열정과 표현력, 사교성을 상징합니다.',   advice:'빨간색 소품으로 활기를 더하고, 자신의 생각과 감정을 더 적극적으로 표현해보세요.' },
+  토: { label:'토(土)', emoji:'🌍', color:'#ffa726', bg:'rgba(255,167,38,.18)',  border:'rgba(255,167,38,.45)',  attr:'안정·신뢰·포용', desc:'대지의 기운. 안정감과 신뢰, 포용력을 상징합니다.',  advice:'황토색·갈색 계열 소품을 활용하고, 꾸준한 루틴으로 안정감을 만들어보세요.' },
+  금: { label:'금(金)', emoji:'⚡', color:'#e0e0e0', bg:'rgba(224,224,224,.12)', border:'rgba(224,224,224,.35)', attr:'결단·재물·의리', desc:'쇠의 기운. 결단력과 재물운, 강한 의리를 상징합니다.', advice:'흰색·은색 소품을 가까이 두고, 한 번 결정한 일은 끝까지 밀어붙이는 연습을 해보세요.' },
+  수: { label:'수(水)', emoji:'💧', color:'#42a5f5', bg:'rgba(66,165,245,.18)',  border:'rgba(66,165,245,.45)',  attr:'지혜·유연·적응', desc:'물의 기운. 지혜와 유연성, 뛰어난 적응력을 상징합니다.', advice:'검정·파란색 소품으로 수의 기운을 보충하고, 다양한 관점으로 사물을 바라보는 연습을 해보세요.' },
 };
+const OHANG_ORDER = ['목','화','토','금','수'];
 
-function getStrokeSum(name) {
-  let sum = 0;
-  for (const ch of name) {
-    sum += STROKE[ch] || (ch.charCodeAt(0) % 10 + 3);
-  }
-  return sum;
+/* 천간 */
+const STEMS      = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const STEM_KOR   = ['갑','을','병','정','무','기','경','신','임','계'];
+const STEM_OHANG = ['목','목','화','화','토','토','금','금','수','수'];
+
+/* 지지 */
+const BRANCHES      = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const BRANCH_KOR    = ['자','축','인','묘','진','사','오','미','신','유','술','해'];
+const BRANCH_OHANG  = ['수','토','목','목','토','화','화','토','금','금','토','수'];
+
+/* 월지 (양력 월 → 지지 index, 절기 근사) */
+const MONTH_BRANCH = [1,2,3,4,5,6,7,8,9,10,11,0]; // 1월=丑(1), ... 12월=子(0)
+
+/* 월간 기두 (년간 index % 5 → 인월 천간 index) */
+const MONTH_STEM_BASE = [2, 4, 6, 8, 0]; // 甲己→丙, 乙庚→戊, 丙辛→庚, 丁壬→壬, 戊癸→甲
+
+/* ─── 연주 ─── */
+function getYearPillar(year) {
+  const si = ((year - 4) % 10 + 10) % 10;
+  const bi = ((year - 4) % 12 + 12) % 12;
+  return { stem: si, branch: bi,
+           stemChar: STEMS[si], stemKor: STEM_KOR[si], stemOhang: STEM_OHANG[si],
+           branchChar: BRANCHES[bi], branchKor: BRANCH_KOR[bi], branchOhang: BRANCH_OHANG[bi] };
 }
 
+/* ─── 월주 ─── */
+function getMonthPillar(year, month) {
+  const bi = MONTH_BRANCH[month - 1];
+  const yStemIdx = ((year - 4) % 10 + 10) % 10;
+  const base = MONTH_STEM_BASE[yStemIdx % 5];
+  // 인월(2월)이 기준. 양력 offset: 1월=11개월 후 → index+11, 2월=0, ...
+  const offset = month === 1 ? 11 : month - 2;
+  const si = (base + offset) % 10;
+  return { stem: si, branch: bi,
+           stemChar: STEMS[si], stemKor: STEM_KOR[si], stemOhang: STEM_OHANG[si],
+           branchChar: BRANCHES[bi], branchKor: BRANCH_KOR[bi], branchOhang: BRANCH_OHANG[bi] };
+}
+
+/* ─── 일주 (2000-01-01 = 甲戌日, 0-indexed position 10) ─── */
+function getDayPillar(year, month, day) {
+  const ref  = new Date(2000, 0, 1);
+  const birth = new Date(year, month - 1, day);
+  const diff  = Math.round((birth - ref) / 86400000);
+  const idx   = ((10 + diff) % 60 + 60) % 60;
+  const si    = idx % 10;
+  const bi    = idx % 12;
+  return { stem: si, branch: bi,
+           stemChar: STEMS[si], stemKor: STEM_KOR[si], stemOhang: STEM_OHANG[si],
+           branchChar: BRANCHES[bi], branchKor: BRANCH_KOR[bi], branchOhang: BRANCH_OHANG[bi] };
+}
+
+/* ─── 사주 오행 집계 ─── */
+function collectSajuOhang(yp, mp, dp) {
+  const cnt = { 목:0, 화:0, 토:0, 금:0, 수:0 };
+  [yp.stemOhang, yp.branchOhang, mp.stemOhang, mp.branchOhang, dp.stemOhang, dp.branchOhang]
+    .forEach(e => cnt[e]++);
+  return cnt; // 6글자 기준
+}
+
+/* ═══════════════════════════════════
+   이름 오행
+═══════════════════════════════════ */
+const CHOSUNG_OHANG_ARR = ['목','목','화','화','화','화','수','수','수','금','금','토','금','금','금','목','화','수','토'];
+
+function charToOhang(ch) {
+  const code = ch.charCodeAt(0) - 0xAC00;
+  if (code < 0 || code > 11171) return null;
+  const idx = Math.floor(code / 28 / 21);
+  return CHOSUNG_OHANG_ARR[idx] || null;
+}
+
+/* ═══════════════════════════════════
+   획수 & 수리
+═══════════════════════════════════ */
+const STROKE = {
+  '김':8,'이':7,'박':6,'최':11,'정':15,'강':9,'조':14,'윤':4,'장':11,'임':8,
+  '한':17,'오':7,'서':10,'신':5,'권':22,'황':12,'안':6,'송':7,'류':9,'전':5,
+  '홍':9,'고':10,'문':4,'양':11,'손':10,'배':14,'백':5,'허':11,'유':15,'남':9,
+  '심':7,'노':16,'하':8,'곽':15,'성':7,'차':7,'주':6,'우':9,'구':8,'민':12,
+  '가':8,'건':11,'경':12,'규':6,'근':10,'기':11,'길':6,'대':3,'도':12,'동':8,
+  '두':4,'명':8,'모':14,'무':8,'미':9,'범':15,'별':7,'상':11,'선':12,'세':5,
+  '소':9,'수':7,'숙':11,'순':10,'승':12,'아':13,'연':13,'영':8,'예':18,'원':4,
+  '재':6,'절':13,'제':14,'종':8,'준':9,'지':12,'찬':17,'채':11,'철':10,'초':7,
+  '춘':9,'태':10,'택':16,'형':7,'혁':14,'혜':15,'호':10,'화':7,'환':10,'희':16,
+  '진':10,'현':15,'은':10,'율':9,'인':4,'다':6,'만':13,'나':19,'라':19,'봉':14,
+  '석':14,'기':11,'길':6,'다':6,'만':13,
+};
+function getStroke(ch) { return STROKE[ch] || (ch.charCodeAt(0) % 12 + 4); }
+
+const SURI = {
+  1:{c:'대길',d:'만물의 시작. 강한 독립심으로 성공을 이끄는 수'},
+  2:{c:'흉',d:'분열의 수. 파트너와 함께할 때 진가를 발휘'},
+  3:{c:'길',d:'활발한 창의력. 사교적이고 인기가 높은 수'},
+  4:{c:'흉',d:'변화와 불안정. 꾸준한 노력이 필요한 수'},
+  5:{c:'대길',d:'중용과 균형. 어디서든 중심이 되는 안정의 수'},
+  6:{c:'길',d:'가정운 최고. 온화하고 포용력이 넘치는 수'},
+  7:{c:'길',d:'독립적이고 분석적. 전문가로 성장하는 수'},
+  8:{c:'길',d:'강한 의지와 인내. 역경을 딛고 성공하는 수'},
+  9:{c:'흉',d:'지나친 이상주의. 현실적 목표 설정이 필요'},
+  10:{c:'흉',d:'공허의 수. 실질적인 성과를 추구해야 함'},
+  11:{c:'길',d:'직관과 영감. 예술적 감각이 빛나는 수'},
+  12:{c:'흉',d:'고독의 수. 인간관계에 더 적극적으로 임해야 함'},
+  13:{c:'길',d:'지혜와 통찰. 학문과 연구에서 빛을 발하는 수'},
+  14:{c:'흉',d:'변화무쌍. 한 가지에 집중하는 힘이 필요'},
+  15:{c:'대길',d:'덕망의 수. 귀인이 많고 인복이 가득한 길수'},
+  16:{c:'길',d:'리더십의 수. 많은 사람을 이끄는 지도자'},
+  17:{c:'길',d:'강인함과 독립. 자수성가 기질이 강한 수'},
+  18:{c:'길',d:'진취적 기상. 새로운 도전에서 성공하는 수'},
+  19:{c:'흉',d:'파란의 수. 굴곡이 많지만 극복하면 강해짐'},
+  20:{c:'흉',d:'허무의 수. 노력 대비 결실이 늦게 나타남'},
+  21:{c:'대길',d:'두령의 수. 강한 카리스마로 리더가 되는 수'},
+  22:{c:'흉',d:'중도 좌절. 끈기 있게 버티는 인내가 필요'},
+  23:{c:'대길',d:'공명의 수. 이름을 세상에 알리는 출세 지향'},
+  24:{c:'대길',d:'입신의 수. 재능과 노력이 결실을 맺는 황금 수'},
+  25:{c:'길',d:'안강의 수. 어떤 환경에서도 중심을 잃지 않음'},
+  26:{c:'흉',d:'파란곡절. 예상치 못한 변화가 많은 수'},
+  27:{c:'중',d:'독립의 수. 혼자 힘으로 길을 개척하는 수'},
+  28:{c:'흉',d:'파란의 수. 인간관계에서 상처받기 쉬운 수'},
+  29:{c:'길',d:'권위의 수. 전문성과 신뢰로 높은 자리에 오름'},
+  30:{c:'중',d:'길흉이 반반. 과감한 결단이 운명을 바꾸는 수'},
+  31:{c:'길',d:'덕망의 수. 한 분야 전문가로 인정받는 수'},
+  32:{c:'길',d:'요행의 수. 귀인 도움으로 뜻밖의 성공을 거둠'},
+  33:{c:'대길',d:'승천의 수. 끊임없이 상승하는 발전과 번영'},
+  34:{c:'흉',d:'파멸의 수. 분수에 맞게 욕심을 줄여야 함'},
+  35:{c:'길',d:'중화의 수. 학문·예술 분야에서 재능을 발휘'},
+  36:{c:'흉',d:'영웅의 수. 큰 뜻을 품지만 좌절이 많은 수'},
+  37:{c:'대길',d:'인덕의 수. 주변 신뢰와 도움으로 크게 성공'},
+  38:{c:'길',d:'예술의 수. 창의적 감각과 표현력이 뛰어남'},
+  39:{c:'대길',d:'장수의 수. 건강하고 오래 사랑받는 복된 수'},
+  40:{c:'흉',d:'무상의 수. 변화가 많고 안정이 필요한 수'},
+  41:{c:'대길',d:'건록의 수. 재물운 탁월하고 사업이 번창'},
+  42:{c:'중',d:'다재다능. 집중하는 힘이 필요한 수'},
+  43:{c:'흉',d:'산재의 수. 재물이 흩어지기 쉬운 수'},
+  44:{c:'흉',d:'마장의 수. 장애물이 많아 각별한 노력 필요'},
+  45:{c:'길',d:'현달의 수. 학식과 덕망으로 높은 자리에 오름'},
+};
+function getSuri(n) {
+  while (n > 45) n -= 44;
+  if (n < 1) n = 1;
+  return SURI[n] || { c:'중', d:'꾸준한 노력으로 운을 개척해나가는 수' };
+}
+function suriColor(c) {
+  return c==='대길'?'#ffd700':c==='길'?'#66bb6a':c==='흉'?'#ef5350':'#42a5f5';
+}
+
+/* ═══════════════════════════════════
+   메인 계산
+═══════════════════════════════════ */
 function calculate() {
-  const name = document.getElementById('nameInput').value.trim();
+  const name  = document.getElementById('nameInput').value.trim();
+  const year  = parseInt(document.getElementById('birthYear').value);
+  const month = parseInt(document.getElementById('birthMonth').value);
+  const day   = parseInt(document.getElementById('birthDay').value);
+
   if (!name || name.length < 2) { alert('이름을 2글자 이상 입력해주세요 😊'); return; }
+  if (!year || year < 1930 || year > 2024) { alert('출생연도를 올바르게 입력해주세요 (1930~2024)'); return; }
+  if (!month || month < 1 || month > 12)   { alert('월을 올바르게 입력해주세요 (1~12)'); return; }
+  if (!day   || day   < 1 || day   > 31)   { alert('일을 올바르게 입력해주세요'); return; }
 
-  const strokeSum = getStrokeSum(name);
-  const base = (strokeSum * 7 + name.length * 11) % 40 + 55;
-  const score = Math.min(99, Math.max(55, base));
+  /* 사주 3주 */
+  const yp = getYearPillar(year);
+  const mp = getMonthPillar(year, month);
+  const dp = getDayPillar(year, month, day);
 
+  /* 사주 오행 집계 */
+  const sajuCnt = collectSajuOhang(yp, mp, dp);
+  const sajuLacking = OHANG_ORDER.filter(e => sajuCnt[e] === 0);
+  const sajuWeak    = OHANG_ORDER.filter(e => sajuCnt[e] === 1);
+  const sajuMax     = Math.max(...OHANG_ORDER.map(e => sajuCnt[e]));
+  const sajuStrong  = OHANG_ORDER.filter(e => sajuCnt[e] === sajuMax);
+
+  /* 이름 오행 집계 */
+  const nameCharsData = [...name].map(ch => ({
+    ch, ohang: charToOhang(ch), stroke: getStroke(ch)
+  }));
+  const nameCnt = { 목:0, 화:0, 토:0, 금:0, 수:0 };
+  nameCharsData.forEach(d => { if (d.ohang) nameCnt[d.ohang]++; });
+
+  /* 보완 분석 */
+  const covered = sajuLacking.filter(e => nameCnt[e] > 0);
+  const stillMissing = sajuLacking.filter(e => nameCnt[e] === 0);
+  const weakCovered = sajuWeak.filter(e => nameCnt[e] > 0 && !sajuLacking.includes(e));
+
+  /* 보완 점수 */
+  const supplementScore = sajuLacking.length === 0 ? 100
+    : Math.round((covered.length / sajuLacking.length) * 60 + 40);
+
+  /* 수리 (성/이름 분리) */
+  const surname = name[0];
+  const given   = name.slice(1);
+  const gArr    = [...given].map(c => getStroke(c));
+  const sStroke = getStroke(surname);
+  const gTotal  = gArr.reduce((a,b)=>a+b,0);
+
+  const won   = getSuri(gTotal);
+  const hyung = getSuri(sStroke + gArr[0]);
+  const li    = getSuri((gArr[1]||gArr[0]) + sStroke);
+  const jeong = getSuri(sStroke + gTotal);
+  const wonN  = gTotal;
+  const hyungN= sStroke + gArr[0];
+  const liN   = (gArr[1]||gArr[0]) + sStroke;
+  const jeongN= sStroke + gTotal;
+
+  /* 운별 점수 */
+  const h = jeongN;
   const fortune = {
-    love:    Math.min(99, Math.max(40, (strokeSum * 3 + 41) % 60 + 38)),
-    money:   Math.min(99, Math.max(40, (strokeSum * 5 + 33) % 55 + 43)),
-    health:  Math.min(99, Math.max(50, (strokeSum * 2 + 55) % 45 + 50)),
-    career:  Math.min(99, Math.max(40, (strokeSum * 4 + 27) % 55 + 42)),
+    love:   clamp((h*3+month*2+41)%55+40),
+    money:  clamp((h*2+day+33)%50+45),
+    health: clamp((hyungN*2+year%10+55)%45+50),
+    career: clamp((liN*3+month+27)%50+45),
   };
 
-  const grade = score >= 90 ? { label: '최상', color: '#ffd700', emoji: '👑' }
-              : score >= 80 ? { label: '상',   color: '#46d369', emoji: '⭐' }
-              : score >= 70 ? { label: '중상',  color: '#4facfe', emoji: '✨' }
-              :               { label: '중',   color: '#f6d365', emoji: '🌟' };
+  /* 총점 */
+  const base  = (jeongN*7 + name.length*11 + day) % 40 + 52;
+  const score = Math.min(98, Math.max(52, base + (5-sajuLacking.length)*2 + covered.length*2));
+  const grade = score>=90?{l:'최상 👑',c:'#ffd700'}:score>=80?{l:'상 ⭐',c:'#66bb6a'}:score>=70?{l:'중상 ✨',c:'#42a5f5'}:{l:'중 🌟',c:'#ffa726'};
 
-  const msgs = [
-    `${name}님의 이름은 에너지가 넘치고 주변을 밝게 하는 이름입니다.`,
-    `${name}님의 이름에는 강한 의지와 추진력이 담겨 있습니다.`,
-    `${name}님은 이름처럼 섬세하고 창의적인 감각을 가지고 있습니다.`,
-    `${name}님의 이름은 리더십과 카리스마를 상징합니다.`,
-    `${name}님은 이름의 기운처럼 주변 사람을 행복하게 만드는 힘이 있습니다.`,
-  ];
-  const msg = msgs[strokeSum % msgs.length];
+  /* 보완 문구 */
+  const supplementMsg = sajuLacking.length === 0
+    ? '사주의 오행이 이미 고르게 갖춰져 있습니다. 이름이 강점을 더욱 강화해 주는 역할을 합니다.'
+    : covered.length === sajuLacking.length
+    ? `이름이 사주의 부족한 오행(${covered.map(e=>OHANG[e].label).join(', ')})을 완벽하게 보완합니다! 이름과 사주의 조화가 탁월합니다. ✨`
+    : covered.length > 0
+    ? `이름이 부족한 오행 중 ${covered.map(e=>OHANG[e].label).join(', ')}을 보완하고 있습니다. ${stillMissing.length > 0 ? stillMissing.map(e=>OHANG[e].label).join(', ')+'은 아래 조언을 참고하세요.' : ''}`
+    : `이름이 사주의 부족한 오행을 보완하지 못하고 있습니다. 아래 조언을 통해 생활에서 보완해보세요.`;
 
-  const sec = document.getElementById('resultSection');
   showAdThenResult(() => {
-  document.getElementById('introSection').style.display = 'none';
-  sec.style.display = 'block';
-  sec.innerHTML = `
-    <div class="result-card">
-      <div class="score-circle" style="background: conic-gradient(${grade.color} ${score * 3.6}deg, rgba(255,255,255,.08) 0deg);">
-        <div class="score-circle" style="width:130px;height:130px;background:var(--bg2);position:absolute;">
-          <div style="text-align:center;">
-            <div class="score-circle-num" style="color:${grade.color}">${score}</div>
-            <div class="score-circle-label">점 · ${grade.label} ${grade.emoji}</div>
+    document.getElementById('introSection').style.display = 'none';
+    const sec = document.getElementById('resultSection');
+    sec.style.display = 'block';
+    sec.innerHTML = buildResult({
+      name, year, month, day, yp, mp, dp,
+      sajuCnt, sajuLacking, sajuWeak, sajuStrong,
+      nameCharsData, nameCnt,
+      covered, stillMissing, weakCovered, supplementScore, supplementMsg,
+      wonN, hyungN, liN, jeongN, won, hyung, li, jeong,
+      fortune, score, grade,
+    });
+  });
+}
+
+function clamp(n) { return Math.min(98, Math.max(42, n)); }
+
+function ohangTag(elem, small=false) {
+  if (!elem || !OHANG[elem]) return '';
+  const o = OHANG[elem];
+  return `<span class="name-char-ohang" style="background:${o.bg};color:${o.color};border:1px solid ${o.border}">${o.emoji} ${o.label}</span>`;
+}
+function pillarOhangTag(elem) {
+  const o = OHANG[elem];
+  return `<span class="pillar-ohang-tag" style="background:${o.bg};color:${o.color};border:1px solid ${o.border}">${o.emoji}${elem}</span>`;
+}
+
+/* ═══════════════════════════════════
+   HTML 생성
+═══════════════════════════════════ */
+function buildResult(d) {
+  const sajuMaxCount = Math.max(...OHANG_ORDER.map(e => d.sajuCnt[e]));
+
+  return `
+  <div class="result-card" style="padding:0;background:none;border:none;">
+
+    <!-- ① 사주 오행 분석 -->
+    <div class="ns-block">
+      <div class="ns-block-title">🀄 STEP 1 · 내 사주 오행 분석</div>
+
+      <!-- 3주 표 -->
+      <div class="pillar-row">
+        ${[
+          { label:'年柱 ('+d.year+'년)', p:d.yp },
+          { label:'月柱 ('+d.month+'월)', p:d.mp },
+          { label:'日柱 ('+d.day+'일)', p:d.dp },
+        ].map(({label,p}) => `
+          <div class="pillar-card">
+            <div class="pillar-label">${label}</div>
+            <div class="pillar-stem" style="color:${OHANG[p.stemOhang].color}">${p.stemChar}</div>
+            <div style="font-size:10px;color:#9e9e9e;margin:2px 0">${p.stemKor}</div>
+            ${pillarOhangTag(p.stemOhang)}
+            <div class="pillar-branch" style="color:${OHANG[p.branchOhang].color}">${p.branchChar}</div>
+            <div style="font-size:10px;color:#9e9e9e;margin:2px 0">${p.branchKor}</div>
+            ${pillarOhangTag(p.branchOhang)}
+          </div>`).join('')}
+      </div>
+
+      <!-- 사주 오행 분포 -->
+      <div style="font-size:13px;color:#b3b3b3;font-weight:600;margin-bottom:10px;">사주 6자 오행 분포</div>
+      <div class="ohang-row">
+        ${OHANG_ORDER.map(elem => {
+          const o = OHANG[elem];
+          const cnt = d.sajuCnt[elem];
+          const isLack = cnt === 0;
+          const isWeak = cnt === 1;
+          return `<div class="ohang-card ${isLack?'zero':''}" style="background:${o.bg};border-color:${o.border}">
+            ${isLack?'<span class="lack-badge">부족</span>':''}
+            <span class="ohang-card-emoji">${o.emoji}</span>
+            <div class="ohang-card-label" style="color:${o.color}">${o.label}</div>
+            <div class="ohang-card-count" style="color:${o.color}">${cnt}</div>
+            <div class="ohang-card-attr">${o.attr}</div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- 사주 해석 -->
+      <div style="margin-top:14px;padding:14px 16px;background:var(--bg3);border-radius:10px;border:1px solid rgba(255,255,255,.07)">
+        ${d.sajuLacking.length===0
+          ? `<p style="color:#81c784;font-size:13px;font-weight:700">✅ 사주의 오행이 고르게 갖춰져 있습니다!</p><p style="color:#e5e5e5;font-size:13px;margin-top:6px;line-height:1.7">오행 5가지가 모두 사주에 포함되어 있어요. 타고난 균형 감각으로 어떤 상황에서도 중심을 잡는 힘이 있습니다.</p>`
+          : `<p style="color:#ef9a9a;font-size:13px;font-weight:700;margin-bottom:8px">⚠️ 사주에서 부족한 오행</p>
+             ${d.sajuLacking.map(e=>`<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
+               <span style="font-size:18px;flex-shrink:0">${OHANG[e].emoji}</span>
+               <div><div style="color:${OHANG[e].color};font-size:13px;font-weight:800">${OHANG[e].label} — ${OHANG[e].attr}</div>
+               <div style="color:#b3b3b3;font-size:12px;margin-top:3px;line-height:1.6">${OHANG[e].desc}</div></div>
+             </div>`).join('')}`}
+        ${d.sajuStrong.length>0 ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);font-size:12px;color:#9e9e9e">
+          💪 강한 오행: <span style="color:#fff;font-weight:700">${d.sajuStrong.map(e=>OHANG[e].label+' ('+d.sajuCnt[e]+'개)').join(', ')}</span></div>` : ''}
+      </div>
+    </div>
+
+    <!-- ② 이름 오행 분석 -->
+    <div class="ns-block">
+      <div class="ns-block-title">✍️ STEP 2 · 이름 오행 분석</div>
+
+      <!-- 이름 글자별 오행 -->
+      <div class="name-chars">
+        ${d.nameCharsData.map(({ch, ohang, stroke}) => {
+          const o = ohang ? OHANG[ohang] : null;
+          return `<div class="name-char-card">
+            <span class="name-char" style="color:${o?o.color:'#9e9e9e'}">${ch}</span>
+            ${o ? `<span class="name-char-ohang" style="background:${o.bg};color:${o.color};border:1px solid ${o.border}">${o.emoji} ${ohang}</span>` : '<span style="font-size:11px;color:#616161">-</span>'}
+            <div class="name-char-stroke">${stroke}획</div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- 이름 오행 분포 -->
+      <div style="font-size:13px;color:#b3b3b3;font-weight:600;margin:14px 0 10px;">이름 오행 분포</div>
+      <div class="ohang-row">
+        ${OHANG_ORDER.map(elem => {
+          const o = OHANG[elem];
+          const cnt = d.nameCnt[elem];
+          return `<div class="ohang-card ${cnt===0?'zero':''}" style="background:${o.bg};border-color:${o.border}">
+            <span class="ohang-card-emoji">${o.emoji}</span>
+            <div class="ohang-card-label" style="color:${o.color}">${o.label}</div>
+            <div class="ohang-card-count" style="color:${o.color}">${cnt}</div>
+            <div class="ohang-card-attr">${o.attr}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- ③ 보완 종합 -->
+    <div class="ns-block">
+      <div class="ns-block-title">🔗 STEP 3 · 이름 + 사주 보완 분석</div>
+
+      <!-- 총점 링 -->
+      <div class="score-ring-wrap">
+        <div class="score-ring" style="background:conic-gradient(${d.grade.c} ${d.score*3.6}deg, rgba(255,255,255,.07) 0deg)">
+          <div class="score-ring-inner">
+            <div class="score-num" style="color:${d.grade.c}">${d.score}</div>
+            <div class="score-unit">/ 100점</div>
           </div>
         </div>
+        <div class="score-grade" style="color:${d.grade.c}">"${d.name}" ${d.grade.l}</div>
       </div>
 
-      <div class="result-type">이름 분석 결과</div>
-      <div class="result-title">"${name}"</div>
-      <p style="color:var(--gray2); margin-bottom:28px; font-size:15px; line-height:1.8;">${msg}</p>
+      <!-- 보완 현황 -->
+      ${d.sajuLacking.length > 0 ? `
+      <div style="font-size:13px;color:#b3b3b3;font-weight:600;margin-bottom:10px;">부족한 오행 보완 현황</div>
+      <div class="supplement-row">
+        ${d.sajuLacking.map(e => d.covered.includes(e)
+          ? `<div class="supplement-chip covered">${OHANG[e].emoji} ${OHANG[e].label} <span>✅ 이름이 보완</span></div>`
+          : `<div class="supplement-chip missing">${OHANG[e].emoji} ${OHANG[e].label} <span>⚠️ 여전히 부족</span></div>`
+        ).join('')}
+      </div>` : `<div class="supplement-row"><div class="supplement-chip none">🎉 사주 오행 완전 균형 — 이름이 강점을 강화</div></div>`}
 
+      <!-- 보완 메시지 -->
+      <div style="padding:14px 16px;background:var(--bg3);border-radius:10px;border:1px solid rgba(255,255,255,.07);margin-top:12px">
+        <p style="color:#e5e5e5;font-size:14px;line-height:1.8;">${d.supplementMsg}</p>
+      </div>
+
+      <!-- 부족한 오행 보완 조언 -->
+      ${d.stillMissing.length>0 ? `
+      <div style="margin-top:14px;padding:14px 16px;background:rgba(239,83,80,.07);border-radius:10px;border:1px solid rgba(239,83,80,.2)">
+        <div style="color:#ef9a9a;font-size:13px;font-weight:800;margin-bottom:10px">💡 생활에서 보완하는 방법</div>
+        ${d.stillMissing.map(e=>`<div style="margin-bottom:10px">
+          <span style="color:${OHANG[e].color};font-weight:800;font-size:13px">${OHANG[e].emoji} ${OHANG[e].label}</span>
+          <p style="color:#bdbdbd;font-size:13px;margin-top:4px;line-height:1.7">${OHANG[e].advice}</p>
+        </div>`).join('')}
+      </div>` : ''}
+    </div>
+
+    <!-- ④ 수리 4격 -->
+    <div class="ns-block">
+      <div class="ns-block-title">📐 수리 운격 분석</div>
+      <div class="suri-grid">
+        ${[
+          {title:'원격(元格)',sub:'이름 자체·중년운', n:d.wonN,   s:d.won},
+          {title:'형격(亨格)',sub:'사회·직업·초년운', n:d.hyungN, s:d.hyung},
+          {title:'이격(利格)',sub:'대인관계·가정운',  n:d.liN,    s:d.li},
+          {title:'정격(貞格)',sub:'전체 인생운',       n:d.jeongN, s:d.jeong},
+        ].map(g=>`<div class="suri-card">
+          <div class="suri-card-title">${g.title}</div>
+          <div class="suri-card-sub">${g.sub}</div>
+          <div class="suri-card-num" style="color:${suriColor(g.s.c)}">${g.n}</div>
+          <div><span class="suri-badge" style="background:${suriColor(g.s.c)}22;color:${suriColor(g.s.c)};border:1px solid ${suriColor(g.s.c)}55">${g.s.c}</span></div>
+          <div class="suri-desc">${g.s.d}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- ⑤ 운별 점수 -->
+    <div class="ns-block">
+      <div class="ns-block-title">🔮 운(運)별 분석</div>
       <div class="fortune-grid">
-        <div class="fortune-item">
-          <span class="fortune-item-icon">💕</span>
-          <div class="fortune-item-label">애정운</div>
-          <div class="fortune-item-val" style="color:#f06292">${fortune.love}점</div>
-        </div>
-        <div class="fortune-item">
-          <span class="fortune-item-icon">💰</span>
-          <div class="fortune-item-label">금전운</div>
-          <div class="fortune-item-val" style="color:#ffd700">${fortune.money}점</div>
-        </div>
-        <div class="fortune-item">
-          <span class="fortune-item-icon">💪</span>
-          <div class="fortune-item-label">건강운</div>
-          <div class="fortune-item-val" style="color:#46d369">${fortune.health}점</div>
-        </div>
-        <div class="fortune-item">
-          <span class="fortune-item-icon">🚀</span>
-          <div class="fortune-item-label">직업운</div>
-          <div class="fortune-item-val" style="color:#4facfe">${fortune.career}점</div>
-        </div>
+        ${[
+          {icon:'💕',label:'애정운',val:d.fortune.love,  color:'#f06292'},
+          {icon:'💰',label:'금전운',val:d.fortune.money, color:'#ffd700'},
+          {icon:'💪',label:'건강운',val:d.fortune.health,color:'#66bb6a'},
+          {icon:'🚀',label:'직업운',val:d.fortune.career,color:'#42a5f5'},
+        ].map(f=>`<div class="fortune-item">
+          <span class="fortune-item-icon">${f.icon}</span>
+          <div class="fortune-item-label">${f.label}</div>
+          <div class="fortune-item-val" style="color:${f.color}">${f.val}점</div>
+          <div class="fortune-bar-wrap"><div class="fortune-bar" style="width:${f.val}%;background:${f.color}"></div></div>
+        </div>`).join('')}
       </div>
+      <p style="font-size:11px;color:#616161;text-align:center;margin-top:12px">※ 본 분석은 성명학 이론 기반의 재미 목적 콘텐츠입니다</p>
+    </div>
 
-      <div class="result-actions">
-        <button class="btn-share" onclick="shareResult('${name}', ${score})">🔗 결과 공유하기</button>
-        <button class="btn-retry" onclick="location.reload()">🔄 다시하기</button>
-        <a href="../index.html" class="btn-back">← 포털로</a>
-      </div>
-    </div>`;
-  }); // showAdThenResult
+    <div class="result-actions">
+      <button class="btn-share" onclick="shareResult('${d.name}',${d.score})">🔗 결과 공유하기</button>
+      <button class="btn-retry" onclick="location.reload()">🔄 다시하기</button>
+      <a href="../index.html" class="btn-back">← 포털로</a>
+    </div>
+
+  </div>`;
 }
 
 function shareResult(name, score) {
-  const text = `"${name}" 이름 점수는 ${score}점! 내 이름 점수도 확인해봐 ✨`;
-  if (navigator.share) {
-    navigator.share({ title: '내 이름 점수', text, url: window.location.href });
-  } else {
-    navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
-  }
+  const text = `"${name}" 사주+성명학 분석 ${score}점! 내 이름도 분석해봐 ✨`;
+  if (navigator.share) navigator.share({ title:'내 이름 점수', text, url: window.location.href });
+  else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
 }
 </script>
 </body>
