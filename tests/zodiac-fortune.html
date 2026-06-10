@@ -3,63 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>띠별 운세 2025 | 오늘연구소</title>
-  <meta name="description" content="띠별 운세 2025 — 오늘연구소에서 재미있게 즐겨보세요">
+  <title>띠별 운세 | 오늘연구소</title>
+  <meta name="description" content="생년월일로 계산하는 정밀 띠별 운세 — 재물·애정·건강·직업 + 분기별 운세 완전 분석">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
   <link rel="stylesheet" href="../style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <script src="../ad.js"></script>
   <style>
+    .birth-row { display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px; margin-bottom:4px; }
+
     .zodiac-hero {
-      background: linear-gradient(145deg, #0d1a0a 0%, #1a2e0a 100%);
-      border-radius: 16px;
-      padding: 32px 24px;
-      text-align: center;
-      margin-bottom: 24px;
-      border: 1.5px solid rgba(70,211,105,.2);
+      border-radius:18px; padding:30px 24px; text-align:center; margin-bottom:20px;
+      border:1.5px solid rgba(70,211,105,.25);
+      background:linear-gradient(145deg,rgba(13,26,10,.95) 0%,rgba(26,46,10,.95) 100%);
     }
-    .zodiac-animal-emoji { font-size: 80px; display: block; margin-bottom: 8px; }
-    .zodiac-animal-name { font-size: 26px; font-weight: 900; color: #46d369; margin-bottom: 4px; }
-    .zodiac-animal-years { font-size: 12px; color: var(--gray3); }
-    .lucky-month-row {
-      display: flex; gap: 12px; margin-bottom: 20px;
+    .zodiac-emoji { font-size:78px; display:block; margin-bottom:10px; line-height:1; }
+    .zodiac-name  { font-size:28px; font-weight:900; color:#46d369; margin-bottom:4px; }
+    .zodiac-info  { font-size:12px; color:var(--gray3); line-height:1.6; }
+
+    .fortune-main {
+      background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+      border-radius:14px; padding:18px 20px; margin-bottom:18px;
+      font-size:14px; color:var(--gray1); line-height:1.9;
     }
-    .lucky-month-box {
-      flex: 1;
-      border-radius: 12px;
-      padding: 14px;
-      text-align: center;
+
+    .quarter-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
+    .quarter-box {
+      background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07);
+      border-radius:14px; padding:14px 14px;
     }
-    .lm-label { font-size: 12px; margin-bottom: 6px; }
-    .lm-val { font-size: 20px; font-weight: 900; }
-    .fortune-desc-box {
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 12px;
-      padding: 18px 20px;
-      margin-bottom: 20px;
-      font-size: 14px;
-      color: var(--gray1);
-      line-height: 1.85;
+    .quarter-head { font-size:12px; font-weight:700; color:var(--gray3); margin-bottom:6px; }
+    .quarter-text { font-size:12px; color:var(--gray2); line-height:1.65; }
+
+    .lucky-row { display:flex; gap:10px; margin-bottom:14px; }
+    .lucky-box {
+      flex:1; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+      border-radius:12px; padding:12px 8px; text-align:center;
     }
-    .lucky-items-row {
-      display: flex; gap: 12px; margin-bottom: 20px;
+    .lucky-icon  { font-size:22px; display:block; margin-bottom:5px; }
+    .lucky-label { font-size:10px; color:var(--gray3); margin-bottom:3px; }
+    .lucky-val   { font-size:13px; font-weight:700; color:var(--gray1); }
+
+    .lucky-row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:18px; }
+
+    .advice-box {
+      background:linear-gradient(135deg,rgba(101,78,163,.12) 0%,rgba(50,100,255,.07) 100%);
+      border:1px solid rgba(161,140,209,.2); border-radius:14px;
+      padding:18px 20px; margin-bottom:20px;
     }
-    .lucky-item-card {
-      flex: 1;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 12px;
-      padding: 14px 10px;
-      text-align: center;
-    }
-    .li-icon { font-size: 26px; display: block; margin-bottom: 6px; }
-    .li-label { font-size: 11px; color: var(--gray3); margin-bottom: 4px; }
-    .li-val { font-size: 14px; font-weight: 700; }
+    .advice-title { font-size:13px; font-weight:700; color:#c9b8f7; margin-bottom:8px; }
+    .advice-text  { font-size:14px; color:var(--gray2); line-height:1.8; }
   </style>
 </head>
 <body>
-
   <nav class="navbar scrolled">
     <div class="nav-container">
       <div class="nav-left">
@@ -76,12 +72,11 @@
 
   <div class="test-wrap">
     <div class="test-inner">
-
       <div id="formSection">
         <div class="test-header">
           <span class="test-header-emoji">🐉</span>
-          <h1>띠별 운세 2025</h1>
-          <p>태어난 해의 띠로 알아보는<br>2025년 나의 한 해 운세 완전 분석!</p>
+          <h1 id="pageTitle">띠별 운세</h1>
+          <p>생년월일로 계산하는 정밀 띠별 운세<br>재물·애정·건강·직업 + 분기별 흐름까지!</p>
           <div class="test-meta">
             <span>🔮 운세</span>
             <span>⏱ 1분</span>
@@ -90,160 +85,249 @@
         </div>
 
         <div class="question-card">
-          <div class="question-text" style="margin-bottom:20px;">태어난 연도를 입력해주세요</div>
-          <label class="input-label">출생 연도</label>
-          <input type="number" class="input-field" id="birthYear" placeholder="예: 1990" min="1930" max="2010">
-          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;margin-top:4px;">
-            🐉 2025년 운세 보기
+          <div class="question-text" style="margin-bottom:16px;">생년월일을 입력해주세요</div>
+          <label class="input-label">생년월일</label>
+          <div class="birth-row">
+            <input type="number" class="input-field" id="bYear"  placeholder="출생연도 (예: 1990)" min="1924" max="2010" style="margin-bottom:0;">
+            <input type="number" class="input-field" id="bMonth" placeholder="월" min="1" max="12" style="margin-bottom:0;">
+            <input type="number" class="input-field" id="bDay"   placeholder="일" min="1" max="31" style="margin-bottom:0;">
+          </div>
+          <p style="font-size:12px;color:var(--gray3);margin:8px 0 20px;line-height:1.6;">
+            ℹ️ 입춘(2월 4일) 이전 출생은 전년도 띠로 계산됩니다.
+          </p>
+          <button class="btn-primary" id="calcBtn" style="width:100%;padding:15px;font-size:16px;">
+            🐉 운세 보기
           </button>
         </div>
       </div>
-
       <div id="resultSection" style="display:none;"></div>
-
     </div>
   </div>
 
 <script>
-// 12 zodiac cycle starting from 쥐(Rat) = year % 12 === 4 (1900 % 12 = 4 → 쥐)
+const THIS_YEAR = new Date().getFullYear();
+document.getElementById('pageTitle').textContent = `띠별 운세 ${THIS_YEAR}`;
+document.getElementById('calcBtn').textContent   = `🐉 ${THIS_YEAR}년 운세 보기`;
+
+// ── 12띠 데이터 (2026 병오년 기준) ──────────────────────────────────────
 const ZODIAC = [
-  { name:'원숭이띠', emoji:'🐒', key:'monkey',
-    fortune2025:'2025년은 원숭이띠에게 변화와 도전의 해입니다. 상반기에는 뜻밖의 기회가 찾아오며 빠른 결단력이 성공의 열쇠가 됩니다. 특히 5~7월에 직업적 전환점이 될 만한 사건이 발생할 수 있으니 눈을 크게 뜨세요. 하반기에는 인간관계에서 뜻밖의 귀인을 만나 삶이 풍요로워질 것입니다.',
-    money:82, love:75, health:68, career:88,
-    luckyMonth:'5월', unluckyMonth:'2월', luckyColor:'금색', luckyNum:9 },
-  { name:'닭띠', emoji:'🐓', key:'rooster',
-    fortune2025:'2025년 닭띠는 꼼꼼함과 성실함이 빛을 발하는 한 해입니다. 올해 초 시작한 프로젝트나 계획이 하반기에 결실을 맺을 가능성이 높습니다. 금전적으로는 안정된 흐름이 이어지지만 무리한 투자는 경계해야 합니다. 건강 관리에 특히 신경 써야 하는 해로, 규칙적인 생활 패턴이 중요합니다.',
-    money:71, love:68, health:55, career:79,
-    luckyMonth:'8월', unluckyMonth:'4월', luckyColor:'흰색', luckyNum:5 },
-  { name:'개띠', emoji:'🐕', key:'dog',
-    fortune2025:'2025년은 개띠에게 신뢰와 우정이 빛나는 해입니다. 오래된 인연들이 귀중한 도움을 주고, 새로운 협력 관계가 형성되는 한 해입니다. 직업적으로는 팀워크가 중요하며 혼자보다 함께할 때 더 큰 성과를 낼 수 있습니다. 애정운도 무난하여 솔직한 감정 표현이 관계를 발전시킵니다.',
-    money:74, love:84, health:72, career:76,
-    luckyMonth:'9월', unluckyMonth:'6월', luckyColor:'갈색', luckyNum:3 },
-  { name:'돼지띠', emoji:'🐷', key:'pig',
-    fortune2025:'2025년 돼지띠는 재물운이 특히 강한 한 해입니다. 그동안 묵혀두었던 계획을 실행에 옮기기 좋은 시기로, 대담한 투자나 사업 확장이 좋은 결과를 가져올 것입니다. 연애 운도 활짝 피어나 솔로라면 진지한 인연을 만날 가능성이 높습니다. 건강에는 소화계 관리가 중요합니다.',
-    money:91, love:87, health:69, career:83,
-    luckyMonth:'3월', unluckyMonth:'10월', luckyColor:'노란색', luckyNum:8 },
-  { name:'쥐띠', emoji:'🐭', key:'rat',
-    fortune2025:'2025년은 쥐띠에게 재기의 해입니다. 작년의 어려움을 딛고 새로운 출발을 준비할 에너지가 충만합니다. 지혜와 재치를 발휘하면 경쟁에서 앞서 나갈 수 있습니다. 특히 학업이나 자격증 취득에 도전하기 최적의 해이며, 여름 이후부터 금전적 흐름이 개선됩니다.',
-    money:77, love:71, health:80, career:85,
-    luckyMonth:'7월', unluckyMonth:'1월', luckyColor:'파란색', luckyNum:7 },
-  { name:'소띠', emoji:'🐮', key:'ox',
-    fortune2025:'2025년 소띠는 인내와 성실함이 드디어 보상받는 해입니다. 오래 준비해온 일이 구체적인 결실을 맺으며, 주변의 인정을 받게 됩니다. 재물운은 상반기 중반부터 꾸준히 상승하는 흐름입니다. 건강은 비교적 양호하지만 과로를 피하고 충분한 휴식을 취하는 것이 중요합니다.',
-    money:84, love:72, health:78, career:90,
-    luckyMonth:'6월', unluckyMonth:'9월', luckyColor:'초록색', luckyNum:6 },
-  { name:'호랑이띠', emoji:'🐯', key:'tiger',
-    fortune2025:'2025년은 호랑이띠에게 도전과 용기가 키워드인 해입니다. 새로운 분야에 뛰어들 용기가 생기며, 주변의 반대에도 불구하고 자신의 길을 걸을 때 가장 빛납니다. 연애에서는 강렬한 만남이 예상되며, 현재 연인이 있다면 관계가 한 단계 성숙해집니다. 금전적으로는 변동이 크므로 분산 투자를 권장합니다.',
-    money:66, love:89, health:82, career:77,
-    luckyMonth:'4월', unluckyMonth:'11월', luckyColor:'주황색', luckyNum:1 },
-  { name:'토끼띠', emoji:'🐰', key:'rabbit',
-    fortune2025:'2025년 토끼띠는 평화롭고 여유로운 한 해를 보내게 됩니다. 급하게 서두르지 않고 자신의 페이스를 지키면 안정적인 성과를 얻을 수 있습니다. 예술·창작 분야에서 재능이 빛나며 새로운 취미가 인생을 풍요롭게 합니다. 다만 중요한 결정에서 지나친 망설임은 기회를 놓칠 수 있으니 주의하세요.',
-    money:73, love:80, health:85, career:71,
-    luckyMonth:'10월', unluckyMonth:'5월', luckyColor:'분홍색', luckyNum:4 },
-  { name:'용띠', emoji:'🐲', key:'dragon',
-    fortune2025:'2025년은 용띠에게 최고의 전성기입니다! 카리스마와 실력이 세상에 인정받으며 직업적으로 큰 도약이 기대됩니다. 특히 하반기에 예상치 못한 큰 기회가 찾아오니 과감하게 잡으세요. 재물운도 최상위권으로 올해 시작하는 사업이나 투자는 상당한 이익을 가져다 줄 것입니다.',
-    money:95, love:83, health:88, career:97,
-    luckyMonth:'11월', unluckyMonth:'3월', luckyColor:'금색', luckyNum:9 },
-  { name:'뱀띠', emoji:'🐍', key:'snake',
-    fortune2025:'2025년 뱀띠는 깊은 통찰력과 직관이 빛나는 해입니다. 겉으로 드러나지 않지만 내면에서 중요한 변화가 일어나는 시기입니다. 재물은 서서히 쌓이는 흐름이며 급진적인 변화보다 꾸준한 노력이 중요합니다. 건강은 마음의 건강이 특히 중요하니 스트레스 관리에 신경 쓰세요.',
-    money:78, love:74, health:63, career:80,
-    luckyMonth:'2월', unluckyMonth:'8월', luckyColor:'보라색', luckyNum:2 },
-  { name:'말띠', emoji:'🐴', key:'horse',
-    fortune2025:'2025년은 말띠에게 자유와 성장이 공존하는 해입니다. 새로운 환경이나 여행이 삶에 신선한 활력을 불어넣어 줍니다. 대인관계에서 넓은 네트워크가 형성되며, 이 인맥이 직업적 기회로 이어질 수 있습니다. 여름철 건강 관리에 특히 유의하고 과도한 활동은 자제하세요.',
-    money:79, love:86, health:65, career:82,
-    luckyMonth:'12월', unluckyMonth:'7월', luckyColor:'빨간색', luckyNum:7 },
-  { name:'양띠', emoji:'🐑', key:'goat',
-    fortune2025:'2025년 양띠는 예술적 감성과 따뜻한 인간미가 빛나는 한 해입니다. 가족과 가까운 이들과의 관계에서 큰 행복을 찾게 됩니다. 직업적으로는 창의적인 분야에서 두각을 나타낼 수 있으며, 하반기에 실질적인 소득 증가가 기대됩니다. 상반기에는 건강에 좀 더 세심한 주의가 필요합니다.',
-    money:75, love:90, health:60, career:73,
-    luckyMonth:'1월', unluckyMonth:'6월', luckyColor:'하늘색', luckyNum:5 },
+  { key:'rat', name:'쥐띠', emoji:'🐭', repYears:'1960 · 1972 · 1984 · 1996 · 2008',
+    fortune:`${THIS_YEAR}년 쥐띠는 지혜와 전략이 빛나는 해입니다. 큰 움직임보다 영리한 판단이 더 큰 성과를 만들어냅니다. 인간관계에서 새로운 인맥이 직업적 기회로 연결될 수 있으며, 하반기에 특히 반가운 소식이 기다립니다. 건강은 전반적으로 양호하지만 스트레스 관리가 가장 중요한 과제입니다.`,
+    quarters:['새로운 계획을 세우기 좋은 시기. 세밀한 전략이 빛을 발합니다.','인맥이 확장되는 시기. 새로운 만남에 적극적으로 임하세요.','노력한 것들이 가시적인 결과로 나타나기 시작합니다. 자신감을 가지세요.','재물운이 상승세. 연말 계획을 꼼꼼히 마련하면 내년이 더 밝아집니다.'],
+    money:79, love:73, health:81, career:83,
+    luckyMonth:'7월', unluckyMonth:'12월', luckyColor:'파란색', luckyNum:3, luckyFood:'물냉면', luckyDir:'북동쪽',
+    advice:'직관보다 데이터와 논리를 믿으세요. 철저한 준비가 뒷받침될 때 쥐띠의 재치가 가장 빛납니다.' },
+
+  { key:'ox', name:'소띠', emoji:'🐮', repYears:'1961 · 1973 · 1985 · 1997 · 2009',
+    fortune:`${THIS_YEAR}년 소띠는 꾸준함이 드디어 빛을 발하는 풍요로운 해입니다. 화(火) 기운이 토(土)를 생하니 소띠의 든든한 기반 위에 성과가 쌓입니다. 직업적으로 오랫동안 준비해온 프로젝트가 결실을 맺으며 주변의 인정을 받는 기쁨이 있습니다. 하반기에는 재물운도 강하게 상승합니다.`,
+    quarters:['올해 목표를 세우고 차근차근 나아가세요. 소의 뚝심이 강점입니다.','협력 관계에서 좋은 성과가 나옵니다. 팀플레이를 적극 활용하세요.','직업적 절정기. 준비해온 것들이 구체적 성취로 이어집니다.','재물이 쌓이는 시기. 내년을 위한 계획을 세우고 저축에 힘쓰세요.'],
+    money:88, love:74, health:79, career:92,
+    luckyMonth:'6월', unluckyMonth:'9월', luckyColor:'초록색', luckyNum:8, luckyFood:'설렁탕', luckyDir:'동쪽',
+    advice:'조급하게 서두르지 않는 것이 소띠의 최강 무기입니다. 올해는 기다림이 황금을 만들어줍니다.' },
+
+  { key:'tiger', name:'호랑이띠', emoji:'🐯', repYears:'1962 · 1974 · 1986 · 1998 · 2010',
+    fortune:`${THIS_YEAR}년은 호랑이띠에게 최고의 전성기 중 하나입니다! 목(木)이 화(火)를 생하니 호랑이의 에너지가 병오년의 불길에 기름을 부어 거침없이 성장합니다. 직업적으로 두각을 나타내고 주변의 주목을 받는 한 해이며, 재물운과 연애운이 동시에 상승합니다. 도전하는 모든 분야에서 용맹하게 나아가세요!`,
+    quarters:['강렬한 시작. 올해의 가장 큰 목표를 향해 전력으로 나아가세요.','주변의 인정과 지지가 쏟아집니다. 리더십을 발휘하기 최적의 시기.','재물과 성과가 동시에 절정에 달합니다. 자신감 있게 행동하세요.','한 해 성과를 점검하며 내년을 향한 큰 그림을 그리는 시기입니다.'],
+    money:88, love:91, health:84, career:95,
+    luckyMonth:'4월', unluckyMonth:'10월', luckyColor:'주황색', luckyNum:9, luckyFood:'소고기 구이', luckyDir:'동쪽',
+    advice:'두려움 없이 앞으로 나아가세요. 올해 호랑이띠를 막을 것은 아무것도 없습니다. 다만 지나친 자신감으로 주변과 마찰이 생기지 않도록 배려도 잊지 마세요.' },
+
+  { key:'rabbit', name:'토끼띠', emoji:'🐰', repYears:'1963 · 1975 · 1987 · 1999',
+    fortune:`${THIS_YEAR}년 토끼띠는 창의성과 감수성이 넘치는 풍요로운 해입니다. 목(木) 기운이 화(火)를 생하니 예술·창작 분야에서 특히 두각을 나타냅니다. 인간관계는 전반적으로 원만하며 새로운 인연이 찾아와 삶을 풍요롭게 합니다. 조급함을 버리고 자신만의 속도로 나아가면 원하는 모든 것을 이룰 수 있는 해입니다.`,
+    quarters:['봄처럼 따뜻한 시작. 새로운 관계와 아이디어가 싹틉니다.','활동이 가장 왕성한 시기. 표현하고 실행할수록 인정받습니다.','성과가 나타나기 시작합니다. 직업과 애정 모두 순풍을 탑니다.','결실의 시기. 한 해의 감사함을 느끼며 편안히 마무리하세요.'],
+    money:81, love:85, health:88, career:78,
+    luckyMonth:'3월', unluckyMonth:'9월', luckyColor:'분홍색', luckyNum:4, luckyFood:'초밥', luckyDir:'동남쪽',
+    advice:'올해는 직관을 믿고 원하는 것을 향해 한 걸음씩 나아가세요. 우아한 걸음이 어느 순간 결승선을 밟고 있을 것입니다.' },
+
+  { key:'dragon', name:'용띠', emoji:'🐲', repYears:'1952 · 1964 · 1976 · 1988 · 2000',
+    fortune:`${THIS_YEAR}년 용띠는 카리스마와 실력이 세상에 인정받는 해입니다. 화(火)가 토(土)를 생하니 용의 위엄이 더욱 빛나고 직업적으로 큰 도약이 기대됩니다. 재물은 대담한 결정이 큰 수익을 만들어내는 흐름으로, 올해 시작하는 사업이나 투자에서 눈에 띄는 성과를 얻을 것입니다. 건강은 비교적 양호하니 에너지를 충분히 활용하세요.`,
+    quarters:['힘차고 당당한 출발. 올해의 가장 야심찬 목표를 세우세요.','중요한 기회가 찾아옵니다. 준비된 용기로 과감하게 잡으세요.','재물 절정기. 투자와 사업에서 가장 좋은 성과가 기대됩니다.','성공적인 한 해를 마무리하며 새로운 비전을 품는 시기입니다.'],
+    money:93, love:82, health:87, career:96,
+    luckyMonth:'5월', unluckyMonth:'1월', luckyColor:'금색', luckyNum:9, luckyFood:'용봉탕', luckyDir:'남쪽',
+    advice:'올해 당신의 기운은 하늘을 찌릅니다. 오래 품어온 꿈을 현실로 만들 최고의 해, 주저하지 말고 나아가세요.' },
+
+  { key:'snake', name:'뱀띠', emoji:'🐍', repYears:'1953 · 1965 · 1977 · 1989 · 2001',
+    fortune:`${THIS_YEAR}년 뱀띠는 병오년의 화(火) 기운과 같은 오행이라 강렬하고 개성 넘치는 한 해가 됩니다. 숨어있던 재능이 드러나고 직관력이 최고조에 달하는 시기입니다. 재물은 빠른 판단으로 기회를 잡으면 크게 불어날 수 있습니다. 다만 지나친 자신감이 갈등을 일으킬 수 있으니 주변과의 소통에 신경 쓰세요.`,
+    quarters:['예리한 직관으로 좋은 기회를 포착합니다. 망설임보다 결단이 중요합니다.','대인관계에서 섬세한 배려가 필요한 시기. 소통을 강화하세요.','재능이 빛나는 시기. 자신만의 강점을 적극적으로 표현하세요.','한 해 성과를 갈무리하며 내년을 위한 전략을 수립하세요.'],
+    money:83, love:77, health:70, career:85,
+    luckyMonth:'2월', unluckyMonth:'8월', luckyColor:'보라색', luckyNum:2, luckyFood:'매운탕', luckyDir:'남동쪽',
+    advice:'조용히 움직이되 결정적인 순간에 강하게 치고 나가는 것이 뱀띠의 진면목. 올해 그 순간이 반드시 찾아옵니다.' },
+
+  { key:'horse', name:'말띠', emoji:'🐴', repYears:'1954 · 1966 · 1978 · 1990 · 2002',
+    fortune:`${THIS_YEAR}년은 말띠 본인의 해(본명년, 本命年)입니다! 자신의 해에는 큰 변화와 함께 기회도 크게 찾아옵니다. 상반기에는 변화의 파도가 높을 수 있으나, 그 파도를 탈 수 있다면 하반기에 큰 도약을 경험합니다. 재물·직업·건강 모든 면에서 변화가 있는 해이니 건강 관리와 신중한 재정 계획이 특히 중요합니다. 붉은색 아이템으로 액운을 막으세요.`,
+    quarters:['본명년의 시작. 붉은색 소품이나 의류를 착용하면 액운을 막는 데 도움이 됩니다.','변화의 물결이 가장 강한 시기. 유연하게 대응하되 원칙은 굳게 지키세요.','하반기 전환점. 어려움을 이겨낸 만큼 더 강해진 자신을 발견합니다.','결실과 회복의 시기. 올해 경험한 모든 것이 귀중한 자산이 됩니다.'],
+    money:74, love:79, health:68, career:80,
+    luckyMonth:'12월', unluckyMonth:'6월', luckyColor:'빨간색', luckyNum:7, luckyFood:'삼겹살', luckyDir:'서쪽',
+    advice:'본명년은 변화의 해이자 성장의 해입니다. 외부의 변화에 흔들리지 말고 자신의 중심을 굳건히 잡으세요.' },
+
+  { key:'goat', name:'양띠', emoji:'🐑', repYears:'1955 · 1967 · 1979 · 1991 · 2003',
+    fortune:`${THIS_YEAR}년 양띠는 화(火)가 토(土)를 기름지게 하는 풍요로운 한 해입니다. 예술적 감수성과 따뜻한 인간미로 주변 사람들의 사랑을 듬뿍 받는 시기입니다. 가족과 가까운 이들과의 관계에서 큰 행복이 찾아오며, 창의적인 분야에서 새로운 가능성이 열립니다. 하반기에는 실질적인 소득 증가도 기대됩니다.`,
+    quarters:['따뜻하고 감성적인 시작. 소중한 사람들과의 시간을 충분히 가지세요.','창의적 에너지가 절정. 취미나 부업에서 예상 밖의 수익이 생길 수 있습니다.','사랑과 재물 모두 풍성한 시기. 자신 있게 원하는 것을 향해 나아가세요.','따뜻한 마무리. 감사한 마음으로 소중한 사람들과 한 해를 추억하세요.'],
+    money:79, love:93, health:73, career:77,
+    luckyMonth:'10월', unluckyMonth:'3월', luckyColor:'하늘색', luckyNum:5, luckyFood:'갈비찜', luckyDir:'남서쪽',
+    advice:'올해 양띠의 가장 큰 행운은 주변 사람들입니다. 그 인연들을 소중히 가꾸는 것이 모든 운을 여는 열쇠입니다.' },
+
+  { key:'monkey', name:'원숭이띠', emoji:'🐒', repYears:'1956 · 1968 · 1980 · 1992 · 2004',
+    fortune:`${THIS_YEAR}년 병오년은 원숭이띠에게 변화와 인내가 공존하는 해입니다. 화(火) 기운이 강한 해라 금(金) 기운의 원숭이에게 예상치 못한 변수가 생길 수 있지만, 타고난 유연한 적응력이 오히려 새로운 기회를 만들어냅니다. 상반기보다 하반기에 훨씬 안정된 흐름이 찾아오며 연말에 반가운 소식이 기다리고 있습니다.`,
+    quarters:['변화에 적응하는 과정에서 일시적인 어려움이 있을 수 있습니다. 조급하지 않고 상황을 지켜보는 것이 중요합니다.','새로운 인맥이 형성되는 시기. 주변의 새로운 제안에 귀를 기울여보세요.','가장 활발한 시기. 상반기에 준비해온 것들이 구체적인 성과로 이어집니다.','연말은 결실과 마무리의 시기. 올해 이룬 것들을 점검하고 내년을 준비하세요.'],
+    money:72, love:78, health:65, career:75,
+    luckyMonth:'10월', unluckyMonth:'3월', luckyColor:'흰색', luckyNum:6, luckyFood:'삼계탕', luckyDir:'서쪽',
+    advice:'변화를 두려워하지 마세요. 원숭이띠의 영리함과 유연성은 어떤 상황에서도 길을 찾아냅니다.' },
+
+  { key:'rooster', name:'닭띠', emoji:'🐓', repYears:'1957 · 1969 · 1981 · 1993 · 2005',
+    fortune:`${THIS_YEAR}년 닭띠는 집중과 정리가 키워드인 해입니다. 자신의 강점을 재정비하고 불필요한 것들을 정리하면 하반기에 의외의 도약을 경험하게 됩니다. 금전적으로는 충동적인 지출을 조심해야 하며 꾸준한 저축이 든든한 버팀목이 됩니다. 건강 관리에 특히 세심한 주의가 필요한 해입니다.`,
+    quarters:['계획을 꼼꼼하게 점검하는 시간. 서두르지 말고 기반을 다지세요.','예상치 못한 변수가 있을 수 있으나 차분하게 대응하면 문제없습니다.','하반기 전환점이 찾아옵니다. 준비된 사람에게 기회가 옵니다.','재물 흐름이 개선되기 시작합니다. 새해를 향한 좋은 준비가 됩니다.'],
+    money:69, love:74, health:61, career:77,
+    luckyMonth:'9월', unluckyMonth:'4월', luckyColor:'황금색', luckyNum:4, luckyFood:'닭갈비', luckyDir:'서남쪽',
+    advice:'꼼꼼한 계획과 성실한 실행이 닭띠의 진면목. 화려한 스포트라이트보다 탄탄한 실력을 쌓는 해로 삼으세요.' },
+
+  { key:'dog', name:'개띠', emoji:'🐕', repYears:'1958 · 1970 · 1982 · 1994 · 2006',
+    fortune:`${THIS_YEAR}년 개띠에게 병오년의 화(火) 에너지가 흙(土)을 기름지게 합니다. 인간관계에서 귀인을 만나고 오래된 노력이 인정받는 풍성한 해입니다. 직업적으로는 협력과 팀워크가 두드러지며 혼자보다 함께일 때 더 큰 성과를 냅니다. 애정운도 따뜻하게 무르익어 솔직한 표현이 관계를 한 단계 깊어지게 합니다.`,
+    quarters:['새로운 시작에 에너지가 충만한 시기. 올해의 목표를 명확히 세우세요.','주변 사람들과의 협력이 빛을 발합니다. 혼자보다 함께 가는 길을 선택하세요.','가장 성과가 풍성한 시기. 직업적 성취와 금전적 상승이 기대됩니다.','감사와 나눔의 시기. 올해 받은 복을 주변과 나누면 더 큰 복이 돌아옵니다.'],
+    money:83, love:87, health:76, career:81,
+    luckyMonth:'8월', unluckyMonth:'2월', luckyColor:'갈색', luckyNum:5, luckyFood:'갈비탕', luckyDir:'남쪽',
+    advice:'신뢰와 성실함이 올해 개띠의 가장 강력한 무기입니다. 진심으로 다가가면 반드시 귀인이 응답합니다.' },
+
+  { key:'pig', name:'돼지띠', emoji:'🐷', repYears:'1959 · 1971 · 1983 · 1995 · 2007',
+    fortune:`${THIS_YEAR}년 돼지띠는 직관과 창의력이 빛나는 한 해입니다. 화(火) 에너지와 수(水)의 특성이 만나 아이디어가 넘치는 시기입니다. 재물은 서서히 쌓이는 흐름이며 상반기보다 하반기에 더욱 윤택해집니다. 감정의 기복이 있을 수 있으니 마음 건강에 특히 신경 써주세요.`,
+    quarters:['새해의 에너지를 긍정적으로 받아들이고 목표를 재정비하세요.','창의적인 아이디어가 샘솟는 시기. 표현하고 실행하면 인정받습니다.','재물 흐름이 개선되고 인맥이 확장됩니다. 적극적인 활동이 도움됩니다.','한 해의 마무리. 감사한 것들을 되돌아보고 내년을 계획하세요.'],
+    money:80, love:84, health:70, career:76,
+    luckyMonth:'11월', unluckyMonth:'5월', luckyColor:'검은색', luckyNum:1, luckyFood:'돼지국밥', luckyDir:'북쪽',
+    advice:'풍요로운 돼지띠의 에너지를 믿으세요. 베풀고 나눌수록 더 큰 복이 돌아오는 해입니다.' },
 ];
 
-// Year to zodiac: base year 1900 is rat(쥐). cycle 12 starting [rat,ox,tiger,rabbit,dragon,snake,horse,goat,monkey,rooster,dog,pig]
-function getZodiac(year) {
-  const cycle = ['rat','ox','tiger','rabbit','dragon','snake','horse','goat','monkey','rooster','dog','pig'];
-  const base = ((year - 1900) % 12 + 12) % 12;
-  const key = cycle[base];
-  return ZODIAC.find(z => z.key === key) || ZODIAC[0];
+// cycle: 1900 = 쥐(rat)
+const CYCLE = ['rat','ox','tiger','rabbit','dragon','snake','horse','goat','monkey','rooster','dog','pig'];
+
+function getZodiac(year, month, day) {
+  let zodYear = year;
+  if (month < 2 || (month === 2 && day < 4)) zodYear = year - 1;
+  const idx = ((zodYear - 1900) % 12 + 12) % 12;
+  return ZODIAC.find(z => z.key === CYCLE[idx]);
 }
 
 function statBar(label, value, color) {
   return `<div class="stat-row">
     <div class="stat-label"><span>${label}</span><span style="color:${color}">${value}</span></div>
-    <div class="stat-bar-bg"><div class="stat-bar-fill" data-val="${value}" style="width:0%;background:${color}"></div></div>
+    <div class="stat-bar-bg"><div class="stat-bar-fill" data-val="${value}" style="width:0%;background:${color};transition:width 1.2s cubic-bezier(.4,0,.2,1) .3s;"></div></div>
   </div>`;
 }
 
-function calculate() {
-  const year = parseInt(document.getElementById('birthYear').value);
-  if (!year || year < 1930 || year > 2010) { alert('1930~2010년 사이의 출생 연도를 입력해주세요!'); return; }
+document.getElementById('calcBtn').addEventListener('click', calculate);
 
-  const z = getZodiac(year);
+function calculate() {
+  const year  = parseInt(document.getElementById('bYear').value);
+  const month = parseInt(document.getElementById('bMonth').value);
+  const day   = parseInt(document.getElementById('bDay').value);
+
+  if (!year || year < 1924 || year > 2010) { alert('1924~2010년 사이의 출생연도를 입력해주세요!'); return; }
+  if (!month || month < 1 || month > 12)   { alert('월을 1~12 사이로 입력해주세요!'); return; }
+  if (!day   || day   < 1 || day   > 31)   { alert('일을 1~31 사이로 입력해주세요!'); return; }
+
+  const z = getZodiac(year, month, day);
 
   showAdThenResult(() => {
     document.getElementById('formSection').style.display = 'none';
     const sec = document.getElementById('resultSection');
     sec.style.display = 'block';
-    sec.innerHTML = `<div class="result-card">
-      <div class="result-type">🐉 2025년 띠별 운세</div>
 
-      <div class="zodiac-hero">
-        <span class="zodiac-animal-emoji">${z.emoji}</span>
-        <div class="zodiac-animal-name">${z.name}</div>
-        <div class="zodiac-animal-years">${year}년생</div>
-      </div>
+    const quarterSeasons = [
+      { icon:'🌸', label:`1분기 (1~3월)` },
+      { icon:'☀️', label:`2분기 (4~6월)` },
+      { icon:'🍂', label:`3분기 (7~9월)` },
+      { icon:'❄️', label:`4분기 (10~12월)` },
+    ];
 
-      <div class="fortune-desc-box">${z.fortune2025}</div>
+    const quarterHtml = z.quarters.map((q, i) => `
+      <div class="quarter-box">
+        <div class="quarter-head">${quarterSeasons[i].icon} ${quarterSeasons[i].label}</div>
+        <div class="quarter-text">${q}</div>
+      </div>`).join('');
 
-      <div style="margin-bottom:24px;">
-        ${statBar('재물운 💰', z.money, '#ffd700')}
-        ${statBar('애정운 💕', z.love, '#f06292')}
-        ${statBar('건강운 💪', z.health, '#46d369')}
-        ${statBar('직업운 🚀', z.career, '#4facfe')}
-      </div>
+    sec.innerHTML = `
+      <div class="result-card">
+        <div class="result-type">🐉 ${THIS_YEAR}년 띠별 운세</div>
 
-      <div class="lucky-month-row">
-        <div class="lucky-month-box" style="background:rgba(70,211,105,.1);border:1px solid rgba(70,211,105,.25);">
-          <div class="lm-label" style="color:#46d369;">🍀 행운의 달</div>
-          <div class="lm-val" style="color:#46d369;">${z.luckyMonth}</div>
+        <div class="zodiac-hero">
+          <span class="zodiac-emoji">${z.emoji}</span>
+          <div class="zodiac-name">${z.name}</div>
+          <div class="zodiac-info">${year}년 ${month}월 ${day}일생<br>${z.repYears}</div>
         </div>
-        <div class="lucky-month-box" style="background:rgba(229,9,20,.08);border:1px solid rgba(229,9,20,.2);">
-          <div class="lm-label" style="color:#ff6b6b;">⚠️ 주의할 달</div>
-          <div class="lm-val" style="color:#ff6b6b;">${z.unluckyMonth}</div>
-        </div>
-      </div>
 
-      <div class="lucky-items-row">
-        <div class="lucky-item-card">
-          <span class="li-icon">🎨</span>
-          <div class="li-label">행운의 색</div>
-          <div class="li-val">${z.luckyColor}</div>
-        </div>
-        <div class="lucky-item-card">
-          <span class="li-icon">🔢</span>
-          <div class="li-label">행운의 숫자</div>
-          <div class="li-val">${z.luckyNum}</div>
-        </div>
-      </div>
+        <div class="fortune-main">${z.fortune}</div>
 
-      <div class="result-actions">
-        <button class="btn-share" onclick="shareResult()">🔗 결과 공유하기</button>
-        <button class="btn-retry" onclick="location.reload()">🔄 다시하기</button>
-        <a href="../index.html" class="btn-back">← 포털로</a>
-      </div>
-    </div>`;
+        <div style="margin-bottom:20px;">
+          ${statBar('재물운 💰', z.money,  '#ffd700')}
+          ${statBar('애정운 💕', z.love,   '#f06292')}
+          ${statBar('건강운 💪', z.health, '#46d369')}
+          ${statBar('직업운 🚀', z.career, '#4facfe')}
+        </div>
+
+        <div style="font-size:13px;font-weight:700;color:var(--gray2);margin-bottom:12px;">📅 ${THIS_YEAR}년 분기별 흐름</div>
+        <div class="quarter-grid">${quarterHtml}</div>
+
+        <div class="lucky-row">
+          <div class="lucky-box" style="background:rgba(70,211,105,.08);border-color:rgba(70,211,105,.2);">
+            <span class="lucky-icon">🍀</span>
+            <div class="lucky-label">행운의 달</div>
+            <div class="lucky-val" style="color:#46d369;">${z.luckyMonth}</div>
+          </div>
+          <div class="lucky-box" style="background:rgba(255,80,80,.08);border-color:rgba(255,80,80,.2);">
+            <span class="lucky-icon">⚠️</span>
+            <div class="lucky-label">주의할 달</div>
+            <div class="lucky-val" style="color:#ff6b6b;">${z.unluckyMonth}</div>
+          </div>
+        </div>
+
+        <div class="lucky-row3">
+          <div class="lucky-box">
+            <span class="lucky-icon">🎨</span>
+            <div class="lucky-label">행운의 색</div>
+            <div class="lucky-val">${z.luckyColor}</div>
+          </div>
+          <div class="lucky-box">
+            <span class="lucky-icon">🔢</span>
+            <div class="lucky-label">행운의 숫자</div>
+            <div class="lucky-val">${z.luckyNum}</div>
+          </div>
+          <div class="lucky-box">
+            <span class="lucky-icon">🧭</span>
+            <div class="lucky-label">행운의 방향</div>
+            <div class="lucky-val">${z.luckyDir}</div>
+          </div>
+        </div>
+
+        <div class="lucky-row">
+          <div class="lucky-box" style="flex:none;width:100%;">
+            <span class="lucky-icon">🍽️</span>
+            <div class="lucky-label">행운의 음식</div>
+            <div class="lucky-val">${z.luckyFood}</div>
+          </div>
+        </div>
+
+        <div class="advice-box">
+          <div class="advice-title">💜 올해의 조언</div>
+          <div class="advice-text">${z.advice}</div>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn-share" onclick="shareResult('${z.name}','${z.emoji}')">🔗 결과 공유하기</button>
+          <button class="btn-retry" onclick="location.reload()">🔄 다시하기</button>
+          <a href="../index.html" class="btn-back">← 포털로</a>
+        </div>
+      </div>`;
 
     setTimeout(() => {
       document.querySelectorAll('.stat-bar-fill').forEach(el => {
         el.style.width = el.dataset.val + '%';
       });
-    }, 100);
+    }, 150);
   });
 }
 
-function shareResult() {
-  const year = parseInt(document.getElementById('birthYear').value);
-  const z = getZodiac(year);
-  const text = `나는 ${z.emoji} ${z.name}! 2025년 운세 확인했어 🐉 너도 해봐!`;
-  if (navigator.share) navigator.share({ title: '띠별 운세 2025', text, url: window.location.href });
+function shareResult(name, emoji) {
+  const text = `나는 ${emoji} ${name}! ${THIS_YEAR}년 띠별 운세 확인했어 🐉 너도 해봐!`;
+  if (navigator.share) navigator.share({ title:`띠별 운세 ${THIS_YEAR}`, text, url:window.location.href });
   else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
 }
 </script>

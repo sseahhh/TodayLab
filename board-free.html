@@ -8,6 +8,8 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" crossorigin="anonymous"></script>
+  <script src="auth.js"></script>
   <style>
     .board-wrap { min-height: 100vh; background: var(--bg); padding: calc(var(--nav-h) + 32px) 20px 80px; }
     .board-inner { max-width: 860px; margin: 0 auto; }
@@ -141,6 +143,57 @@
       .post-right { flex-direction: row; align-items: center; margin-top: 8px; }
       .modal-box { padding: 20px 16px; }
     }
+
+    /* Auth wall */
+    .auth-wall {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg); align-items: center; justify-content: center; padding: 20px;
+    }
+    .auth-wall.show { display: flex; }
+    .auth-box {
+      background: var(--bg2); border-radius: 20px; padding: 36px 32px;
+      width: 100%; max-width: 400px; border: 1.5px solid rgba(255,255,255,.1);
+      text-align: center;
+    }
+    .auth-box h2 { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+    .auth-box > p { font-size: 14px; color: var(--gray3); margin-bottom: 24px; }
+    .auth-tabs {
+      display: flex; margin-bottom: 22px; border-radius: 10px;
+      overflow: hidden; border: 1.5px solid rgba(255,255,255,.1);
+    }
+    .auth-tab {
+      flex: 1; padding: 11px; background: transparent; border: none; cursor: pointer;
+      font-family: inherit; font-size: 14px; font-weight: 700; color: var(--gray3); transition: all .2s;
+    }
+    .auth-tab.active { background: var(--red); color: #fff; }
+    .auth-input {
+      width: 100%; background: var(--bg3); border: 1.5px solid rgba(255,255,255,.1);
+      border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 14px;
+      font-family: inherit; outline: none; margin-bottom: 10px; box-sizing: border-box;
+    }
+    .auth-input:focus { border-color: var(--red); }
+    .auth-submit {
+      width: 100%; padding: 13px; background: var(--red); color: #fff; border: none;
+      border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer;
+      font-family: inherit; margin-top: 4px; transition: opacity .2s;
+    }
+    .auth-submit:hover { opacity: .85; }
+    .auth-error { font-size: 13px; color: #ff4d4d; margin: 4px 0 8px; min-height: 18px; text-align: left; }
+    .auth-back { display: block; margin-top: 20px; font-size: 13px; color: var(--gray3); text-decoration: none; }
+    .auth-back:hover { color: var(--gray2); }
+    .kakao-login-btn {
+      width: 100%; padding: 14px; background: #FEE500; color: #191919;
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: opacity .2s; margin-top: 8px;
+    }
+    .kakao-login-btn:hover { opacity: .88; }
+    .user-chip { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray2); }
+    .btn-logout {
+      padding: 6px 14px; background: transparent; border: 1.5px solid rgba(255,255,255,.15);
+      border-radius: 6px; color: var(--gray3); font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: all .2s;
+    }
+    .btn-logout:hover { border-color: var(--red); color: #ff4d4d; }
   </style>
 </head>
 <body>
@@ -154,6 +207,10 @@
       </div>
       <div class="nav-right">
         <a href="board-hotdeal.html" style="color:var(--gray2);text-decoration:none;font-size:13px;margin-right:16px;">🔥 핫딜공유방</a>
+        <div id="userBar" class="user-chip" style="display:none;margin-right:12px;">
+          <span>👤 <span id="userNickDisplay"></span></span>
+          <button class="btn-logout" onclick="doLogout()">로그아웃</button>
+        </div>
         <a href="index.html" class="btn-back">← 포털로 돌아가기</a>
       </div>
     </div>
@@ -185,12 +242,24 @@
     </div>
   </div>
 
+  <!-- Auth wall -->
+  <div class="auth-wall" id="authWall">
+    <div class="auth-box">
+      <h2>🔒 로그인이 필요해요</h2>
+      <p>자유게시판은 카카오 로그인 후 이용할 수 있어요</p>
+      <button class="kakao-login-btn" onclick="doKakaoLogin()">
+        <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" alt="" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">
+        카카오로 시작하기
+      </button>
+      <div id="kakaoLoginError" style="font-size:13px;color:#ff4d4d;margin-top:12px;min-height:18px;"></div>
+      <a href="index.html" class="auth-back">← 포털로 돌아가기</a>
+    </div>
+  </div>
+
   <!-- Write Modal -->
   <div class="modal-overlay" id="writeModalOverlay">
     <div class="modal-box">
       <h2>✏️ 글쓰기</h2>
-      <label class="modal-label">닉네임 *</label>
-      <input class="modal-input" id="mNick" placeholder="익명으로 활동할 닉네임을 입력하세요" maxlength="20">
       <label class="modal-label">카테고리</label>
       <select class="modal-select" id="mCat">
         <option>일상</option>
@@ -374,6 +443,10 @@ document.getElementById('catChips').addEventListener('click', e => {
 
 // Write modal
 function openWriteModal() {
+  if (!authCurrentUser()) {
+    document.getElementById('authWall').classList.add('show');
+    return;
+  }
   document.getElementById('writeModalOverlay').classList.add('open');
 }
 function closeWriteModal() {
@@ -384,12 +457,11 @@ document.getElementById('writeModalOverlay').addEventListener('click', e => {
 });
 
 function submitPost() {
-  const nick = document.getElementById('mNick').value.trim();
+  const nick = authCurrentUser();
   const cat = document.getElementById('mCat').value;
   const title = document.getElementById('mTitle').value.trim();
   const content = document.getElementById('mContent').value.trim();
 
-  if (!nick) { alert('닉네임을 입력해주세요.'); return; }
   if (!title) { alert('제목을 입력해주세요.'); return; }
   if (!content) { alert('내용을 입력해주세요.'); return; }
 
@@ -400,7 +472,6 @@ function submitPost() {
   posts.unshift({ id: newId, nick, cat, title, content, views: 1, likes: 0, date: today, isHot: false });
   savePosts(posts);
 
-  document.getElementById('mNick').value = '';
   document.getElementById('mTitle').value = '';
   document.getElementById('mContent').value = '';
   closeWriteModal();
@@ -452,6 +523,49 @@ document.getElementById('readModalOverlay').addEventListener('click', e => {
 });
 
 renderList();
+
+// ---- Auth wall ----
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0) === (tab === 'login'));
+  });
+  document.getElementById('loginPane').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('signupPane').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('signupError').textContent = '';
+}
+
+function doKakaoLogin() {
+  document.getElementById('kakaoLoginError').textContent = '';
+  authKakaoLogin(
+    function(profile) { onAuthSuccess(profile.nick); },
+    function() { document.getElementById('kakaoLoginError').textContent = '카카오 로그인에 실패했어요. 다시 시도해주세요.'; }
+  );
+}
+
+function onAuthSuccess(nick) {
+  document.getElementById('authWall').classList.remove('show');
+  document.getElementById('userNickDisplay').textContent = nick;
+  document.getElementById('userBar').style.display = 'flex';
+}
+
+function doLogout() {
+  authLogout();
+  location.reload();
+}
+
+// Page load check
+(function() {
+  const user = authCurrentUser();
+  if (!user) {
+    document.getElementById('authWall').classList.add('show');
+  } else {
+    document.getElementById('userNickDisplay').textContent = user;
+    document.getElementById('userBar').style.display = 'flex';
+  }
+})();
 </script>
+
+
 </body>
 </html>

@@ -9,6 +9,52 @@
   <link rel="stylesheet" href="../style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <script src="../ad.js"></script>
+  <style>
+    /* ── 공유 이미지 오버레이 ── */
+    .share-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.92); z-index: 9900;
+      align-items: center; justify-content: center;
+      flex-direction: column; padding: 20px;
+    }
+    .share-overlay.open { display: flex; }
+    .share-overlay-label {
+      font-size: 13px; color: #888; margin-bottom: 14px; font-weight: 500;
+    }
+    .share-preview-img {
+      max-width: min(400px, 90vw); max-height: 65vh;
+      border-radius: 16px; box-shadow: 0 24px 80px rgba(229,9,20,.25), 0 8px 32px rgba(0,0,0,.8);
+      display: block; animation: popIn .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn { from { transform: scale(.85); opacity:0; } to { transform: scale(1); opacity:1; } }
+    .share-btn-row {
+      display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; justify-content: center;
+    }
+    .share-action-btn {
+      padding: 13px 24px; border-radius: 10px; border: none;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: all .2s;
+    }
+    .share-action-btn.primary { background: #e50914; color: #fff; }
+    .share-action-btn.primary:hover { background: #ff1f2d; transform: scale(1.03); }
+    .share-action-btn.secondary { background: rgba(255,255,255,.1); color: #ccc; border: 1px solid rgba(255,255,255,.15); }
+    .share-action-btn.secondary:hover { background: rgba(255,255,255,.18); color: #fff; }
+    .share-action-btn.close { background: transparent; color: #555; font-size: 22px; padding: 8px 14px; }
+    .share-hint {
+      font-size: 11px; color: #444; margin-top: 12px; text-align: center; line-height: 1.6;
+    }
+
+    /* ── 결과 카드 내 이미지 버튼 ── */
+    .img-card-btn {
+      width: 100%; padding: 16px; margin-top: 6px;
+      background: linear-gradient(135deg, #e50914 0%, #ff4d4d 100%);
+      color: #fff; border: none; border-radius: 12px;
+      font-size: 17px; font-weight: 900; cursor: pointer;
+      font-family: inherit; letter-spacing: .02em;
+      transition: all .2s; box-shadow: 0 4px 24px rgba(229,9,20,.35);
+    }
+    .img-card-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(229,9,20,.45); }
+  </style>
 </head>
 <body>
 
@@ -29,7 +75,6 @@
   <div class="test-wrap">
     <div class="test-inner">
 
-      <!-- INTRO -->
       <div id="introSection">
         <div class="test-header">
           <span class="test-header-emoji">😈</span>
@@ -48,13 +93,11 @@
         </div>
       </div>
 
-      <!-- QUIZ -->
       <div id="quizSection" style="display:none;">
         <div class="progress-bar-wrap">
           <div class="progress-bar-fill" id="progressFill" style="width:10%"></div>
         </div>
         <div class="progress-text" id="progressText">1 / 15</div>
-
         <div class="question-card" id="questionCard">
           <div class="question-num" id="questionNum">Q1</div>
           <div class="question-text" id="questionText"></div>
@@ -62,15 +105,25 @@
         </div>
       </div>
 
-      <!-- RESULT -->
       <div id="resultSection" style="display:none;"></div>
 
     </div>
   </div>
 
+  <!-- 공유 이미지 오버레이 -->
+  <div class="share-overlay" id="shareOverlay">
+    <div class="share-overlay-label">📸 카드를 저장하고 친구에게 보내보세요!</div>
+    <img id="sharePreviewImg" class="share-preview-img" alt="결과 카드">
+    <div class="share-btn-row">
+      <button class="share-action-btn primary" onclick="downloadShareImage()">💾 이미지 저장</button>
+      <button class="share-action-btn secondary" onclick="shareImageFile()">📤 공유하기</button>
+      <button class="share-action-btn close" onclick="closeShareOverlay()">✕</button>
+    </div>
+    <div class="share-hint">📱 모바일: 이미지를 꾹 눌러 저장 → 카카오톡 전송<br>💻 PC: 이미지 저장 후 직접 공유하세요</div>
+  </div>
+
 <script>
 const QUESTIONS = [
-  // ===== 기존 10개 =====
   {
     text: "회의에서 다른 팀원이 발표하고 있을 때 나는?",
     choices: [
@@ -161,8 +214,6 @@ const QUESTIONS = [
       { text: "원칙적이고 기준이 높은 사람", score: { D:2 } },
     ]
   },
-
-  // ===== 신규 5개 =====
   {
     text: "자리에 없는 동료 이야기가 점심 자리에서 나오면?",
     choices: [
@@ -214,57 +265,54 @@ const RESULTS = {
   A: {
     emoji: '😤',
     type: '조선시대 시어머니',
-    summary: '지적할 때만 시력이 2.0이 되는 잔소리 폭격기',
-    title: '당신의 빌런 유형은 👉 조선시대 시어머니',
-    desc: `당신의 눈은 평소엔 그냥 눈이지만, 누군가 실수하는 순간 레이저로 업그레이드됩니다. 후배의 오타, 동료의 사소한 말투, 보고서 띄어쓰기까지 그냥 지나치는 법이 없죠. "이건 아니지~"가 입 밖으로 나오기까지 0.3초.
-
-좋은 의도인 건 압니다. 하지만 세상 모든 문제를 내가 고쳐야 직성이 풀리는 스타일, 주변 사람들은 오늘도 피로 누적 중입니다. 잔소리를 참는 것도 능력이에요.`,
-    tags: ['#잔소리폭격기', '#지적충동참을수없어', '#할말은해야지', '#선의의빌런']
+    summary: '지적할 때만 시력 2.0, 잔소리 폭격기',
+    desc: '당신의 눈은 평소엔 그냥 눈이지만, 누군가 실수하는 순간 레이저로 업그레이드됩니다. 후배의 오타, 동료의 사소한 말투, 보고서 띄어쓰기까지 그냥 지나치는 법이 없죠. "이건 아니지~"가 입 밖으로 나오기까지 0.3초.\n\n좋은 의도인 건 압니다. 하지만 잔소리를 참는 것도 능력이에요.',
+    tags: ['#잔소리폭격기', '#지적충동참을수없어', '#할말은해야지', '#선의의빌런'],
+    cardBg: ['#1a0a00', '#0f0500'],
+    cardAccent: '#ff6b00',
   },
   B: {
     emoji: '🎭',
     type: '성과 숟가락 장인',
     summary: '남이 차린 밥상에 숟가락 얹기 무형문화재',
-    title: '당신의 빌런 유형은 👉 성과 숟가락 장인',
-    desc: `팀원들이 밤새 차려놓은 밥상, 발표 당일 제일 앞자리에서 "저희 팀이 이번에 정말 고생했는데요~"로 운을 떼는 사람. 바로 당신입니다. 기여도 5%로 공유도 50% 가져가는 마법을 부리죠.
-
-뛰어난 관찰력과 포지셔닝 능력은 진짜 재능입니다. 다만 그 능력을 팀 전체를 위해 쓸 때 비로소 진짜 인정받는 사람이 됩니다. 숟가락 말고 직접 밥을 지어보세요.`,
-    tags: ['#숟가락얹기장인', '#공가로채기', '#어필의신', '#무형문화재']
+    desc: '팀원들이 밤새 차려놓은 밥상, 발표 당일 제일 앞자리에서 "저희 팀이 이번에 정말 고생했는데요~"로 운을 떼는 사람. 기여도 5%로 공유도 50% 가져가는 마법을 부리죠.\n\n뛰어난 포지셔닝 능력은 진짜 재능입니다. 숟가락 말고 직접 밥을 지어보세요.',
+    tags: ['#숟가락얹기장인', '#공가로채기', '#어필의신', '#무형문화재'],
+    cardBg: ['#0d0d1a', '#050510'],
+    cardAccent: '#a78bfa',
   },
   C: {
     emoji: '🦥',
-    type: '\'저요?\' 안들려형',
+    type: "'저요?' 안들려형",
     summary: '책임감은 퇴근길에 두고 오는 오픈형 개인주의자',
-    title: '당신의 빌런 유형은 👉 \'저요?\' 안들려형',
-    desc: `"이거 누가 해줄 수 있어요?" — 이 문장이 들리는 순간 당신의 귀는 자동으로 꺼집니다. 야근 요청엔 갑자기 선약이 생기고, 팀 단체 카톡엔 읽씹이 기본값. 내 일만 하면 된다는 철학 하나로 직장생활을 관통하는 타입이죠.
-
-자유와 개인주의는 존중받아 마땅합니다. 하지만 팀이라는 배는 노를 같이 저어야 앞으로 갑니다. 가끔은 "저 할게요" 한마디가 당신의 이미지를 완전히 바꿀 수 있어요.`,
-    tags: ['#저요안들려', '#책임감퇴근길분실', '#칼퇴요정', '#오픈형개인주의']
+    desc: '"이거 누가 해줄 수 있어요?" — 이 문장이 들리는 순간 당신의 귀는 자동으로 꺼집니다. 야근 요청엔 갑자기 선약이 생기고, 팀 단체 카톡엔 읽씹이 기본값.\n\n자유와 개인주의는 존중받아 마땅합니다. 가끔은 "저 할게요" 한마디가 이미지를 완전히 바꿔요.',
+    tags: ['#저요안들려', '#책임감퇴근길분실', '#칼퇴요정', '#오픈형개인주의'],
+    cardBg: ['#0a1a0a', '#050f05'],
+    cardAccent: '#4ade80',
   },
   D: {
     emoji: '🥶',
     type: '인간 겨울왕국',
     summary: '출근과 동시에 사무실 온도를 영하로 얼리는 눈치 지배자',
-    title: '당신의 빌런 유형은 👉 인간 겨울왕국',
-    desc: `당신이 출근하면 사무실 에어컨이 필요 없습니다. 기분이 안 좋은 날엔 반경 3미터 이내 동료들이 전부 눈치를 보기 시작하죠. 표정 하나, 한숨 한 번으로 팀 전체 분위기를 지배하는 능력자.
-
-감정을 잘 드러내지 않는 것은 때론 강점이 됩니다. 하지만 그 감정이 '분위기'라는 이름으로 조용히 흘러나올 때, 주변 사람들은 이미 다 알고 있어요. 차라리 말로 표현하는 게 모두에게 편합니다.`,
-    tags: ['#인간에어컨', '#눈치지배자', '#분위기장악', '#렛잇고']
+    desc: '당신이 출근하면 사무실 에어컨이 필요 없습니다. 기분이 안 좋은 날엔 반경 3미터 이내 동료들이 전부 눈치를 보기 시작하죠.\n\n감정을 잘 드러내지 않는 건 강점입니다. 하지만 차라리 말로 표현하는 게 모두에게 편해요.',
+    tags: ['#인간에어컨', '#눈치지배자', '#분위기장악', '#렛잇고'],
+    cardBg: ['#001a2a', '#000d15'],
+    cardAccent: '#60c8f5',
   },
   E: {
     emoji: '🐍',
     type: '오피스 확성기',
-    summary: '"너만 알아라"라면서 온 동네 소문 다 내는 두 얼굴의 메신저',
-    title: '당신의 빌런 유형은 👉 오피스 확성기',
-    desc: `"이거 너한테만 말하는 건데~"로 시작하는 그 문장, 사실 이미 다섯 명한테 했죠. 앞에서는 "맞아 맞아, 완전 공감해!" 하고 뒤돌아서는 그 이야기를 다음 사람에게 그대로 전달하는 정보 릴레이의 달인.
-
-소문은 반드시 출처로 돌아옵니다. 당신이 뿌린 이야기가 돌고 돌아 언젠가 당신 귀에 들어올 때, 그땐 이미 수정이 불가능합니다. "너만 알아라"가 진심이 되는 날, 주변 신뢰도 따라옵니다.`,
-    tags: ['#오피스확성기', '#너만알아라', '#소문진원지', '#두얼굴메신저']
+    summary: '"너만 알아라"라면서 온 동네 소문 다 내는 두 얼굴',
+    desc: '"이거 너한테만 말하는 건데~"로 시작하는 그 문장, 사실 이미 다섯 명한테 했죠. 앞에서는 "맞아 맞아, 완전 공감해!" 뒤돌아서는 릴레이 전달의 달인.\n\n소문은 반드시 출처로 돌아옵니다. "너만 알아라"가 진심이 되는 날, 신뢰도 따라옵니다.',
+    tags: ['#오피스확성기', '#너만알아라', '#소문진원지', '#두얼굴메신저'],
+    cardBg: ['#1a000a', '#0f0005'],
+    cardAccent: '#f472b6',
   },
 };
 
 let scores = { A:0, B:0, C:0, D:0, E:0 };
 let current = 0;
+let currentResult = null;
+let shareDataURL = null;
 
 function startTest() {
   document.getElementById('introSection').style.display = 'none';
@@ -278,7 +326,6 @@ function showQuestion(i) {
   document.getElementById('questionText').textContent = q.text;
   document.getElementById('progressText').textContent = `${i + 1} / ${QUESTIONS.length}`;
   document.getElementById('progressFill').style.width = `${((i + 1) / QUESTIONS.length) * 100}%`;
-
   const choicesEl = document.getElementById('choices');
   choicesEl.innerHTML = '';
   const letters = ['A', 'B', 'C', 'D'];
@@ -294,39 +341,30 @@ function showQuestion(i) {
 function pick(score) {
   Object.keys(score).forEach(k => { scores[k] += score[k]; });
   current++;
-  if (current < QUESTIONS.length) {
-    showQuestion(current);
-  } else {
-    showAdThenResult(showResult);
-  }
+  if (current < QUESTIONS.length) showQuestion(current);
+  else showAdThenResult(showResult);
 }
 
 function showResult() {
   document.getElementById('quizSection').style.display = 'none';
   const top = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
-  const r = RESULTS[top];
+  currentResult = RESULTS[top];
+  const r = currentResult;
   const sec = document.getElementById('resultSection');
   sec.style.display = 'block';
   sec.innerHTML = `
     <div class="result-card">
       <span class="result-emoji">${r.emoji}</span>
       <div class="result-type">${r.type}</div>
-      <div style="
-        background: rgba(229,9,20,.1);
-        border: 1px solid rgba(229,9,20,.25);
-        border-radius: 8px;
-        padding: 10px 16px;
-        font-size: 14px;
-        font-weight: 600;
-        color: #ff8a8a;
-        margin: 12px 0 20px;
-        line-height: 1.5;
-      ">💬 ${r.summary}</div>
-      <div class="result-title">${r.title}</div>
+      <div style="background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.25);border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;color:#ff8a8a;margin:12px 0 20px;line-height:1.5;">
+        💬 ${r.summary}
+      </div>
+      <div class="result-title">당신의 빌런 유형은 👉 ${r.type}</div>
       <div class="result-desc">${r.desc.replace(/\n/g, '<br>')}</div>
       <div class="result-tags">${r.tags.map(t => `<span class="result-tag">${t}</span>`).join('')}</div>
-      <div class="result-actions">
-        <button class="btn-share" onclick="shareResult('${r.type}')">🔗 결과 공유하기</button>
+      <button class="img-card-btn" onclick="openShareOverlay()">📸 결과 이미지 카드 만들기</button>
+      <div class="result-actions" style="margin-top:14px;">
+        <button class="btn-share" onclick="shareLink()">🔗 링크 공유</button>
         <button class="btn-retry" onclick="retryTest()">🔄 다시하기</button>
         <a href="../index.html" class="btn-back">← 포털로</a>
       </div>
@@ -336,18 +374,220 @@ function showResult() {
 function retryTest() {
   scores = { A:0, B:0, C:0, D:0, E:0 };
   current = 0;
+  currentResult = null;
+  shareDataURL = null;
   document.getElementById('resultSection').style.display = 'none';
   document.getElementById('quizSection').style.display = 'block';
   showQuestion(0);
 }
 
-function shareResult(type) {
-  if (navigator.share) {
-    navigator.share({ title: '직장인 빌런 유형 테스트', text: `나의 빌런 유형은 "${type}"! 너는?`, url: window.location.href });
-  } else {
-    navigator.clipboard.writeText(window.location.href).then(() => alert('링크가 복사됐어요! 🎉'));
+function shareLink() {
+  const r = currentResult;
+  if (navigator.share) navigator.share({ title: '직장인 빌런 유형 테스트', text: `나의 빌런 유형은 "${r.type}"! 너는?`, url: window.location.href });
+  else navigator.clipboard.writeText(window.location.href).then(() => alert('링크가 복사됐어요! 🎉'));
+}
+
+// ── Canvas 이미지 생성 ─────────────────────────────────────────────────
+
+function wrapText(ctx, text, x, y, maxW, lineH) {
+  const words = text.split(' ');
+  let line = '';
+  let ty = y;
+  for (const word of words) {
+    const test = line ? line + ' ' + word : word;
+    if (ctx.measureText(test).width > maxW && line) {
+      ctx.fillText(line, x, ty);
+      line = word;
+      ty += lineH;
+    } else {
+      line = test;
+    }
+  }
+  if (line) { ctx.fillText(line, x, ty); ty += lineH; }
+  return ty;
+}
+
+async function renderVillainCard(r) {
+  await document.fonts.ready;
+
+  const W = 600, H = 820;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+
+  // ── 배경 그라데이션 ──
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, r.cardBg[0]);
+  bg.addColorStop(1, r.cardBg[1]);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // 중앙 글로우
+  const glow = ctx.createRadialGradient(W/2, H*0.32, 30, W/2, H*0.32, 260);
+  glow.addColorStop(0, r.cardAccent + '22');
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── 상단 액센트 바 ──
+  ctx.fillStyle = r.cardAccent;
+  ctx.fillRect(0, 0, W, 5);
+
+  // ── 사이트 상단 라벨 ──
+  ctx.font = '500 14px "Noto Sans KR"';
+  ctx.fillStyle = '#444';
+  ctx.textAlign = 'center';
+  ctx.fillText('🔬 오늘연구소 · 직장인 빌런 유형 테스트', W/2, 38);
+
+  // ── 이모지 ──
+  ctx.font = '96px serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(r.emoji, W/2, 145);
+
+  // ── 유형명 ──
+  ctx.font = '900 38px "Noto Sans KR"';
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'center';
+  ctx.fillText(r.type, W/2, 210);
+
+  // 액센트 언더라인
+  const tw = ctx.measureText(r.type).width;
+  const ux = W/2 - tw/2;
+  const grad = ctx.createLinearGradient(ux, 0, ux + tw, 0);
+  grad.addColorStop(0, r.cardAccent);
+  grad.addColorStop(1, r.cardAccent + '44');
+  ctx.fillStyle = grad;
+  ctx.fillRect(ux, 220, tw, 3);
+
+  // ── 서머리 ──
+  ctx.font = 'italic 500 17px "Noto Sans KR"';
+  ctx.fillStyle = r.cardAccent + 'cc';
+  ctx.textAlign = 'center';
+  wrapText(ctx, `"${r.summary}"`, W/2, 262, W - 80, 28);
+
+  // ── 구분선 ──
+  const div = ctx.createLinearGradient(60, 0, W-60, 0);
+  div.addColorStop(0, 'rgba(255,255,255,0)');
+  div.addColorStop(0.5, 'rgba(255,255,255,0.15)');
+  div.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.strokeStyle = div;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(60, 320); ctx.lineTo(W-60, 320); ctx.stroke();
+
+  // ── 설명 텍스트 (첫 문단만) ──
+  const descLine = r.desc.split('\n')[0];
+  ctx.font = '400 15px "Noto Sans KR"';
+  ctx.fillStyle = '#9a9a9a';
+  ctx.textAlign = 'center';
+  wrapText(ctx, descLine, W/2, 355, W - 80, 26);
+
+  // ── 구분선 2 ──
+  ctx.strokeStyle = div;
+  ctx.beginPath(); ctx.moveTo(60, 510); ctx.lineTo(W-60, 510); ctx.stroke();
+
+  // ── 태그 ──
+  ctx.font = '700 13px "Noto Sans KR"';
+  ctx.fillStyle = r.cardAccent;
+  ctx.textAlign = 'center';
+  const tagsStr = r.tags.slice(0, 3).join('  ');
+  ctx.fillText(tagsStr, W/2, 550);
+
+  // ── 하단 워터마크 영역 ──
+  ctx.fillStyle = 'rgba(255,255,255,0.03)';
+  ctx.fillRect(0, H - 90, W, 90);
+
+  // 하단 구분선
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, H - 90); ctx.lineTo(W, H - 90); ctx.stroke();
+
+  ctx.font = '700 17px "Noto Sans KR"';
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.textAlign = 'center';
+  ctx.fillText('나의 빌런 유형은? 직접 테스트해보기 →', W/2, H - 52);
+
+  ctx.font = '400 13px "Noto Sans KR"';
+  ctx.fillStyle = '#444';
+  ctx.fillText('오늘연구소 | 직장인 빌런 유형 테스트', W/2, H - 24);
+
+  return c;
+}
+
+let shareCanvas = null;
+
+function toBlobAsync(canvas) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('blob 실패')), 'image/png');
+  });
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(20,20,20,.96);color:#fff;padding:12px 22px;border-radius:50px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.6);text-align:center;max-width:320px;font-family:inherit;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .4s'; setTimeout(() => t.remove(), 400); }, 3000);
+}
+
+async function openShareOverlay() {
+  const btn = document.querySelector('.img-card-btn');
+  if (btn) { btn.textContent = '⏳ 이미지 생성 중...'; btn.disabled = true; }
+
+  try {
+    shareCanvas = await renderVillainCard(currentResult);
+    shareDataURL = shareCanvas.toDataURL('image/png');
+    document.getElementById('sharePreviewImg').src = shareDataURL;
+    document.getElementById('shareOverlay').classList.add('open');
+  } finally {
+    if (btn) { btn.textContent = '📸 결과 이미지 카드 만들기'; btn.disabled = false; }
   }
 }
+
+function closeShareOverlay() {
+  document.getElementById('shareOverlay').classList.remove('open');
+}
+
+function downloadShareImage() {
+  if (!shareDataURL) return;
+  const a = document.createElement('a');
+  a.href = shareDataURL;
+  a.download = `빌런유형_${currentResult.type}.png`;
+  a.click();
+}
+
+async function shareImageFile() {
+  if (!shareCanvas) return;
+  const btn = document.querySelector('.share-action-btn.secondary');
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  try {
+    const blob = await toBlobAsync(shareCanvas);
+    const file = new File([blob], `빌런유형_${currentResult.type}.png`, { type: 'image/png' });
+    // 1순위: 이미지 파일 공유 (모바일)
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: '직장인 빌런 유형 테스트', text: `나의 빌런 유형은 "${currentResult.type}"! 너는?` });
+    // 2순위: 링크 공유 (일부 모바일)
+    } else if (navigator.share) {
+      await navigator.share({ title: '직장인 빌런 유형 테스트', text: `나의 빌런 유형은 "${currentResult.type}"! 너는?`, url: window.location.href });
+    // 3순위: 이미지 다운로드
+    } else {
+      downloadShareImage();
+      showToast('💾 이미지가 저장됐어요! 카카오톡에 직접 공유해보세요 😊');
+    }
+  } catch(e) {
+    if (e.name !== 'AbortError') {
+      downloadShareImage();
+      showToast('💾 이미지가 저장됐어요! 직접 공유해보세요 😊');
+    }
+  } finally {
+    if (btn) { btn.textContent = '📤 공유하기'; btn.disabled = false; }
+  }
+}
+
+// ESC로 오버레이 닫기
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeShareOverlay(); });
+document.getElementById('shareOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('shareOverlay')) closeShareOverlay();
+});
 </script>
 </body>
 </html>

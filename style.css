@@ -66,7 +66,10 @@ body {
 .logo-text {
   font-size: 22px;
   font-weight: 900;
-  color: var(--red);
+  background: linear-gradient(90deg, #e50000 0%, #e50000 16%, #f9d423 32%, #43e97b 52%, #4facfe 72%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   letter-spacing: -1px;
 }
 .nav-links {

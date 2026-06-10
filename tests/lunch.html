@@ -4,55 +4,61 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>오늘 점심 추천 | 오늘연구소</title>
-  <meta name="description" content="오늘 점심 추천 — 오늘연구소에서 재미있게 즐겨보세요">
+  <meta name="description" content="기분·종류로 찾는 오늘 점심 — 칼로리·건강점수·맛 프로필까지 한눈에">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
   <link rel="stylesheet" href="../style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <script src="../ad.js"></script>
   <style>
-    .menu-card {
-      background: var(--bg2);
-      border-radius: 16px;
-      padding: 36px 28px;
-      border: 1.5px solid rgba(255,255,255,.06);
-      text-align: center;
-      animation: fadeInUp .5s ease;
+    .menu-hero {
+      text-align:center; padding:28px 20px 20px;
+      border-radius:20px; margin-bottom:18px;
+      animation: fadeInUp .45s ease;
     }
-    .menu-emoji { font-size: 88px; display:block; margin-bottom: 20px; }
-    .menu-name { font-size: 36px; font-weight: 900; margin-bottom: 12px; }
-    .menu-desc { color: var(--gray2); font-size: 15px; line-height: 1.7; margin-bottom: 28px; }
-    .menu-tags { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:32px; }
-    .menu-tag {
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.12);
-      color: var(--gray2);
-      font-size:13px; padding:5px 14px; border-radius:50px;
+    .menu-big-emoji { font-size:96px; display:block; margin-bottom:12px; line-height:1; }
+    .menu-match-label { font-size:12px; font-weight:700; letter-spacing:.06em; margin-bottom:6px; }
+    .menu-title { font-size:34px; font-weight:900; margin-bottom:8px; line-height:1.2; }
+    .menu-desc  { font-size:14px; color:var(--gray2); line-height:1.75; }
+
+    .stats-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:16px; }
+    .stat-chip {
+      background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+      border-radius:14px; padding:12px 8px; text-align:center;
     }
-    .nearby-section { margin-top: 28px; }
-    .nearby-title { font-size:15px; font-weight:700; color:var(--gray2); margin-bottom:14px; text-align:left; }
-    .nearby-list { display:flex; flex-direction:column; gap:10px; }
-    .nearby-item {
-      background: rgba(255,255,255,.04);
-      border-radius:10px; padding:12px 16px;
-      display:flex; justify-content:space-between; align-items:center;
-      font-size:14px;
+    .stat-chip-icon  { font-size:20px; display:block; margin-bottom:4px; }
+    .stat-chip-label { font-size:10px; color:var(--gray3); margin-bottom:3px; }
+    .stat-chip-val   { font-size:14px; font-weight:700; color:var(--gray1); }
+
+    .flavor-row { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:16px; }
+    .flavor-chip { padding:5px 13px; border-radius:50px; font-size:12px; font-weight:600; }
+
+    .why-box {
+      border-radius:14px; padding:14px 18px; margin-bottom:16px;
+      font-size:13px; line-height:1.75;
     }
-    .nearby-item span:last-child { color:var(--gray3); font-size:13px; }
+
+    .alts-section { margin-bottom:20px; }
+    .alts-title { font-size:12px; font-weight:700; color:var(--gray3); margin-bottom:10px; letter-spacing:.04em; }
+    .alts-grid  { display:flex; gap:8px; flex-wrap:wrap; }
+    .alt-btn {
+      background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1);
+      border-radius:50px; padding:7px 16px; font-size:13px; font-weight:600;
+      color:var(--gray2); cursor:pointer; transition:all .2s; font-family:inherit;
+    }
+    .alt-btn:hover { background:rgba(255,255,255,.09); color:var(--gray1); }
+
     .spin-btn {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white; border: none;
-      padding: 18px 0; width: 100%;
-      border-radius: 12px; font-size: 20px; font-weight: 900;
-      cursor: pointer; transition: var(--transition);
-      font-family: inherit; margin-top: 8px;
+      background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);
+      color:white; border:none; padding:16px 0; width:100%;
+      border-radius:12px; font-size:18px; font-weight:900;
+      cursor:pointer; transition:var(--transition); font-family:inherit;
     }
-    .spin-btn:hover { transform: scale(1.02); opacity: .92; }
-    .spinning { animation: spin .6s ease; }
+    .spin-btn:hover { transform:scale(1.02); opacity:.92; }
     @keyframes spin { 0%{transform:scale(.8) rotate(-10deg)} 50%{transform:scale(1.1) rotate(5deg)} 100%{transform:scale(1) rotate(0)} }
+    .spinning { animation:spin .6s ease; }
   </style>
 </head>
 <body>
-
   <nav class="navbar scrolled">
     <div class="nav-container">
       <div class="nav-left">
@@ -69,20 +75,17 @@
 
   <div class="test-wrap">
     <div class="test-inner">
-
-      <!-- STEP 1: mood -->
       <div id="step1">
         <div class="test-header">
           <span class="test-header-emoji">🍱</span>
           <h1>오늘 점심 추천</h1>
-          <p>지금 기분에 맞는 점심 메뉴를 찾아드려요!</p>
+          <p>지금 기분에 딱 맞는 점심 메뉴를<br>칼로리·건강점수와 함께 추천해드려요!</p>
           <div class="test-meta">
             <span>🎲 추천</span>
             <span>⏱ 1분</span>
             <span>👥 256,128명 참여</span>
           </div>
         </div>
-
         <div class="question-card">
           <div class="question-num">STEP 1</div>
           <div class="question-text">지금 기분이 어때요?</div>
@@ -90,17 +93,14 @@
             <button class="chip" data-mood="든든">🍖 든든하게 먹고 싶어</button>
             <button class="chip" data-mood="가벼운">🥗 가볍게 먹고 싶어</button>
             <button class="chip" data-mood="매콤">🌶 매콤한 게 당겨</button>
-            <button class="chip" data-mood="시원한">❄ 시원한 게 먹고 싶어</button>
+            <button class="chip" data-mood="시원한">❄️ 시원한 게 먹고 싶어</button>
             <button class="chip" data-mood="달콤">🍮 달콤한 게 땡겨</button>
             <button class="chip" data-mood="아무거나">🎲 아무거나 상관없어</button>
           </div>
-          <button class="btn-primary" onclick="goStep2()" style="width:100%;padding:15px;font-size:16px;margin-top:4px;">
-            다음 →
-          </button>
+          <button class="btn-primary" onclick="goStep2()" style="width:100%;padding:15px;font-size:16px;margin-top:4px;">다음 →</button>
         </div>
       </div>
 
-      <!-- STEP 2: cuisine -->
       <div id="step2" style="display:none;">
         <div class="question-card">
           <div class="question-num">STEP 2</div>
@@ -113,53 +113,278 @@
             <button class="chip" data-cuisine="분식">🍲 분식</button>
             <button class="chip" data-cuisine="아무거나">🎲 다 좋아</button>
           </div>
-          <button class="btn-primary" onclick="recommend()" style="width:100%;padding:15px;font-size:16px;margin-top:4px;">
-            🍽 메뉴 추천받기
-          </button>
+          <button class="btn-primary" onclick="recommend()" style="width:100%;padding:15px;font-size:16px;margin-top:4px;">🍽️ 메뉴 추천받기</button>
         </div>
       </div>
 
-      <!-- RESULT -->
       <div id="resultSection" style="display:none;"></div>
-
     </div>
   </div>
 
 <script>
+// ── 메뉴 데이터 ──────────────────────────────────────────────────────────
+// kcal: 1인분 칼로리 / health: 건강점수 1-5 / spice: 맵기 0-3
+// flavor: 맛 특징 태그 / why: {mood: 추천 이유}
 const MENU = [
-  // 한식
-  { name:'삼겹살', emoji:'🥓', mood:['든든'], cuisine:['한식'], desc:'두툼한 삼겹살을 상추에 싸 먹는 한국의 맛! 쌈장, 마늘, 파채까지 곁들이면 완벽한 점심', tags:['#고기', '#든든', '#한식'] },
-  { name:'된장찌개 정식', emoji:'🍲', mood:['든든'], cuisine:['한식'], desc:'구수한 된장찌개에 반찬이 가득한 정식. 집밥 생각날 때 최고의 선택', tags:['#정식', '#집밥', '#한식'] },
-  { name:'김치찌개', emoji:'🥘', mood:['매콤','든든'], cuisine:['한식'], desc:'칼칼하게 끓인 돼지고기 김치찌개. 든든한 한 끼로 딱 맞아요', tags:['#매콤', '#칼칼', '#한식'] },
-  { name:'냉면', emoji:'🍜', mood:['시원한','가벼운'], cuisine:['한식'], desc:'시원하고 쫄깃한 면발! 물냉면과 비빔냉면 중 오늘의 선택은?', tags:['#시원', '#여름', '#한식'] },
-  { name:'설렁탕', emoji:'🥛', mood:['가벼운'], cuisine:['한식'], desc:'뽀얗고 깊은 설렁탕 국물. 소면이나 밥을 넣어 든든하게 즐겨요', tags:['#한식', '#국밥', '#설렁탕'] },
-  { name:'육개장', emoji:'🌶️', mood:['매콤','든든'], cuisine:['한식'], desc:'얼큰하고 칼칼한 소고기 국물에 고사리, 대파가 가득! 매운 걸 좋아한다면 딱이에요', tags:['#매콤', '#든든', '#한식'] },
-  { name:'비빔밥', emoji:'🍚', mood:['가벼운','달콤'], cuisine:['한식'], desc:'형형색색 나물에 고추장 쓱쓱! 가볍지만 영양은 꽉 찬 한 그릇', tags:['#가벼운', '#건강', '#한식'] },
-  // 중식
-  { name:'짜장면', emoji:'🍝', mood:['든든','달콤'], cuisine:['중식'], desc:'달콤 짭짤한 짜장 소스가 면에 코팅! 군만두 추가하면 더 든든해요', tags:['#중식', '#짜장', '#든든'] },
-  { name:'짬뽕', emoji:'🍜', mood:['매콤','시원한'], cuisine:['중식'], desc:'얼큰하고 시원한 국물! 해물 가득한 짬뽕 한 그릇으로 속을 달래요', tags:['#매콤', '#중식', '#얼큰'] },
-  { name:'탕수육', emoji:'🍖', mood:['든든','달콤'], cuisine:['중식'], desc:'바삭한 탕수육에 달콤 새콤한 소스! 부먹 vs 찍먹, 선택은 당신에게', tags:['#중식', '#탕수육', '#바삭'] },
-  { name:'볶음밥', emoji:'🍳', mood:['가벼운','든든'], cuisine:['중식'], desc:'고슬고슬한 볶음밥 한 그릇! 새우, 김치, 야채 등 원하는 토핑으로 즐겨요', tags:['#중식', '#볶음밥', '#간단'] },
-  { name:'마라탕', emoji:'🫕', mood:['매콤'], cuisine:['중식'], desc:'얼얼하고 향긋한 마라 소스! 원하는 재료를 골라 넣는 나만의 마라탕', tags:['#매콤', '#중식', '#마라'] },
-  // 일식
-  { name:'초밥', emoji:'🍣', mood:['가벼운'], cuisine:['일식'], desc:'신선한 재료로 만든 초밥. 가볍고 깔끔하게 즐기는 점심', tags:['#일식', '#신선', '#가벼운'] },
-  { name:'라멘', emoji:'🍜', mood:['든든'], cuisine:['일식'], desc:'진한 국물의 라멘 한 그릇. 돼지뼈 육수의 깊은 맛에 빠져봐요', tags:['#일식', '#라멘', '#든든'] },
-  { name:'돈까스', emoji:'🍛', mood:['든든'], cuisine:['일식'], desc:'바삭바삭 황금빛 돈까스! 두툼한 고기와 소스의 조화가 일품', tags:['#일식', '#돈까스', '#바삭'] },
-  { name:'우동', emoji:'🍥', mood:['가벼운','시원한'], cuisine:['일식'], desc:'부드럽고 쫄깃한 우동 면발에 맑은 국물. 뜨겁게도 차갑게도 즐길 수 있어요', tags:['#일식', '#우동', '#가벼운'] },
-  // 양식
-  { name:'파스타', emoji:'🍝', mood:['가벼운'], cuisine:['양식'], desc:'크리미한 크림파스타 or 깔끔한 오일파스타. 오늘의 기분에 맞게 선택!', tags:['#양식', '#파스타', '#이탈리안'] },
-  { name:'피자', emoji:'🍕', mood:['든든','달콤'], cuisine:['양식'], desc:'도우부터 치즈까지 풍성한 피자 한 판! 혼자 다 먹어도 OK', tags:['#양식', '#피자', '#치즈'] },
-  { name:'버거', emoji:'🍔', mood:['든든'], cuisine:['양식'], desc:'두툼한 패티와 신선한 채소의 조화! 감자튀김과 함께라면 완벽한 세트', tags:['#양식', '#버거', '#든든'] },
-  { name:'샐러드 & 샌드위치', emoji:'🥗', mood:['가벼운'], cuisine:['양식'], desc:'신선한 채소와 단백질로 가득 찬 건강한 점심! 다이어트 중이라면 이걸로', tags:['#건강', '#다이어트', '#가벼운'] },
-  // 분식
-  { name:'떡볶이', emoji:'🌶️', mood:['매콤','달콤'], cuisine:['분식'], desc:'달콤 매콤한 떡볶이! 튀김이나 순대와 함께 먹으면 더 맛있어요', tags:['#분식', '#매콤', '#떡볶이'] },
-  { name:'김밥', emoji:'🍙', mood:['가벼운'], cuisine:['분식'], desc:'간편하고 든든한 김밥! 참치, 불고기, 야채 등 다양한 선택이 있어요', tags:['#분식', '#간편', '#김밥'] },
-  { name:'순대국밥', emoji:'🥣', mood:['든든'], cuisine:['분식'], desc:'뜨끈한 국밥 한 그릇으로 속을 든든하게! 새우젓으로 간 맞추는 것 잊지 마요', tags:['#국밥', '#든든', '#분식'] },
-  { name:'라볶이', emoji:'🍲', mood:['매콤','달콤'], cuisine:['분식'], desc:'라면과 떡볶이의 환상 조합! 쫄깃한 떡에 라면 면발까지 더해져 더 맛있어요', tags:['#분식', '#매콤', '#라볶이'] },
+  // ── 한식 ──────────────────────────────────────────────────────────────
+  { name:'삼겹살', emoji:'🥓', cuisine:'한식', mood:['든든'],
+    kcal:650, health:2, spice:0,
+    desc:'두툼한 삼겹살을 상추에 싸 먹는 한국의 맛! 쌈장, 마늘, 파채까지 곁들이면 완벽한 점심.',
+    flavor:['고소함','짭짤함','육즙 팡팡','삼겹의 고소함'],
+    why:{ 든든:'든든하게 먹고 싶을 때 삼겹살만 한 게 없죠. 포만감 최고입니다!' },
+    alts:['소고기 구이','갈비','항정살'] },
+
+  { name:'된장찌개 정식', emoji:'🍲', cuisine:'한식', mood:['든든','가벼운'],
+    kcal:520, health:5, spice:0,
+    desc:'구수한 된장찌개에 반찬이 가득한 정식. 집밥 그리울 때 최고의 선택.',
+    flavor:['구수함','따뜻함','깊은 맛','담백함'],
+    why:{ 든든:'집밥 같은 든든한 한 끼, 된장찌개 정식이 딱이에요!', 가벼운:'건강하고 가볍게, 된장찌개 정식으로 속을 달래보세요.' },
+    alts:['청국장 정식','순두부찌개','두부조림 정식'] },
+
+  { name:'김치찌개', emoji:'🥘', cuisine:'한식', mood:['매콤','든든'],
+    kcal:480, health:4, spice:2,
+    desc:'칼칼하게 끓인 돼지고기 김치찌개. 신 김치가 들어갈수록 깊은 맛이 납니다.',
+    flavor:['매콤함','칼칼함','깊은 국물','구수함'],
+    why:{ 매콤:'칼칼한 김치찌개로 스트레스를 훅 날려버리세요!', 든든:'돼지고기 가득한 김치찌개로 든든하게 채워요.' },
+    alts:['부대찌개','돼지김치볶음','참치김치찌개'] },
+
+  { name:'냉면', emoji:'🍜', cuisine:'한식', mood:['시원한','가벼운'],
+    kcal:410, health:4, spice:1,
+    desc:'시원하고 쫄깃한 면발! 물냉면의 깔끔한 육수와 비빔냉면의 매콤달콤 소스 중 선택하세요.',
+    flavor:['시원함','쫄깃함','상큼함','깔끔함'],
+    why:{ 시원한:'더운 날씨엔 냉면이 최고! 차가운 육수로 속까지 시원하게.', 가벼운:'가볍고 깔끔한 냉면 한 그릇으로 개운하게.' },
+    alts:['콩국수','막국수','열무냉면'] },
+
+  { name:'설렁탕', emoji:'🥛', cuisine:'한식', mood:['가벼운','든든'],
+    kcal:430, health:5, spice:0,
+    desc:'뽀얗고 깊은 국물의 설렁탕. 소면이나 밥을 넣고 소금 간을 맞춰 드세요.',
+    flavor:['담백함','구수함','뽀얀 국물','깊은 맛'],
+    why:{ 가벼운:'속이 편안한 설렁탕 국물로 몸을 달래보세요.', 든든:'뼈 국물의 깊은 영양으로 든든하게!' },
+    alts:['곰탕','갈비탕','육개장'] },
+
+  { name:'육개장', emoji:'🌶️', cuisine:'한식', mood:['매콤','든든'],
+    kcal:380, health:4, spice:3,
+    desc:'얼큰하고 칼칼한 소고기 국물에 고사리, 대파가 가득! 매운 걸 좋아한다면 최고.',
+    flavor:['매우 매콤','얼큰함','진한 국물','칼칼함'],
+    why:{ 매콤:'진짜 매운 게 당긴다면? 육개장으로 얼큰하게 해결!', 든든:'얼큰한 국물에 고기까지, 든든한 한 끼 보장.' },
+    alts:['해장국','순대국밥','선지국'] },
+
+  { name:'비빔밥', emoji:'🍚', cuisine:'한식', mood:['가벼운','아무거나'],
+    kcal:560, health:5, spice:1,
+    desc:'형형색색 나물에 고추장 쓱쓱! 가볍지만 영양은 꽉 찬 한 그릇 밥.',
+    flavor:['고소함','매콤달콤','풍부한 식감','건강함'],
+    why:{ 가벼운:'다양한 나물과 함께 영양 균형 잡힌 가벼운 비빔밥 어때요?', 아무거나:'뭘 먹을지 모를 때 비빔밥은 언제나 정답!' },
+    alts:['돌솥비빔밥','영양돌솥밥','나물밥'] },
+
+  { name:'삼계탕', emoji:'🍗', cuisine:'한식', mood:['든든','가벼운'],
+    kcal:580, health:5, spice:0,
+    desc:'통닭에 인삼, 대추, 찹쌀이 가득! 보양식 중의 보양식, 기운 없을 때 최고.',
+    flavor:['구수함','깊은 육수','따뜻함','건강함'],
+    why:{ 든든:'몸보신하며 든든하게! 삼계탕으로 기력 충전.', 가벼운:'담백하면서도 영양 가득한 삼계탕은 가벼운 보양식.' },
+    alts:['닭볶음탕','닭한마리','백숙'] },
+
+  { name:'갈비탕', emoji:'🍖', cuisine:'한식', mood:['든든'],
+    kcal:540, health:4, spice:0,
+    desc:'진하고 깔끔한 갈비 국물에 부드러운 갈비살. 맑은 국물이 속을 따뜻하게.',
+    flavor:['깔끔함','구수함','진한 육수','부드러운 고기'],
+    why:{ 든든:'진한 갈비 국물로 오늘 점심 든든하게!' },
+    alts:['설렁탕','곰탕','꼬리곰탕'] },
+
+  { name:'불고기 덮밥', emoji:'🍛', cuisine:'한식', mood:['든든','달콤'],
+    kcal:620, health:3, spice:0,
+    desc:'달콤 짭짤한 불고기 소스가 밥 위에 듬뿍! 한국인의 소울 푸드.',
+    flavor:['달콤함','짭짤함','부드러운 고기','감칠맛'],
+    why:{ 든든:'달콤한 불고기 덮밥으로 든든하게 한 끼!', 달콤:'달콤한 불고기 소스가 당긴다면 이걸로!' },
+    alts:['제육볶음 덮밥','차슈 덮밥','닭고기 덮밥'] },
+
+  // ── 중식 ──────────────────────────────────────────────────────────────
+  { name:'짜장면', emoji:'🍝', cuisine:'중식', mood:['든든','달콤'],
+    kcal:680, health:2, spice:0,
+    desc:'달콤 짭짤한 짜장 소스가 면에 코팅! 군만두 추가하면 더 든든한 한 끼.',
+    flavor:['달콤함','짭짤함','고소함','쫄깃한 면'],
+    why:{ 든든:'짜장면 + 군만두 조합으로 든든하게!', 달콤:'달달한 짜장 소스가 당길 때 이걸로.' },
+    alts:['짬뽕','간짜장','쟁반짜장'] },
+
+  { name:'짬뽕', emoji:'🍜', cuisine:'중식', mood:['매콤','시원한'],
+    kcal:550, health:3, spice:2,
+    desc:'얼큰하고 시원한 해물 국물! 다양한 해산물과 매콤한 국물이 어우러진 최고의 조합.',
+    flavor:['매콤함','시원함','해물 향','깊은 국물'],
+    why:{ 매콤:'얼큰한 짬뽕 국물로 매콤함을 제대로 충족!', 시원한:'뜨거운데 속은 시원해지는 마법, 짬뽕!' },
+    alts:['해물볶음짬뽕','굴짬뽕','짬뽕밥'] },
+
+  { name:'탕수육', emoji:'🍖', cuisine:'중식', mood:['든든','달콤'],
+    kcal:780, health:2, spice:0,
+    desc:'바삭한 탕수육에 달콤 새콤한 소스! 부먹 vs 찍먹, 영원한 논쟁은 당신이 결정.',
+    flavor:['달콤새콤','바삭함','부드러운 속','고소함'],
+    why:{ 든든:'탕수육으로 든든하게! 부먹이냐 찍먹이냐는 당신 선택.', 달콤:'달콤새콤 탕수육 소스가 당길 때.' },
+    alts:['깐풍기','유린기','꿔바로우'] },
+
+  { name:'마라탕', emoji:'🫕', cuisine:'중식', mood:['매콤'],
+    kcal:700, health:2, spice:3,
+    desc:'얼얼하고 향긋한 마라 소스에 원하는 재료를 골라 넣는 나만의 마라탕.',
+    flavor:['매우 매콤','얼얼함','향긋함','화끈함'],
+    why:{ 매콤:'제대로 매운 게 당긴다면 마라탕! 얼얼한 매운맛.' },
+    alts:['마라샹궈','마라볶음밥','마라 라멘'] },
+
+  { name:'볶음밥', emoji:'🍳', cuisine:'중식', mood:['가벼운','든든','아무거나'],
+    kcal:580, health:3, spice:0,
+    desc:'고슬고슬하게 볶아낸 볶음밥 한 그릇. 새우, 김치, 야채 등 원하는 토핑으로.',
+    flavor:['고소함','감칠맛','다양한 식감','든든함'],
+    why:{ 가벼운:'가볍게 먹기엔 볶음밥이 딱!', 든든:'든든하게 한 그릇으로 해결.', 아무거나:'뭐든 다 있는 볶음밥.' },
+    alts:['새우볶음밥','김치볶음밥','게살볶음밥'] },
+
+  { name:'깐풍기', emoji:'🍗', cuisine:'중식', mood:['매콤','든든'],
+    kcal:720, health:2, spice:2,
+    desc:'바삭하게 튀긴 닭에 매콤달콤 양념! 맥주 생각나는 중식의 명물.',
+    flavor:['매콤달콤','바삭함','짭짤함','감칠맛'],
+    why:{ 매콤:'매콤달콤한 깐풍기로 점심을 특별하게!', 든든:'든든하고 바삭한 깐풍기 한 접시.' },
+    alts:['유린기','탕수육','깐쇼새우'] },
+
+  // ── 일식 ──────────────────────────────────────────────────────────────
+  { name:'초밥', emoji:'🍣', cuisine:'일식', mood:['가벼운','아무거나'],
+    kcal:420, health:5, spice:0,
+    desc:'신선한 재료로 만든 한 입 초밥. 가볍고 깔끔하게 즐기는 점심의 정석.',
+    flavor:['신선함','깔끔함','단맛','감칠맛'],
+    why:{ 가벼운:'가볍고 신선하게, 초밥 한 접시로 상큼하게!', 아무거나:'뭘 먹을지 모를 땐 초밥이 언제나 안전.' },
+    alts:['회덮밥','참치마요 덮밥','연어 덮밥'] },
+
+  { name:'돈카츠', emoji:'🍛', cuisine:'일식', mood:['든든'],
+    kcal:730, health:3, spice:0,
+    desc:'바삭바삭 황금빛 돈카츠! 두툼한 고기와 달콤한 소스의 조화가 일품.',
+    flavor:['바삭함','고소함','부드러운 고기','달콤한 소스'],
+    why:{ 든든:'바삭한 돈카츠로 점심을 든든하게 마무리!' },
+    alts:['치즈 돈카츠','새우튀김','가츠동'] },
+
+  { name:'라멘', emoji:'🍜', cuisine:'일식', mood:['든든','시원한'],
+    kcal:620, health:2, spice:1,
+    desc:'진한 돼지뼈 육수의 라멘 한 그릇. 차슈, 달걀, 대파의 풍성한 토핑까지.',
+    flavor:['진한 국물','고소함','짭짤함','쫄깃한 면'],
+    why:{ 든든:'진한 라멘 한 그릇으로 속 든든하게!', 시원한:'뜨끈한 라멘이 오히려 더 시원하게.' },
+    alts:['쇼유라멘','미소라멘','츠케멘'] },
+
+  { name:'우동', emoji:'🍥', cuisine:'일식', mood:['가벼운','시원한'],
+    kcal:390, health:4, spice:0,
+    desc:'부드럽고 쫄깃한 우동 면발에 맑은 국물. 뜨겁게도 차갑게도 즐길 수 있어요.',
+    flavor:['담백함','쫄깃함','맑은 국물','깔끔함'],
+    why:{ 가벌운:'가볍고 담백하게, 우동 한 그릇으로!', 시원한:'차가운 자루우동으로 시원하게.' },
+    alts:['소바','냉우동','냄비우동'] },
+
+  { name:'연어 덮밥', emoji:'🍱', cuisine:'일식', mood:['가벼운','달콤'],
+    kcal:520, health:5, spice:0,
+    desc:'두툼하게 썬 신선한 연어가 올라간 덮밥. 오메가3 가득한 건강한 점심.',
+    flavor:['신선함','고소함','부드러움','깔끔함'],
+    why:{ 가벼운:'가볍고 건강하게, 연어 덮밥으로 오메가3 충전!', 달콤:'달콤 짭짤한 간장 소스와 연어의 만남.' },
+    alts:['참치 덮밥','아보카도 연어 덮밥','회덮밥'] },
+
+  { name:'규동 (소고기 덮밥)', emoji:'🥩', cuisine:'일식', mood:['든든','달콤'],
+    kcal:640, health:3, spice:0,
+    desc:'달콤 짭짤한 소고기와 양파가 밥 위에! 빠르고 든든하게 먹기 딱.',
+    flavor:['달콤함','짭짤함','부드러운 고기','감칠맛'],
+    why:{ 든든:'빠르고 든든하게! 규동 한 그릇으로 에너지 충전.', 달콤:'달콤한 소고기 소스가 당길 때 규동.' },
+    alts:['가츠동','오야코동','텐동'] },
+
+  // ── 양식 ──────────────────────────────────────────────────────────────
+  { name:'크림 파스타', emoji:'🍝', cuisine:'양식', mood:['달콤','가벼운'],
+    kcal:680, health:3, spice:0,
+    desc:'진하고 크리미한 알프레도 소스의 파스타. 베이컨과 버섯이 더해지면 완벽.',
+    flavor:['크리미함','고소함','부드러움','감칠맛'],
+    why:{ 달콤:'크리미하고 고소한 파스타로 기분 전환!', 가벼운:'크림 파스타로 가볍게 여유로운 점심.' },
+    alts:['오일 파스타','로제 파스타','까르보나라'] },
+
+  { name:'토마토 파스타', emoji:'🍅', cuisine:'양식', mood:['가벼운','아무거나'],
+    kcal:510, health:4, spice:0,
+    desc:'상큼한 토마토 소스와 알단테 파스타의 만남. 깔끔하고 건강한 이탈리안.',
+    flavor:['상큼함','깔끔함','토마토 향','감칠맛'],
+    why:{ 가벼운:'상큼한 토마토 파스타로 가볍고 건강하게!', 아무거나:'실패 없는 선택, 토마토 파스타.' },
+    alts:['아라비아따','나폴리탄','봉골레 파스타'] },
+
+  { name:'피자', emoji:'🍕', cuisine:'양식', mood:['든든','달콤','아무거나'],
+    kcal:820, health:2, spice:0,
+    desc:'도우부터 치즈까지 풍성한 피자. 혼자 먹어도 OK, 나눠 먹으면 더 맛있는 피자.',
+    flavor:['고소함','치즈향','달콤함','바삭한 도우'],
+    why:{ 든든:'피자 한 판으로 든든하게!', 달콤:'달콤한 토핑 피자로 기분 업!', 아무거나:'뭐든 다 올려먹는 피자.' },
+    alts:['치킨피자','포테이토 피자','고구마 피자'] },
+
+  { name:'수제 버거', emoji:'🍔', cuisine:'양식', mood:['든든'],
+    kcal:850, health:2, spice:0,
+    desc:'두툼한 패티와 신선한 채소의 조화! 감자튀김과 함께라면 완벽한 든든 세트.',
+    flavor:['고소함','육즙 팡팡','짭짤함','바삭함'],
+    why:{ 든든:'두툼한 패티의 수제버거로 제대로 든든하게!' },
+    alts:['치킨 버거','베이컨 에그 버거','머쉬룸 버거'] },
+
+  { name:'샐러드 볼', emoji:'🥗', cuisine:'양식', mood:['가벼운'],
+    kcal:320, health:5, spice:0,
+    desc:'신선한 채소와 단백질, 드레싱의 조화. 다이어트 중이라면 최고의 선택.',
+    flavor:['상큼함','신선함','건강함','가벼움'],
+    why:{ 가벼운:'가볍고 상쾌하게, 샐러드 볼로 건강하게 충전!' },
+    alts:['그릭 샐러드','시저 샐러드','연어 샐러드'] },
+
+  { name:'리조또', emoji:'🍚', cuisine:'양식', mood:['가벼운','달콤'],
+    kcal:580, health:4, spice:0,
+    desc:'크리미하게 익힌 리조또. 버섯, 새우, 트러플 중 오늘의 선택은?',
+    flavor:['크리미함','고소함','풍부한 향','부드러움'],
+    why:{ 가벼운:'가볍고 부드러운 리조또로 여유로운 점심을.', 달콤:'달달하고 크리미한 리조또 한 그릇.' },
+    alts:['버섯 리조또','새우 리조또','트러플 리조또'] },
+
+  // ── 분식 ──────────────────────────────────────────────────────────────
+  { name:'떡볶이', emoji:'🌶️', cuisine:'분식', mood:['매콤','달콤'],
+    kcal:490, health:2, spice:2,
+    desc:'달콤 매콤한 떡볶이! 튀김이나 순대와 함께 먹으면 더 맛있는 분식의 왕.',
+    flavor:['매콤달콤','쫄깃함','고소함','감칠맛'],
+    why:{ 매콤:'달달하면서 매콤한 떡볶이로 기분 업!', 달콤:'달콤한 소스가 가득한 떡볶이.' },
+    alts:['로제 떡볶이','까르보 떡볶이','치즈 떡볶이'] },
+
+  { name:'김밥', emoji:'🍙', cuisine:'분식', mood:['가벼운','아무거나'],
+    kcal:380, health:4, spice:0,
+    desc:'간편하고 든든한 김밥! 참치, 불고기, 야채 등 원하는 종류로 골라보세요.',
+    flavor:['고소함','담백함','균형 잡힌 맛','깔끔함'],
+    why:{ 가벼운:'가볍고 간편하게, 김밥 한 줄로!', 아무거나:'어디서나 간편하게 먹을 수 있는 김밥.' },
+    alts:['충무김밥','참치김밥','치즈김밥'] },
+
+  { name:'부대찌개', emoji:'🍲', cuisine:'분식', mood:['든든','매콤'],
+    kcal:620, health:2, spice:2,
+    desc:'햄, 소시지, 라면이 들어간 풍성한 부대찌개! 얼큰하고 든든한 국민 찌개.',
+    flavor:['얼큰함','짭짤함','풍성함','감칠맛'],
+    why:{ 든든:'풍성한 부대찌개로 든든하게!', 매콤:'얼큰한 부대찌개로 매콤하게 해소.' },
+    alts:['김치찌개','순두부찌개','라볶이'] },
+
+  { name:'라볶이', emoji:'🍲', cuisine:'분식', mood:['매콤','달콤'],
+    kcal:530, health:2, spice:2,
+    desc:'라면과 떡볶이의 환상 조합! 쫄깃한 떡에 라면 면발까지 더해 더 맛있어요.',
+    flavor:['매콤달콤','쫄깃함','면의 쫀득함','진한 소스'],
+    why:{ 매콤:'매콤한 라볶이로 스트레스 해소!', 달콤:'달콤매콤한 라볶이 소스의 유혹.' },
+    alts:['떡볶이','순대볶음','치즈 라볶이'] },
+
+  { name:'순대국밥', emoji:'🥣', cuisine:'분식', mood:['든든'],
+    kcal:550, health:3, spice:0,
+    desc:'뜨끈한 국밥 한 그릇으로 속을 든든하게! 새우젓으로 간 맞추는 것 잊지 마세요.',
+    flavor:['구수함','담백함','든든함','깊은 국물'],
+    why:{ 든든:'뜨끈한 순대국밥으로 속까지 든든하게!' },
+    alts:['돼지국밥','국밥','해장국'] },
+
+  { name:'치즈 핫도그', emoji:'🌭', cuisine:'분식', mood:['달콤','아무거나'],
+    kcal:450, health:2, spice:0,
+    desc:'바삭한 튀김옷 속에 쭉 늘어나는 치즈! 케첩이나 머스타드와 함께.',
+    flavor:['고소함','치즈 향','달콤함','바삭함'],
+    why:{ 달콤:'달달한 게 땡길 때 치즈 핫도그!', 아무거나:'간편하고 맛있는 치즈 핫도그.' },
+    alts:['감자 핫도그','소시지 핫도그','오징어 핫도그'] },
 ];
 
-let selectedMood = null;
-let selectedCuisine = null;
+// 기분별 추천 멘트
+const MOOD_WHY_DEFAULT = {
+  든든:    '든든하게 먹고 싶은 당신에게 딱 맞는 메뉴예요!',
+  가벼운:  '가볍고 건강하게 먹고 싶은 당신을 위한 추천이에요.',
+  매콤:    '칼칼하고 매콤한 게 당기는 당신의 선택!',
+  시원한:  '시원하고 청량하게 즐길 수 있는 메뉴예요.',
+  달콤:    '달콤한 것이 땡기는 당신을 위한 추천이에요.',
+  아무거나:'오늘은 이걸로 결정! 고민 끝 😄',
+};
+
+const HEALTH_STARS = v => '★'.repeat(v) + '☆'.repeat(5 - v);
+const SPICE_LABELS = ['안 맵다','약간 매움','보통 매움','매우 매움'];
+const SPICE_EMOJIS = ['🟢','🟡','🟠','🔴'];
+
+let selectedMood = null, selectedCuisine = null, lastPool = [];
 
 document.querySelectorAll('#moodGroup .chip').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -182,46 +407,97 @@ function goStep2() {
   });
 }
 
-function recommend() {
-  if (!selectedCuisine) { alert('음식 종류를 선택해주세요! 😊'); return; }
-
-  const moodMatch    = m => selectedMood    === '아무거나' || m.mood.includes(selectedMood);
-  const cuisineMatch = m => selectedCuisine === '아무거나' || m.cuisine.includes(selectedCuisine);
-
-  let pool = MENU.filter(m => moodMatch(m) && cuisineMatch(m));
-  let isFallback = false;
-
-  if (!pool.length) {
-    pool = MENU.filter(m => cuisineMatch(m));
-    isFallback = true;
-  }
-  if (!pool.length) {
-    pool = MENU.filter(m => moodMatch(m));
-    isFallback = true;
-  }
+function getPool() {
+  const mMatch = m => selectedMood    === '아무거나' || m.mood.includes(selectedMood);
+  const cMatch = m => selectedCuisine === '아무거나' || m.cuisine === selectedCuisine;
+  let pool = MENU.filter(m => mMatch(m) && cMatch(m));
+  if (!pool.length) pool = MENU.filter(m => cMatch(m));
+  if (!pool.length) pool = MENU.filter(m => mMatch(m));
   if (!pool.length) pool = MENU;
-
-  const pick = pool[Math.floor(Math.random() * pool.length)];
-  showAdThenResult(() => showResult(pick, isFallback));
+  return pool;
 }
 
-function showResult(item, isFallback = false) {
+function recommend() {
+  if (!selectedCuisine) { alert('음식 종류를 선택해주세요! 😊'); return; }
+  lastPool = getPool();
+  const pick = lastPool[Math.floor(Math.random() * lastPool.length)];
+  showAdThenResult(() => showResult(pick));
+}
+
+function showResult(item) {
+  document.getElementById('step1').style.display = 'none';
   document.getElementById('step2').style.display = 'none';
   const sec = document.getElementById('resultSection');
   sec.style.display = 'block';
 
-  sec.innerHTML = `
-    <div class="menu-card">
-      <span class="menu-emoji">${item.emoji}</span>
-      <div style="font-size:13px;font-weight:700;color:var(--red);letter-spacing:1px;margin-bottom:8px;">${isFallback ? '조건과 비슷한 추천 메뉴' : '오늘의 추천 메뉴'}</div>
-      <div class="menu-name">${item.name}</div>
-      <div class="menu-desc">${item.desc}</div>
-      <div class="menu-tags">${item.tags.map(t => `<span class="menu-tag">${t}</span>`).join('')}</div>
+  // 맛 특징 칩 색상
+  const flavorColors = ['#f59e0b','#f472b6','#34d399','#60a5fa','#a78bfa','#fb923c'];
+  const flavorChips = item.flavor.map((f, i) =>
+    `<span class="flavor-chip" style="background:${flavorColors[i%flavorColors.length]}22;color:${flavorColors[i%flavorColors.length]};border:1px solid ${flavorColors[i%flavorColors.length]}44;">${f}</span>`
+  ).join('');
 
-      <div class="result-actions" style="margin-top:28px;">
+  // 왜 추천인지
+  const whyText = (item.why && item.why[selectedMood]) || MOOD_WHY_DEFAULT[selectedMood] || '오늘의 추천 메뉴!';
+
+  // 카드 그라데이션 by cuisine
+  const gradients = {
+    한식:'linear-gradient(135deg,rgba(255,100,60,.12) 0%,rgba(255,60,60,.06) 100%)',
+    중식:'linear-gradient(135deg,rgba(255,200,0,.12) 0%,rgba(255,120,0,.06) 100%)',
+    일식:'linear-gradient(135deg,rgba(255,80,120,.12) 0%,rgba(200,80,180,.06) 100%)',
+    양식:'linear-gradient(135deg,rgba(80,160,255,.12) 0%,rgba(80,100,255,.06) 100%)',
+    분식:'linear-gradient(135deg,rgba(255,140,0,.12) 0%,rgba(255,60,100,.06) 100%)',
+  };
+  const grad = gradients[item.cuisine] || gradients['한식'];
+
+  // 대안 메뉴 (현재 메뉴 제외하고 비슷한 것들)
+  const altPool = item.alts || [];
+
+  sec.innerHTML = `
+    <div class="result-card">
+      <div class="menu-hero" style="background:${grad};border:1px solid rgba(255,255,255,.08);">
+        <span class="menu-big-emoji" id="menuEmoji">${item.emoji}</span>
+        <div class="menu-match-label" style="color:var(--red);">${item.cuisine} · ${selectedMood !== '아무거나' ? selectedMood + ' 추천' : '오늘의 추천'}</div>
+        <div class="menu-title">${item.name}</div>
+        <div class="menu-desc">${item.desc}</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-chip">
+          <span class="stat-chip-icon">🔥</span>
+          <div class="stat-chip-label">칼로리</div>
+          <div class="stat-chip-val">${item.kcal} kcal</div>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-chip-icon">💚</span>
+          <div class="stat-chip-label">건강점수</div>
+          <div class="stat-chip-val" style="font-size:12px;color:#46d369;">${HEALTH_STARS(item.health)}</div>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-chip-icon">${SPICE_EMOJIS[item.spice]}</span>
+          <div class="stat-chip-label">맵기</div>
+          <div class="stat-chip-val" style="font-size:11px;">${SPICE_LABELS[item.spice]}</div>
+        </div>
+      </div>
+
+      <div class="flavor-row">${flavorChips}</div>
+
+      <div class="why-box" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);">
+        <span style="font-size:13px;font-weight:700;color:var(--gray3);">💡 추천 이유</span><br>
+        <span style="font-size:13px;color:var(--gray2);line-height:1.8;">${whyText}</span>
+      </div>
+
+      ${altPool.length ? `
+      <div class="alts-section">
+        <div class="alts-title">🔀 이런 메뉴는 어때요?</div>
+        <div class="alts-grid">
+          ${altPool.map(a => `<button class="alt-btn" onclick="pickAlt('${a}')">${a}</button>`).join('')}
+        </div>
+      </div>` : ''}
+
+      <div class="result-actions" style="margin-top:8px;">
         <button class="spin-btn" onclick="reRoll()">🎲 다른 메뉴 추천</button>
       </div>
-      <div class="result-actions" style="margin-top:14px;">
+      <div class="result-actions" style="margin-top:12px;">
         <button class="btn-share" onclick="shareResult('${item.name}')">🔗 공유하기</button>
         <button class="btn-retry" onclick="location.reload()">🔄 처음부터</button>
         <a href="../index.html" class="btn-back">← 포털로</a>
@@ -230,26 +506,22 @@ function showResult(item, isFallback = false) {
 }
 
 function reRoll() {
-  const moodMatch    = m => selectedMood    === '아무거나' || m.mood.includes(selectedMood);
-  const cuisineMatch = m => selectedCuisine === '아무거나' || m.cuisine.includes(selectedCuisine);
-  let pool = MENU.filter(m => moodMatch(m) && cuisineMatch(m));
-  let isFallback = false;
-  if (!pool.length) { pool = MENU.filter(m => cuisineMatch(m)); isFallback = true; }
-  if (!pool.length) { pool = MENU.filter(m => moodMatch(m));    isFallback = true; }
-  if (!pool.length) pool = MENU;
-  const pick = pool[Math.floor(Math.random() * pool.length)];
-  showResult(pick, isFallback);
-  setTimeout(() => document.querySelector('.menu-emoji')?.classList.add('spinning'), 100);
-  setTimeout(() => document.querySelector('.menu-emoji')?.classList.remove('spinning'), 700);
+  lastPool = getPool();
+  const pick = lastPool[Math.floor(Math.random() * lastPool.length)];
+  showResult(pick);
+  setTimeout(() => { const e = document.getElementById('menuEmoji'); if(e){ e.classList.add('spinning'); setTimeout(()=>e.classList.remove('spinning'),650); } }, 50);
+}
+
+function pickAlt(name) {
+  const found = MENU.find(m => m.name === name);
+  if (found) showResult(found);
+  else reRoll();
 }
 
 function shareResult(name) {
-  const text = `오늘 점심은 ${name}! 너도 뭐 먹을지 고민이라면? 🍱`;
-  if (navigator.share) {
-    navigator.share({ title: '오늘 점심 추천', text, url: window.location.href });
-  } else {
-    navigator.clipboard.writeText(text).then(() => alert('복사됐어요! 🎉'));
-  }
+  const text = `오늘 점심은 ${name}! 뭐 먹을지 고민이라면? 🍱`;
+  if (navigator.share) navigator.share({ title:'오늘 점심 추천', text, url:window.location.href });
+  else navigator.clipboard.writeText(text).then(() => alert('복사됐어요! 🎉'));
 }
 </script>
 </body>

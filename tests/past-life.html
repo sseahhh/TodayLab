@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>나의 전생은? | 오늘연구소</title>
-  <meta name="description" content="나의 전생은? — 오늘연구소에서 재미있게 즐겨보세요">
+  <meta name="description" content="나의 전생은? — 8가지 질문으로 알아보는 나의 전생 직업과 현생에 남은 흔적 | 오늘연구소">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
   <link rel="stylesheet" href="../style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
@@ -13,62 +13,63 @@
     .past-life-scene {
       background: linear-gradient(135deg, rgba(139,90,43,.1), rgba(80,40,0,.1));
       border: 1px solid rgba(139,90,43,.25);
-      border-radius: 14px;
-      padding: 18px 22px;
-      margin: 16px 0;
-      text-align: left;
+      border-radius: 14px; padding: 18px 22px; margin: 16px 0; text-align: left;
     }
     .past-life-scene-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: #c8a97e;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 10px;
+      font-size: 12px; font-weight: 700; color: #c8a97e;
+      letter-spacing: 1.5px; margin-bottom: 10px;
     }
-    .past-life-scene-text {
-      font-size: 14px;
-      color: var(--gray2);
-      line-height: 1.8;
-    }
-    .trace-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
+    .trace-list { list-style: none; padding: 0; margin: 0; }
     .trace-list li {
-      font-size: 14px;
-      color: var(--gray2);
-      padding: 6px 0 6px 22px;
-      position: relative;
-      line-height: 1.6;
+      font-size: 14px; color: var(--gray2); padding: 6px 0 6px 22px;
+      position: relative; line-height: 1.6;
     }
-    .trace-list li::before {
-      content: '🌀';
-      position: absolute;
-      left: 0;
-      font-size: 12px;
-      top: 7px;
-    }
+    .trace-list li::before { content: '🌀'; position: absolute; left: 0; font-size: 12px; top: 7px; }
     .now-box {
-      background: rgba(100,120,255,.08);
-      border: 1px solid rgba(100,120,255,.2);
-      border-radius: 10px;
-      padding: 14px 18px;
-      font-size: 14px;
-      color: #a0b0ff;
-      margin: 14px 0;
-      line-height: 1.7;
-      text-align: left;
+      background: rgba(100,120,255,.08); border: 1px solid rgba(100,120,255,.2);
+      border-radius: 10px; padding: 14px 18px; font-size: 14px; color: #a0b0ff;
+      margin: 14px 0; line-height: 1.7; text-align: left;
     }
-    .now-box strong {
-      display: block;
-      font-size: 12px;
-      letter-spacing: 1px;
-      color: #7090ff;
-      margin-bottom: 6px;
-      text-transform: uppercase;
+    .now-box strong { display: block; font-size: 12px; letter-spacing: 1px; color: #7090ff; margin-bottom: 6px; }
+
+    /* ── 공유 이미지 오버레이 ── */
+    .share-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.93); z-index: 9900;
+      align-items: center; justify-content: center;
+      flex-direction: column; padding: 20px;
     }
+    .share-overlay.open { display: flex; }
+    .share-overlay-label { font-size: 13px; color: #888; margin-bottom: 14px; font-weight: 500; }
+    .share-preview-img {
+      max-width: min(400px, 90vw); max-height: 65vh;
+      border-radius: 16px;
+      box-shadow: 0 24px 80px rgba(167,139,250,.2), 0 8px 32px rgba(0,0,0,.8);
+      display: block; animation: popIn .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn { from { transform: scale(.85); opacity:0; } to { transform: scale(1); opacity:1; } }
+    .share-btn-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+    .share-action-btn {
+      padding: 13px 24px; border-radius: 10px; border: none;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: all .2s;
+    }
+    .share-action-btn.primary { background: linear-gradient(135deg, #7c3aed, #a855f7); color: #fff; }
+    .share-action-btn.primary:hover { opacity: .9; transform: scale(1.03); }
+    .share-action-btn.secondary { background: rgba(255,255,255,.1); color: #ccc; border: 1px solid rgba(255,255,255,.15); }
+    .share-action-btn.secondary:hover { background: rgba(255,255,255,.18); color: #fff; }
+    .share-action-btn.close { background: transparent; color: #555; font-size: 22px; padding: 8px 14px; }
+    .share-hint { font-size: 11px; color: #444; margin-top: 12px; text-align: center; line-height: 1.6; }
+
+    .img-card-btn {
+      width: 100%; padding: 16px; margin-top: 6px;
+      background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+      color: #fff; border: none; border-radius: 12px;
+      font-size: 17px; font-weight: 900; cursor: pointer;
+      font-family: inherit; letter-spacing: .02em;
+      transition: all .2s; box-shadow: 0 4px 24px rgba(124,58,237,.35);
+    }
+    .img-card-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(124,58,237,.5); }
   </style>
 </head>
 <body>
@@ -89,7 +90,6 @@
   <div class="test-wrap">
     <div class="test-inner">
 
-      <!-- INTRO -->
       <div id="introSection">
         <div class="test-header">
           <span class="test-header-emoji">✨</span>
@@ -108,7 +108,6 @@
         </div>
       </div>
 
-      <!-- QUIZ -->
       <div id="quizSection" style="display:none;">
         <div class="progress-bar-wrap">
           <div class="progress-bar-fill" id="progressFill" style="width:12.5%"></div>
@@ -121,10 +120,21 @@
         </div>
       </div>
 
-      <!-- RESULT -->
       <div id="resultSection" style="display:none;"></div>
 
     </div>
+  </div>
+
+  <!-- 공유 이미지 오버레이 -->
+  <div class="share-overlay" id="shareOverlay">
+    <div class="share-overlay-label">✨ 카드를 저장하고 친구에게 보내보세요!</div>
+    <img id="sharePreviewImg" class="share-preview-img" alt="전생 결과 카드">
+    <div class="share-btn-row">
+      <button class="share-action-btn primary" onclick="downloadShareImage()">💾 이미지 저장</button>
+      <button class="share-action-btn secondary" onclick="shareImageFile()">📤 공유하기</button>
+      <button class="share-action-btn close" onclick="closeShareOverlay()">✕</button>
+    </div>
+    <div class="share-hint">📱 모바일: 이미지를 꾹 눌러 저장 → 카카오톡 전송<br>💻 PC: 이미지 저장 후 직접 공유하세요</div>
   </div>
 
 <script>
@@ -192,78 +202,89 @@ const QUESTIONS = [
   {
     text: "다음 중 가장 공감되는 문장은?",
     choices: [
-      { text: "\"모르는 것이 있으면 참을 수가 없다\"", score: { scholar: 3 } },
-      { text: "\"나는 보이지 않는 곳에서 모든 걸 알고 있다\"", score: { court: 3 } },
-      { text: "\"불의를 보면 모른 체하기가 힘들다\"", score: { swordsman: 3 } },
-      { text: "\"모든 것은 결국 돈과 연결된다\"", score: { merchant: 3 } },
-      { text: "\"혼자 있을 때 가장 온전한 나다\"", score: { monk: 2, artist: 1 } },
+      { text: '"모르는 것이 있으면 참을 수가 없다"', score: { scholar: 3 } },
+      { text: '"나는 보이지 않는 곳에서 모든 걸 알고 있다"', score: { court: 3 } },
+      { text: '"불의를 보면 모른 체하기가 힘들다"', score: { swordsman: 3 } },
+      { text: '"모든 것은 결국 돈과 연결된다"', score: { merchant: 3 } },
+      { text: '"혼자 있을 때 가장 온전한 나다"', score: { monk: 2, artist: 1 } },
     ]
   },
   {
     text: "사람들이 나에 대해 가장 많이 하는 말은?",
     choices: [
-      { text: "\"너 진짜 박학다식하다\"", score: { scholar: 3 } },
-      { text: "\"네가 없었으면 어쩔 뻔했어\"", score: { court: 2, swordsman: 1 } },
-      { text: "\"넌 의외로 의리 있다\"", score: { swordsman: 2 } },
-      { text: "\"돈 벌 아이디어가 항상 있네\"", score: { merchant: 3 } },
-      { text: "\"넌 뭔가 특이한 매력이 있어\"", score: { artist: 2, monk: 1 } },
+      { text: '"너 진짜 박학다식하다"', score: { scholar: 3 } },
+      { text: '"네가 없었으면 어쩔 뻔했어"', score: { court: 2, swordsman: 1 } },
+      { text: '"넌 의외로 의리 있다"', score: { swordsman: 2 } },
+      { text: '"돈 벌 아이디어가 항상 있네"', score: { merchant: 3 } },
+      { text: '"넌 뭔가 특이한 매력이 있어"', score: { artist: 2, monk: 1 } },
     ]
   },
 ];
 
 const RESULTS = {
   scholar: {
-    emoji: '📜',
-    type: '조선시대 선비',
-    title: '조선시대 선비',
-    desc: '당신의 전생은 학문을 사랑한 선비였습니다. 먹물 냄새 가득한 서재에서 사서삼경을 외우고, 달이 밝은 밤이면 시 한 편을 지어 술잔을 기울이던 사람. 과거를 준비하며 세상을 바꾸겠다는 꿈을 품었지만, 정치적 현실에 가끔 실망하면서도 지식 자체를 사랑했던 진짜 지식인이었습니다.',
-    now: '그래서 지금의 당신은... 새로운 것을 배우는 데서 기쁨을 찾고, 모르는 게 생기면 끝까지 찾아보는 탐구형입니다. 책이나 유튜브 알고리즘의 늪에 빠지는 건 전생의 습관이에요.',
+    emoji: '📜', type: '조선시대 선비',
+    desc: '당신의 전생은 학문을 사랑한 선비였습니다. 먹물 냄새 가득한 서재에서 사서삼경을 외우고, 달이 밝은 밤이면 시 한 편을 지어 술잔을 기울이던 사람. 지식 자체를 사랑했던 진짜 지식인이었습니다.',
+    now: '새로운 것을 배우는 데서 기쁨을 찾고, 모르는 게 생기면 끝까지 찾아보는 탐구형입니다. 책이나 유튜브 알고리즘의 늪에 빠지는 건 전생의 습관이에요.',
     traces: ['책이나 다큐멘터리를 보면 시간 가는 줄 모르는 집중력', '말을 할 때 논리적으로 정리해서 말하는 습관'],
+    cardBg: ['#0d0a04', '#1a1206'], cardAccent: '#c8a97e',
   },
   court: {
-    emoji: '👘',
-    type: '왕실 궁녀/내관',
-    title: '왕실 궁녀/내관',
-    desc: '전생의 당신은 궁중 깊은 곳에서 모든 것을 지켜보았습니다. 왕의 식사를 챙기고, 왕후의 속마음을 읽고, 궁중의 크고 작은 비밀을 전부 알고 있었죠. 겉으로는 조용하고 순종적이었지만, 실제로는 그 누구보다 정확하게 권력의 흐름을 읽고 있었던 숨겨진 관찰자였습니다.',
-    now: '그래서 지금의 당신은... 말은 없어도 상황 파악이 빠르고, 사람들 사이의 관계와 분위기를 누구보다 잘 읽습니다. 아무것도 모르는 척해도 사실 다 알고 있어요.',
+    emoji: '👘', type: '왕실 궁녀/내관',
+    desc: '전생의 당신은 궁중 깊은 곳에서 모든 것을 지켜보았습니다. 겉으로는 조용하고 순종적이었지만, 실제로는 그 누구보다 정확하게 권력의 흐름을 읽고 있었던 숨겨진 관찰자였습니다.',
+    now: '말은 없어도 상황 파악이 빠르고, 사람들 사이의 관계와 분위기를 누구보다 잘 읽습니다. 아무것도 모르는 척해도 사실 다 알고 있어요.',
     traces: ['그 자리에 없어도 분위기를 이미 파악하고 있는 능력', '비밀을 잘 지키지만, 알게 되면 끝까지 기억하는 기억력'],
+    cardBg: ['#0a0514', '#15091f'], cardAccent: '#e879f9',
   },
   swordsman: {
-    emoji: '⚔️',
-    type: '방랑하는 검객',
-    title: '방랑하는 검객',
-    desc: '전생의 당신은 어느 한 곳에 매이지 않고 떠돌던 협객이었습니다. 의리를 위해 칼을 뽑고, 불의를 보면 지나치지 못하는 성격. 주군도 없이 본인의 기준으로 선과 악을 판단하며, 때로는 혼자 적들과 맞서는 무모함도 있었죠. 화려함보다는 강인함, 명예보다는 의리를 선택했던 낭인이었습니다.',
-    now: '그래서 지금의 당신은... 부당한 상황에서 가만히 있지 못하고, 친한 사람을 위해서라면 어디든 달려가는 의리파입니다. 가끔 불필요한 싸움에 끼어드는 건 전생의 업이에요.',
+    emoji: '⚔️', type: '방랑하는 검객',
+    desc: '전생의 당신은 어느 한 곳에 매이지 않고 떠돌던 협객이었습니다. 의리를 위해 칼을 뽑고, 불의를 보면 지나치지 못하는 성격. 화려함보다는 강인함, 명예보다는 의리를 선택했던 낭인이었습니다.',
+    now: '부당한 상황에서 가만히 있지 못하고, 친한 사람을 위해서라면 어디든 달려가는 의리파입니다. 가끔 불필요한 싸움에 끼어드는 건 전생의 업이에요.',
     traces: ['싸움이나 갈등 상황에서 두려움보다 행동이 먼저 나오는 것', '친구에 대한 의리가 강해 함부로 배신하지 못하는 성격'],
+    cardBg: ['#0a0a00', '#1a1500'], cardAccent: '#facc15',
   },
   merchant: {
-    emoji: '💰',
-    type: '장사로 세상을 누빈 상인',
-    title: '장사로 세상을 누빈 상인',
-    desc: '전생의 당신은 한양에서 제주까지, 조선 팔도를 누비던 상인이었습니다. 어디서든 거래처를 만들고, 빠르게 가격을 계산하고, 상대방이 원하는 것이 무엇인지 직감적으로 파악하는 사람. 자유로운 영혼이었지만 철저한 현실주의자로, 세상을 사람과 물건과 돈의 흐름으로 이해했습니다.',
-    now: '그래서 지금의 당신은... 이해타산에 밝고 손해 보는 거래는 본능적으로 피합니다. 사람과의 관계에서도 자연스럽게 "이 관계가 나에게 어떤 의미인지"를 계산하는 현실주의자예요.',
+    emoji: '💰', type: '장사로 세상을 누빈 상인',
+    desc: '전생의 당신은 한양에서 제주까지, 조선 팔도를 누비던 상인이었습니다. 어디서든 거래처를 만들고, 상대방이 원하는 것이 무엇인지 직감적으로 파악하는 사람. 세상을 사람과 물건과 돈의 흐름으로 이해했습니다.',
+    now: '이해타산에 밝고 손해 보는 거래는 본능적으로 피합니다. 관계에서도 자연스럽게 "이 관계가 나에게 어떤 의미인지"를 계산하는 현실주의자예요.',
     traces: ['어떤 상황에서도 빠르게 이득과 손해를 따지는 계산력', '처음 만난 사람과도 금방 친해지는 친화력과 말 솜씨'],
+    cardBg: ['#040a04', '#071408'], cardAccent: '#4ade80',
   },
   artist: {
-    emoji: '🎭',
-    type: '예술을 사랑한 기생/광대',
-    title: '예술을 사랑한 기생/광대',
-    desc: '전생의 당신은 노래와 춤으로 세상을 빛냈던 예술인이었습니다. 신분의 한계 속에서도 재능 하나로 귀족도 울리고 웃게 만들었던 진짜 실력자. 감정을 숨기지 않고 온몸으로 표현하며, 사람들의 마음 속 깊은 곳을 건드리는 데 탁월한 능력이 있었습니다.',
-    now: '그래서 지금의 당신은... 감성이 풍부하고 표현 욕구가 강합니다. 음악을 들을 때 소름 돋는 횟수가 남들보다 많고, 어떤 형태로든 창작이나 표현에서 기쁨을 느끼는 예술가 기질이 있어요.',
+    emoji: '🎭', type: '예술을 사랑한 기생/광대',
+    desc: '전생의 당신은 노래와 춤으로 세상을 빛냈던 예술인이었습니다. 신분의 한계 속에서도 재능 하나로 귀족도 울리고 웃게 만들었던 진짜 실력자. 감정을 온몸으로 표현하며 사람들의 마음을 건드리는 데 탁월했습니다.',
+    now: '감성이 풍부하고 표현 욕구가 강합니다. 음악을 들을 때 소름 돋는 횟수가 남들보다 많고, 어떤 형태로든 창작이나 표현에서 기쁨을 느끼는 예술가 기질이 있어요.',
     traces: ['감정이 얼굴에 바로 드러나고 공감 능력이 뛰어난 것', '무언가를 표현할 때 에너지가 넘치고 생기가 돌아오는 것'],
+    cardBg: ['#0a0514', '#14030d'], cardAccent: '#f472b6',
   },
   monk: {
-    emoji: '🧘',
-    type: '깊은 산속의 도사/스님',
-    title: '깊은 산속의 도사/스님',
-    desc: '전생의 당신은 세상의 소란스러움을 등지고 산 깊은 곳에서 수행했던 사람이었습니다. 명예도 돈도 관계도 집착하지 않고, 오직 내면의 고요함과 깨달음을 향해 나아갔죠. 가끔 하산하여 고통받는 사람들을 도와주다 다시 산으로 돌아가는, 존재 자체로 힘이 되는 사람이었습니다.',
-    now: '그래서 지금의 당신은... 혼자 있는 시간이 충전이고, 쓸데없는 욕심보다 내면의 평화가 우선입니다. 주변이 시끄러울수록 더 조용해지는 건 전생에서 쌓은 수련의 결과예요.',
+    emoji: '🧘', type: '깊은 산속의 도사/스님',
+    desc: '전생의 당신은 세상의 소란스러움을 등지고 산 깊은 곳에서 수행했던 사람이었습니다. 명예도 돈도 집착하지 않고, 오직 내면의 고요함과 깨달음을 향해 나아갔죠. 존재 자체로 힘이 되는 사람이었습니다.',
+    now: '혼자 있는 시간이 충전이고, 쓸데없는 욕심보다 내면의 평화가 우선입니다. 주변이 시끄러울수록 더 조용해지는 건 전생에서 쌓은 수련의 결과예요.',
     traces: ['혼자 있어도 외롭지 않고 오히려 에너지가 충전되는 내향성', '사람들이 모르는 깊은 직관력으로 상황을 꿰뚫어 보는 능력'],
+    cardBg: ['#040a0a', '#071414'], cardAccent: '#67e8f9',
   },
 };
 
 let scores = { scholar: 0, court: 0, swordsman: 0, merchant: 0, artist: 0, monk: 0 };
 let current = 0;
+let currentResult = null;
+let shareDataURL = null;
+let shareCanvas = null;
+
+function toBlobAsync(canvas) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('blob 실패')), 'image/png');
+  });
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(20,20,20,.96);color:#fff;padding:12px 22px;border-radius:50px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.6);text-align:center;max-width:320px;font-family:inherit;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .4s'; setTimeout(() => t.remove(), 400); }, 3000);
+}
 
 function startTest() {
   document.getElementById('introSection').style.display = 'none';
@@ -277,7 +298,6 @@ function showQ(i) {
   document.getElementById('questionText').textContent = q.text;
   document.getElementById('progressText').textContent = `${i + 1} / ${QUESTIONS.length}`;
   document.getElementById('progressFill').style.width = `${((i + 1) / QUESTIONS.length) * 100}%`;
-
   const choicesEl = document.getElementById('choices');
   choicesEl.innerHTML = '';
   const letters = ['A', 'B', 'C', 'D', 'E'];
@@ -293,24 +313,22 @@ function showQ(i) {
 function pick(score) {
   Object.keys(score).forEach(k => { scores[k] += score[k]; });
   current++;
-  if (current < QUESTIONS.length) {
-    showQ(current);
-  } else {
-    showAdThenResult(showResult);
-  }
+  if (current < QUESTIONS.length) showQ(current);
+  else showAdThenResult(showResult);
 }
 
 function showResult() {
   document.getElementById('quizSection').style.display = 'none';
   const top = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
-  const r = RESULTS[top];
+  currentResult = RESULTS[top];
+  const r = currentResult;
   const sec = document.getElementById('resultSection');
   sec.style.display = 'block';
   sec.innerHTML = `
     <div class="result-card">
       <span class="result-emoji">${r.emoji}</span>
       <div class="result-type">나의 전생</div>
-      <div class="result-title">${r.title}</div>
+      <div class="result-title">${r.type}</div>
       <div class="result-desc">${r.desc}</div>
       <div class="now-box">
         <strong>🔮 그래서 지금 나는...</strong>
@@ -322,8 +340,9 @@ function showResult() {
           ${r.traces.map(t => `<li>${t}</li>`).join('')}
         </ul>
       </div>
-      <div class="result-actions" style="margin-top:28px;">
-        <button class="btn-share" onclick="shareResult('${r.title}')">🔗 결과 공유하기</button>
+      <button class="img-card-btn" onclick="openShareOverlay()">✨ 전생 카드 이미지 만들기</button>
+      <div class="result-actions" style="margin-top:14px;">
+        <button class="btn-share" onclick="shareLink()">🔗 링크 공유</button>
         <button class="btn-retry" onclick="retryTest()">🔄 다시하기</button>
         <a href="../index.html" class="btn-back">← 포털로</a>
       </div>
@@ -332,20 +351,222 @@ function showResult() {
 
 function retryTest() {
   scores = { scholar: 0, court: 0, swordsman: 0, merchant: 0, artist: 0, monk: 0 };
-  current = 0;
+  current = 0; currentResult = null; shareDataURL = null; shareCanvas = null;
   document.getElementById('resultSection').style.display = 'none';
   document.getElementById('quizSection').style.display = 'block';
   showQ(0);
 }
 
-function shareResult(type) {
-  const text = `내 전생은 "${type}"! 너의 전생은?`;
-  if (navigator.share) {
-    navigator.share({ title: '나의 전생은?', text, url: window.location.href });
-  } else {
-    navigator.clipboard.writeText(window.location.href).then(() => alert('링크가 복사됐어요! 🎉'));
+function shareLink() {
+  const r = currentResult;
+  if (navigator.share) navigator.share({ title: '나의 전생은?', text: `내 전생은 "${r.type}"! 너의 전생은?`, url: window.location.href });
+  else navigator.clipboard.writeText(window.location.href).then(() => alert('링크가 복사됐어요! 🎉'));
+}
+
+// ── Canvas 이미지 생성 ─────────────────────────────────────────────────
+
+function wrapText(ctx, text, x, y, maxW, lineH) {
+  const words = text.split(' ');
+  let line = '';
+  let ty = y;
+  for (const word of words) {
+    const test = line ? line + ' ' + word : word;
+    if (ctx.measureText(test).width > maxW && line) {
+      ctx.fillText(line, x, ty);
+      line = word;
+      ty += lineH;
+    } else {
+      line = test;
+    }
+  }
+  if (line) { ctx.fillText(line, x, ty); ty += lineH; }
+  return ty;
+}
+
+async function renderPastLifeCard(r) {
+  await document.fonts.ready;
+
+  const W = 600, H = 860;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+
+  // ── 배경 ──
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, r.cardBg[0]);
+  bg.addColorStop(1, r.cardBg[1]);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // 상단 신비로운 글로우
+  const glow = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, H * 0.7);
+  glow.addColorStop(0, r.cardAccent + '18');
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── 상단 그라데이션 바 ──
+  const topBar = ctx.createLinearGradient(0, 0, W, 0);
+  topBar.addColorStop(0, 'rgba(0,0,0,0)');
+  topBar.addColorStop(0.5, r.cardAccent);
+  topBar.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = topBar;
+  ctx.fillRect(0, 0, W, 3);
+
+  // ── 별빛 파티클 효과 ──
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  const stars = [[45,80],[120,35],[250,22],[400,55],[520,30],[570,90],[80,160],[480,145],[160,200],[530,200]];
+  stars.forEach(([sx, sy]) => {
+    ctx.beginPath();
+    ctx.arc(sx, sy, 1.2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // ── 상단 라벨 ──
+  ctx.font = '500 14px "Noto Sans KR"';
+  ctx.fillStyle = r.cardAccent + '99';
+  ctx.textAlign = 'center';
+  ctx.fillText('✨ 나의 전생 테스트 ✨', W/2, 42);
+
+  // ── 이모지 ──
+  ctx.font = '100px serif';
+  ctx.textAlign = 'center';
+  // 이모지 글로우
+  ctx.shadowColor = r.cardAccent;
+  ctx.shadowBlur = 30;
+  ctx.fillText(r.emoji, W/2, 158);
+  ctx.shadowBlur = 0;
+
+  // ── 전생 레이블 ──
+  ctx.font = '500 14px "Noto Sans KR"';
+  ctx.fillStyle = r.cardAccent + '99';
+  ctx.textAlign = 'center';
+  ctx.fillText('🌀  나의 전생은  🌀', W/2, 195);
+
+  // ── 전생 이름 ──
+  ctx.font = '900 42px "Noto Sans KR"';
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'center';
+  ctx.fillText(r.type, W/2, 258);
+
+  // 언더라인
+  const tw = ctx.measureText(r.type).width;
+  const ux = W/2 - tw/2;
+  const uGrad = ctx.createLinearGradient(ux, 0, ux + tw, 0);
+  uGrad.addColorStop(0, 'rgba(0,0,0,0)');
+  uGrad.addColorStop(0.5, r.cardAccent);
+  uGrad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = uGrad;
+  ctx.fillRect(ux, 268, tw, 2);
+
+  // ── 구분선 ──
+  const divGrad = ctx.createLinearGradient(60, 0, W-60, 0);
+  divGrad.addColorStop(0, 'rgba(255,255,255,0)');
+  divGrad.addColorStop(0.5, 'rgba(255,255,255,0.12)');
+  divGrad.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.strokeStyle = divGrad;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(60, 298); ctx.lineTo(W - 60, 298); ctx.stroke();
+
+  // ── 설명 텍스트 ──
+  ctx.font = '400 15px "Noto Sans KR"';
+  ctx.fillStyle = 'rgba(200,200,220,0.8)';
+  ctx.textAlign = 'center';
+  const descEnd = wrapText(ctx, r.desc, W/2, 338, W - 80, 27);
+
+  // ── 구분선 ──
+  ctx.strokeStyle = divGrad;
+  ctx.beginPath(); ctx.moveTo(60, descEnd + 20); ctx.lineTo(W - 60, descEnd + 20); ctx.stroke();
+
+  // ── "그래서 지금 나는" ──
+  ctx.font = '700 13px "Noto Sans KR"';
+  ctx.fillStyle = r.cardAccent + 'bb';
+  ctx.textAlign = 'center';
+  ctx.fillText('🔮  그래서 지금 나는...', W/2, descEnd + 50);
+
+  ctx.font = 'italic 400 14px "Noto Sans KR"';
+  ctx.fillStyle = 'rgba(180,180,200,0.75)';
+  wrapText(ctx, r.now, W/2, descEnd + 78, W - 80, 25);
+
+  // ── 하단 워터마크 ──
+  const bottomY = H - 80;
+  ctx.fillStyle = 'rgba(255,255,255,0.025)';
+  ctx.fillRect(0, bottomY, W, 80);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, bottomY); ctx.lineTo(W, bottomY); ctx.stroke();
+
+  ctx.font = '700 17px "Noto Sans KR"';
+  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  ctx.textAlign = 'center';
+  ctx.fillText('나의 전생은? — 직접 테스트해보기 →', W/2, H - 48);
+
+  ctx.font = '400 13px "Noto Sans KR"';
+  ctx.fillStyle = '#444';
+  ctx.fillText('🔬 오늘연구소 | 전생 테스트', W/2, H - 22);
+
+  return c;
+}
+
+async function openShareOverlay() {
+  const btn = document.querySelector('.img-card-btn');
+  if (btn) { btn.textContent = '⏳ 카드 생성 중...'; btn.disabled = true; }
+
+  try {
+    shareCanvas = await renderPastLifeCard(currentResult);
+    shareDataURL = shareCanvas.toDataURL('image/png');
+    document.getElementById('sharePreviewImg').src = shareDataURL;
+    document.getElementById('shareOverlay').classList.add('open');
+  } finally {
+    if (btn) { btn.textContent = '✨ 전생 카드 이미지 만들기'; btn.disabled = false; }
   }
 }
+
+function closeShareOverlay() {
+  document.getElementById('shareOverlay').classList.remove('open');
+}
+
+function downloadShareImage() {
+  if (!shareDataURL) return;
+  const a = document.createElement('a');
+  a.href = shareDataURL;
+  a.download = `전생_${currentResult.type}.png`;
+  a.click();
+}
+
+async function shareImageFile() {
+  if (!shareCanvas) return;
+  const btn = document.querySelector('.share-action-btn.secondary');
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  try {
+    const blob = await toBlobAsync(shareCanvas);
+    const file = new File([blob], `전생_${currentResult.type}.png`, { type: 'image/png' });
+    // 1순위: 이미지 파일 공유 (모바일)
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: '나의 전생은?', text: `내 전생은 "${currentResult.type}"! 너의 전생은?` });
+    // 2순위: 링크 공유 (일부 모바일)
+    } else if (navigator.share) {
+      await navigator.share({ title: '나의 전생은?', text: `내 전생은 "${currentResult.type}"! 너의 전생은?`, url: window.location.href });
+    // 3순위: 이미지 다운로드
+    } else {
+      downloadShareImage();
+      showToast('💾 이미지가 저장됐어요! 카카오톡에 직접 공유해보세요 😊');
+    }
+  } catch(e) {
+    if (e.name !== 'AbortError') {
+      downloadShareImage();
+      showToast('💾 이미지가 저장됐어요! 직접 공유해보세요 😊');
+    }
+  } finally {
+    if (btn) { btn.textContent = '📤 공유하기'; btn.disabled = false; }
+  }
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeShareOverlay(); });
+document.getElementById('shareOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('shareOverlay')) closeShareOverlay();
+});
 </script>
 </body>
 </html>

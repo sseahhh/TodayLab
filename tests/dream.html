@@ -4,82 +4,70 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>꿈 해몽 | 오늘연구소</title>
-  <meta name="description" content="꿈 해몽 — 오늘연구소에서 재미있게 즐겨보세요">
+  <meta name="description" content="장소·등장인물·분위기로 풀어보는 꿈 해몽 — 심리해석, 오늘의 운세, 행운 아이템까지">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
   <link rel="stylesheet" href="../style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <script src="../ad.js"></script>
   <style>
-    .step-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 14px;
+    .progress-steps { display:flex; gap:6px; margin-bottom:20px; align-items:center; }
+    .ps-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.15); transition:background .3s; }
+    .ps-dot.done { background:var(--red); }
+    .ps-line { flex:1; height:2px; background:rgba(255,255,255,.1); }
+
+    .step-card { background:var(--bg2); border-radius:16px; padding:24px; border:1.5px solid rgba(255,255,255,.06); margin-bottom:16px; }
+    .step-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .step-num { width:28px; height:28px; background:var(--red); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; flex-shrink:0; }
+    .step-title { font-size:16px; font-weight:700; }
+
+    /* result */
+    .score-wrap { display:flex; flex-direction:column; align-items:center; margin:8px 0 20px; }
+    .score-ring {
+      width:110px; height:110px; border-radius:50%; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; border:4px solid;
+      margin-bottom:10px; position:relative;
     }
-    .step-num {
-      width: 28px; height: 28px;
-      background: var(--red);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 900;
-      flex-shrink: 0;
+    .score-num { font-size:38px; font-weight:900; line-height:1; }
+    .score-unit { font-size:12px; font-weight:500; opacity:.7; }
+    .dream-badge {
+      display:inline-block; padding:7px 22px; border-radius:50px;
+      font-size:15px; font-weight:800;
     }
-    .step-title { font-size: 16px; font-weight: 700; }
-    .step-card {
-      background: var(--bg2);
-      border-radius: 16px;
-      padding: 24px 24px;
-      border: 1.5px solid rgba(255,255,255,.06);
-      margin-bottom: 16px;
+    .badge-gil   { background:rgba(70,211,105,.15);  color:#46d369; border:1px solid rgba(70,211,105,.3); }
+    .badge-hyung { background:rgba(229,9,20,.12);    color:#ff6b6b; border:1px solid rgba(229,9,20,.25); }
+    .badge-plain { background:rgba(255,255,255,.07); color:var(--gray2); border:1px solid rgba(255,255,255,.12); }
+
+    .interp-box {
+      background:linear-gradient(135deg,rgba(101,78,163,.13) 0%,rgba(50,100,255,.07) 100%);
+      border:1px solid rgba(161,140,209,.22); border-radius:14px; padding:20px; margin-bottom:14px;
     }
-    .dream-result-badge {
-      display: inline-block;
-      font-size: 14px;
-      font-weight: 800;
-      padding: 6px 18px;
-      border-radius: 50px;
-      margin-bottom: 16px;
+    .interp-box p { font-size:14px; color:var(--gray1); line-height:1.9; }
+
+    .psych-box {
+      background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07);
+      border-radius:14px; padding:16px 18px; margin-bottom:14px;
     }
-    .badge-gil { background: rgba(70,211,105,.15); color: #46d369; border: 1px solid rgba(70,211,105,.3); }
-    .badge-hyung { background: rgba(229,9,20,.12); color: #ff6b6b; border: 1px solid rgba(229,9,20,.25); }
-    .badge-plain { background: rgba(255,255,255,.07); color: var(--gray2); border: 1px solid rgba(255,255,255,.12); }
-    .dream-interp {
-      background: linear-gradient(135deg, rgba(101,78,163,.12) 0%, rgba(50,100,255,.08) 100%);
-      border: 1px solid rgba(161,140,209,.2);
-      border-radius: 12px;
-      padding: 20px 20px;
-      margin-bottom: 20px;
-    }
-    .dream-interp p { font-size: 14px; color: var(--gray1); line-height: 1.85; }
-    .dream-advice-box {
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 12px;
-      padding: 16px 20px;
-      margin-bottom: 24px;
-    }
-    .dream-advice-box p { font-size: 14px; color: var(--gray2); line-height: 1.8; }
-    .progress-steps {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 20px;
-      align-items: center;
-    }
-    .ps-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.15);
-      transition: background .3s;
-    }
-    .ps-dot.done { background: var(--red); }
-    .ps-line {
-      flex: 1; height: 2px;
-      background: rgba(255,255,255,.1);
-    }
+    .psych-title { font-size:12px; font-weight:700; color:var(--gray3); margin-bottom:8px; letter-spacing:.04em; }
+    .psych-text  { font-size:13px; color:var(--gray2); line-height:1.75; }
+
+    .fortune-wrap { margin-bottom:14px; }
+    .fortune-title { font-size:13px; font-weight:700; color:var(--gray2); margin-bottom:12px; }
+    .fortune-item { margin-bottom:10px; }
+    .fortune-row { display:flex; align-items:center; gap:10px; }
+    .fortune-label { font-size:12px; color:var(--gray3); width:36px; flex-shrink:0; }
+    .fortune-bg { flex:1; background:rgba(255,255,255,.08); border-radius:50px; height:9px; }
+    .fortune-fill { height:100%; border-radius:50px; transition:width 1.2s cubic-bezier(.4,0,.2,1) .3s; }
+    .fortune-val { font-size:12px; font-weight:700; width:30px; text-align:right; flex-shrink:0; }
+
+    .lucky-title { font-size:12px; font-weight:700; color:var(--gray3); margin-bottom:10px; letter-spacing:.04em; }
+    .lucky-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+    .lucky-chip  { padding:7px 14px; border-radius:50px; font-size:13px; font-weight:600; border:1px solid; }
+
+    .advice-box  { background:rgba(255,255,255,.04); border-radius:14px; padding:16px 18px; margin-bottom:20px; }
+    .advice-text { font-size:14px; color:var(--gray2); line-height:1.8; }
   </style>
 </head>
 <body>
-
   <nav class="navbar scrolled">
     <div class="nav-container">
       <div class="nav-left">
@@ -96,12 +84,11 @@
 
   <div class="test-wrap">
     <div class="test-inner">
-
       <div id="formSection">
         <div class="test-header">
           <span class="test-header-emoji">💭</span>
           <h1>꿈 해몽</h1>
-          <p>어젯밤 꿈이 궁금하다면?<br>꿈의 장소 · 등장인물 · 분위기로 해몽해드려요!</p>
+          <p>어젯밤 꿈이 궁금하다면?<br>장소 · 등장인물 · 분위기로 정밀 해몽해드려요!</p>
           <div class="test-meta">
             <span>🔮 운세</span>
             <span>⏱ 1분</span>
@@ -117,42 +104,39 @@
           <div class="ps-dot" id="pd2"></div>
         </div>
 
-        <!-- Step 1: 장소 -->
         <div class="step-card" id="step1">
           <div class="step-header">
             <div class="step-num">1</div>
             <div class="step-title">꿈에 나온 주요 장소는?</div>
           </div>
           <div class="chip-group" id="placeGroup">
-            <button class="chip" data-place="0" onclick="selectPlace(this)">🏠 집/고향</button>
+            <button class="chip" data-place="0" onclick="selectPlace(this)">🏠 집·고향</button>
             <button class="chip" data-place="1" onclick="selectPlace(this)">🏫 학교</button>
-            <button class="chip" data-place="2" onclick="selectPlace(this)">🌊 바다/강</button>
-            <button class="chip" data-place="3" onclick="selectPlace(this)">⛰️ 산/숲</button>
-            <button class="chip" data-place="4" onclick="selectPlace(this)">🏙️ 도시/건물</button>
-            <button class="chip" data-place="5" onclick="selectPlace(this)">🚂 탈것</button>
-            <button class="chip" data-place="6" onclick="selectPlace(this)">🌌 우주/하늘</button>
+            <button class="chip" data-place="2" onclick="selectPlace(this)">🌊 바다·강</button>
+            <button class="chip" data-place="3" onclick="selectPlace(this)">⛰️ 산·숲</button>
+            <button class="chip" data-place="4" onclick="selectPlace(this)">🏙️ 도시·건물</button>
+            <button class="chip" data-place="5" onclick="selectPlace(this)">🚂 탈것·이동</button>
+            <button class="chip" data-place="6" onclick="selectPlace(this)">🌌 우주·하늘</button>
           </div>
         </div>
 
-        <!-- Step 2: 등장 대상 -->
-        <div class="step-card" id="step2" style="opacity:.5;pointer-events:none;">
+        <div class="step-card" id="step2" style="opacity:.45;pointer-events:none;">
           <div class="step-header">
             <div class="step-num">2</div>
             <div class="step-title">꿈에 나온 주요 대상은?</div>
           </div>
           <div class="chip-group" id="subjectGroup">
             <button class="chip" data-subject="0" onclick="selectSubject(this)">👨‍👩‍👧 가족</button>
-            <button class="chip" data-subject="1" onclick="selectSubject(this)">💑 연인/친구</button>
-            <button class="chip" data-subject="2" onclick="selectSubject(this)">👻 귀신/악마</button>
+            <button class="chip" data-subject="1" onclick="selectSubject(this)">💑 연인·친구</button>
+            <button class="chip" data-subject="2" onclick="selectSubject(this)">👻 귀신·악마</button>
             <button class="chip" data-subject="3" onclick="selectSubject(this)">🐯 동물</button>
-            <button class="chip" data-subject="4" onclick="selectSubject(this)">💰 돈/보물</button>
-            <button class="chip" data-subject="5" onclick="selectSubject(this)">⚔️ 싸움/쫓김</button>
-            <button class="chip" data-subject="6" onclick="selectSubject(this)">✨ 빛/신비로운 것</button>
+            <button class="chip" data-subject="4" onclick="selectSubject(this)">💰 돈·보물</button>
+            <button class="chip" data-subject="5" onclick="selectSubject(this)">⚔️ 싸움·쫓김</button>
+            <button class="chip" data-subject="6" onclick="selectSubject(this)">✨ 빛·신비로운 것</button>
           </div>
         </div>
 
-        <!-- Step 3: 분위기 -->
-        <div class="step-card" id="step3" style="opacity:.5;pointer-events:none;">
+        <div class="step-card" id="step3" style="opacity:.45;pointer-events:none;">
           <div class="step-header">
             <div class="step-num">3</div>
             <div class="step-title">꿈의 전반적인 분위기는?</div>
@@ -167,11 +151,8 @@
             💭 꿈 해몽하기
           </button>
         </div>
-
       </div>
-
       <div id="resultSection" style="display:none;"></div>
-
     </div>
   </div>
 
@@ -201,137 +182,172 @@ function selectMood(btn) {
   document.getElementById('dreamBtn').disabled = false;
 }
 
-// Dream interpretation matrix
-// [type: 'gil'|'hyung'|'plain', interpretation, advice]
-const PLACE_NAMES = ['집/고향','학교','바다/강','산/숲','도시/건물','탈것','우주/하늘'];
-const SUBJECT_NAMES = ['가족','연인/친구','귀신/악마','동물','돈/보물','싸움/쫓김','빛/신비로운 것'];
-const MOOD_NAMES = ['무섭고 불안','행복하고 따뜻','이상하고 혼란','슬프고 그리운'];
+// ── 장소 × 분위기 기본 해석 (28가지, {S} = 대상명 with 조사) ──────────────
+const PM = {
+  '0-0': { score:42, interp:'고향이나 집에서 공포와 불안을 경험하는 꿈은 가장 안전해야 할 공간에서 느끼는 위협을 상징합니다. {S}이(가) 그 두려움을 자극한 것은 가까운 관계나 일상의 기반에 해소되지 않은 갈등이 있음을 무의식이 알리는 신호입니다.', psych:'현재 안정감에 심각한 균열이 느껴지거나, 가정·주변 환경에서 오랫동안 쌓인 불안이 표출된 것입니다.', advice:'가장 가까운 사람과 솔직하게 감정을 나누거나, 일상에서 안전감을 줄 수 있는 작은 변화를 시도해 보세요.' },
+  '0-1': { score:86, interp:'집이나 고향에서 행복하고 따뜻한 꿈은 가장 길한 꿈 중 하나입니다. {S}이(가) 함께한 것은 그 행복이 진정성 있게 지속될 것을 암시하며, 삶의 뿌리가 단단해지고 가족이나 가정과 관련된 기쁜 소식이 찾아올 조짐입니다.', psych:'삶의 기반에 대한 깊은 만족감과 안정감이 넘치는 상태입니다. 사랑하는 사람들과의 연결에서 충만함을 느끼고 있습니다.', advice:'소중한 사람들에게 평소 전하지 못했던 감사의 말을 오늘 전해보세요. 좋은 에너지가 배로 돌아옵니다.' },
+  '0-2': { score:55, interp:'집이나 고향에서 이상하고 혼란스러운 꿈은 익숙한 환경 속에서 방향을 잃고 있다는 신호입니다. {S}이(가) 낯선 모습으로 등장한 것은 변화에 적응하는 과정에서 오는 내면의 혼란, 또는 가까운 관계에서 뭔가 달라지고 있음을 암시합니다.', psych:'익숙함과 낯섦 사이에서 정체성을 재조정하는 과도기입니다. 혼란은 새로운 균형을 찾아가는 과정입니다.', advice:'정리되지 않은 일들을 하나씩 목록으로 써보고, 가장 작은 것부터 차례로 마무리 지어보세요.' },
+  '0-3': { score:50, interp:'집이나 고향에서 슬픔과 그리움을 느끼는 꿈은 잃어버린 무언가에 대한 애도, 혹은 돌아갈 수 없는 시절에 대한 그리움을 담고 있습니다. {S}이(가) 등장한 것은 그 감정이 특정 관계나 기억과 깊이 연결되어 있음을 보여줍니다.', psych:'과거에 대한 미련이나 상실감이 충분히 처리되지 않은 상태입니다. 그 감정을 온전히 느끼고 내려놓을 준비가 필요합니다.', advice:'그리운 사람이나 장소에 대한 감정을 일기에 솔직하게 써보세요. 표현하는 것만으로도 마음이 한결 가벼워집니다.' },
 
-// 길몽 조합들
-const DREAM_DB = {
-  // [place][subject][mood]
-  // 바다+돈+행복
-  '2-4-1': ['gil','바다에서 돈이나 보물을 발견하는 꿈은 대표적인 재물 길몽입니다. 기대하지 않았던 수입이 생기거나 오래된 투자가 결실을 맺을 수 있습니다. 행복한 분위기는 그 재물이 오래 지속될 것임을 암시합니다.','복권이나 예상치 못한 행운을 위해 작은 도전을 해보세요.'],
-  // 하늘+빛+행복
-  '6-6-1': ['gil','하늘에서 빛나는 신비로운 존재를 만나는 꿈은 매우 길한 꿈입니다. 신의 보호와 축복이 임하며, 큰 소원이 이루어질 조짐입니다. 새로운 시작과 희망이 가득한 시기입니다.','오늘은 오래 간직해온 소원을 마음속으로 강하게 빌어보세요.'],
-  // 산+동물+행복
-  '3-3-1': ['gil','산에서 동물을 만나는 행복한 꿈은 귀인을 만날 징조입니다. 특히 호랑이나 곰 같은 큰 동물이라면 큰 행운과 지위 상승을 예고합니다. 가까운 시일 내에 도움이 되는 인물을 만날 것입니다.','사람들을 적극적으로 만나고 네트워크를 넓혀보세요.'],
-  // 집+가족+행복
-  '0-0-1': ['gil','고향 집에서 가족과 함께하는 행복한 꿈은 가정의 평화와 번영을 의미합니다. 가족 중 누군가에게 좋은 소식이 생기거나, 오래된 가족 문제가 해결될 것입니다.','가족과 함께하는 소중한 시간을 만들어보세요.'],
-  // 탈것+연인+행복
-  '5-1-1': ['gil','여행 중 사랑하는 사람과 함께하는 꿈은 연애운이 상승하는 신호입니다. 현재 연인이 있다면 관계가 더욱 깊어지고, 솔로라면 새로운 인연이 찾아올 것입니다.','먼저 용기 있게 감정을 표현해보세요.'],
-  // 도시+돈+행복
-  '4-4-1': ['gil','도시의 번화한 곳에서 돈이나 보물을 얻는 꿈은 사업이나 직장에서의 금전적 성공을 예고합니다. 노력한 만큼 정당한 보상이 돌아오는 시기입니다.','새로운 사업 아이디어나 투자 기회에 관심을 가져보세요.'],
+  '1-0': { score:38, interp:'학교에서 두려움과 불안을 느끼는 꿈은 평가받는 것에 대한 공포나 성과 압박이 무의식에 표출된 것입니다. {S}이(가) 그 불안을 더욱 구체화했으며, 아직 극복하지 못한 과거의 트라우마가 현재 행동을 제약하고 있을 수 있습니다.', psych:'타인의 시선과 기대에 대한 두려움이 크고, 실패에 대한 불안이 현재의 도전을 막고 있는 상태입니다.', advice:'\'완벽하지 않아도 충분하다\'고 스스로에게 말해주세요. 작은 성취를 기록하며 자신감을 쌓아가보세요.' },
+  '1-1': { score:76, interp:'학교에서 즐겁고 행복한 꿈은 성장, 배움, 새로운 기회의 시작을 암시하는 길몽입니다. {S}이(가) 함께한 것은 그 성장 과정에서 중요한 조력자나 결정적 기회가 함께할 것을 의미합니다. 자기계발이나 도전에 나서기에 최적의 시기입니다.', psych:'자기 발전에 대한 의욕이 높고 배움에 대한 긍정적인 에너지가 최고조에 달해 있습니다.', advice:'지금 배우고 싶었던 것을 시작하기에 가장 좋은 타이밍입니다. 주저 없이 첫걸음을 내딛으세요.' },
+  '1-2': { score:53, interp:'학교에서 이상하고 혼란스러운 꿈은 현재 자신의 역할과 사회적 위치에 대한 혼란을 반영합니다. {S}이(가) 등장한 것은 이 혼란이 특정 영역의 방향 설정과 연결되어 있음을 나타냅니다. 무엇을 원하는지, 어디로 가고 싶은지 다시 생각해볼 시간입니다.', psych:'자신의 정체성과 사회적 역할에 대한 의문을 품고 있는 시기입니다. 혼란은 새로운 방향을 찾기 직전의 신호입니다.', advice:'\'나는 지금 진짜 무엇을 원하는가\'를 조용히 자문해보세요. 명확한 목표 하나가 모든 혼란을 정리해 줍니다.' },
+  '1-3': { score:47, interp:'학교에서 슬프고 그리운 꿈은 지나온 시절에 대한 향수와 이루지 못한 꿈에 대한 미련을 상징합니다. {S}이(가) 함께한 것은 과거의 특정 관계나 순간에 대한 그리움이 아직 마음속에 남아 있음을 보여줍니다.', psych:'과거에 이루지 못한 것에 대한 아쉬움이 현재 동기에 영향을 미치고 있습니다. 과거를 통해 현재를 재정의하는 시기입니다.', advice:'과거의 자신에게 \'그때 정말 잘했어, 최선이었어\'라고 말해주세요. 후회보다 성장에 집중할 때입니다.' },
 
-  // 흉몽 조합들
-  // 집+귀신+무서움
-  '0-2-0': ['hyung','집에서 귀신이나 악마와 마주치는 무서운 꿈은 건강이나 주변 인물에 대한 불안감을 반영합니다. 가족 중 한 명의 건강을 점검해보거나, 평소 해결하지 못한 갈등이 있다면 먼저 풀어보세요.','주변 가족들과 솔직한 대화를 나누고 오해를 풀어보세요.'],
-  // 바다+싸움+무서움
-  '2-5-0': ['hyung','험한 바다에서 싸우거나 쫓기는 꿈은 현실에서의 극심한 스트레스와 압박감을 나타냅니다. 무리하게 일을 진행하다가 큰 장애를 만날 수 있으니 속도를 줄이고 신중하게 행동하세요.','중요한 결정은 일주일 뒤로 미루고 충분히 재검토하세요.'],
-  // 학교+귀신+무서움
-  '1-2-0': ['hyung','학교에서 귀신이나 위협적인 존재를 만나는 꿈은 과거의 상처나 실패에 대한 두려움이 아직 해소되지 않았음을 보여줍니다. 과거의 실수에 너무 집착하지 말고 앞으로 나아가세요.','오래된 걱정거리를 적어보고 하나씩 해결 방법을 찾아보세요.'],
-  // 도시+싸움+무서움
-  '4-5-0': ['hyung','복잡한 도시에서 쫓기거나 싸우는 꿈은 직장이나 사회에서의 갈등과 경쟁에 대한 압박을 표현합니다. 무리한 도전보다는 현재 위치를 지키는 것에 집중하세요.','인간관계에서 불필요한 적을 만들지 않도록 말을 조심하세요.'],
-  // 산+귀신+무서움
-  '3-2-0': ['hyung','산속에서 귀신이나 어둠을 만나는 꿈은 외로움과 고립감을 나타낼 수 있습니다. 또는 숨겨진 문제가 드러날 것을 예고하기도 합니다. 주변에 솔직하게 도움을 요청하세요.','혼자 해결하려 하지 말고 믿을 수 있는 사람에게 털어놓으세요.'],
+  '2-0': { score:44, interp:'바다나 강에서 두려움과 불안을 느끼는 꿈은 감당하기 어려운 감정의 소용돌이나 상황에 압도된 느낌을 나타냅니다. {S}이(가) 그 위협을 구체화했으며, 현실에서 감당하기 힘든 감정이나 문제가 쌓여 있을 수 있습니다.', psych:'감정이 넘쳐 흐르고 있으며 상황을 통제하기 어렵다는 느낌이 강한 상태입니다. 감정적 과부하가 온 신호입니다.', advice:'모든 것을 혼자 감당하려 하지 마세요. 신뢰할 수 있는 사람에게 솔직하게 털어놓는 것이 가장 좋은 처방입니다.' },
+  '2-1': { score:93, interp:'바다나 강에서 행복하고 평화로운 꿈은 대표적인 재물·기회 길몽입니다. 넓은 물은 풍요와 무한한 가능성을 상징하며, {S}이(가) 함께한 것은 이 행운이 특정 영역에서 곧 구체적으로 실현될 것을 암시합니다. 예상치 못한 기회나 수입이 가까이 있습니다.', psych:'감정적으로 매우 평온하고 풍요에 대한 긍정적인 에너지가 넘칩니다. 자연스럽게 흐름에 몸을 맡기면 좋은 결과를 얻을 수 있습니다.', advice:'새로운 기회가 찾아오면 두 번 생각하지 말고 잡으세요. 오늘은 적극적인 행동이 행운을 불러옵니다.' },
+  '2-2': { score:58, interp:'바다나 강에서 이상하고 혼란스러운 꿈은 감정의 흐름이 뒤엉켜 있음을 나타냅니다. {S}이(가) 그 혼란 속에 등장한 것은 해당 영역에서 해결되지 않은 감정이 있음을 보여줍니다. 억눌러온 감정들을 건강하게 표출하는 방법을 찾아야 할 때입니다.', psych:'복잡한 감정들이 뒤섞여 있으며 내면의 정화가 필요한 시기입니다. 무의식이 감정 정리를 강하게 요청하고 있습니다.', advice:'감정을 억누르지 말고 운동, 음악, 글쓰기 등을 통해 건강하게 표출해보세요.' },
+  '2-3': { score:49, interp:'바다나 강에서 슬프고 그리운 꿈은 흘러가버린 것들, 되돌아오지 않는 시간에 대한 깊은 그리움을 담고 있습니다. {S}이(가) 등장한 것은 그 감정이 특정 관계나 상황과 연결되어 있음을 보여줍니다. 흘려보내는 것도 하나의 사랑임을 기억하세요.', psych:'상실감과 변화에 대한 저항이 내면에 있습니다. 흐르는 강처럼 변화를 자연스럽게 받아들이는 연습이 필요합니다.', advice:'더 이상 잡을 수 없는 것은 강물처럼 흘려보내세요. 그 빈 공간에 새로운 것이 채워집니다.' },
 
-  // 평범한 꿈 조합들
-  // 학교+가족+슬픔
-  '1-0-3': ['plain','학교에서 가족을 만나는 슬픈 꿈은 그리움과 향수를 상징합니다. 오랫동안 만나지 못한 사람에 대한 기억이 꿈으로 나타난 것입니다. 잠시 과거를 돌아보고 감정을 정리하는 시간을 가지세요.','오래 연락 못한 가족이나 친구에게 안부를 전해보세요.'],
-  // 탈것+가족+슬픔
-  '5-0-3': ['plain','기차나 차 안에서 가족이 나오는 슬픈 꿈은 이별이나 변화에 대한 마음의 준비를 의미합니다. 변화를 두려워하지 말고 자연스럽게 받아들이세요. 헤어짐이 있어야 새로운 만남도 있습니다.','변화를 긍정적으로 받아들이고 새로운 시작을 준비하세요.'],
-  // 하늘+가족+혼란
-  '6-0-2': ['plain','하늘을 날다가 가족이 등장하는 혼란스러운 꿈은 현실에서 자유와 책임 사이에서 갈등하는 마음을 보여줍니다. 자신의 꿈을 좇으면서도 주변 사람들을 배려하는 균형을 찾아보세요.','하고 싶은 것과 해야 할 것을 리스트로 작성해 균형을 맞춰보세요.'],
-  // 바다+연인+슬픔
-  '2-1-3': ['plain','바다에서 연인이나 친구와 함께하는 슬픈 꿈은 관계에 대한 아쉬움이나 미련이 담겨있습니다. 아직 하지 못한 말이나 표현이 있다면 용기를 내어 전해보세요.','솔직한 감정 표현이 관계를 더 깊게 만들어줄 것입니다.'],
+  '3-0': { score:40, interp:'산이나 숲에서 두려움과 불안을 느끼는 꿈은 인생의 큰 과제 앞에서 느끼는 고독한 압박감을 나타냅니다. {S}이(가) 위협으로 등장한 것은 오래 회피해온 문제가 이제 직면할 때가 됐다는 무의식의 신호입니다.', psych:'고독감과 두려움이 교차하는 힘든 국면에 있습니다. 혼자 감당하기 어려운 문제가 쌓여 있는 상태입니다.', advice:'산을 오르듯 한 걸음씩 천천히, 하지만 꾸준히 나아가세요. 당신은 혼자가 아닙니다.' },
+  '3-1': { score:89, interp:'산이나 숲에서 행복하고 평화로운 꿈은 귀인을 만나거나 든든한 지원을 받을 징조입니다. {S}이(가) 함께한 것은 그 도움의 방향이나 형태를 암시하며, 산의 큰 기운이 당신 뒤에서 단단하게 받쳐주고 있습니다.', psych:'강한 지지 기반과 내면의 힘을 느끼는 상태입니다. 자연의 큰 에너지가 활성화되어 있습니다.', advice:'귀인이 나타날 수 있으니 인맥을 적극적으로 활용하고 도움을 요청하는 것을 망설이지 마세요.' },
+  '3-2': { score:57, interp:'산이나 숲에서 이상하고 혼란스러운 꿈은 인생의 방향성에 대한 깊은 고민, 또는 혼자 자신을 돌아봐야 할 필요를 나타냅니다. {S}이(가) 등장한 것은 그 혼란이 특정 관계나 상황에서 비롯되고 있음을 시사합니다.', psych:'내면 깊은 곳에서 변화를 요구하고 있습니다. 혼자만의 성찰이 필요한 때입니다.', advice:'번잡한 일상에서 벗어나 조용한 자연 속을 걸어보세요. 자연이 가장 솔직한 답을 줍니다.' },
+  '3-3': { score:54, interp:'산이나 숲에서 슬프고 그리운 꿈은 자유와 고독에 대한 동경, 혹은 지나온 힘든 여정에 대한 회고를 상징합니다. {S}이(가) 함께한 것은 그 그리움이 향하는 방향을 보여줍니다. 과거를 인정하고 받아들이는 것이 앞으로 나아가는 힘이 됩니다.', psych:'자유와 홀가분함에 대한 그리움, 또는 힘들었던 시절을 돌아보는 성찰의 시간입니다.', advice:'인생의 힘들었던 시절을 통해 얼마나 성장했는지 돌아보세요. 그 경험들이 지금의 당신을 만들었습니다.' },
+
+  '4-0': { score:35, interp:'도시나 건물에서 두려움과 불안을 느끼는 꿈은 사회적 압박이나 직장·경쟁 환경에서의 위협을 나타냅니다. {S}이(가) 그 위험을 구체화했으며, 현실에서 경쟁이나 인간관계 갈등이 극에 달해 있을 수 있습니다.', psych:'사회적 생존에 대한 불안이 극도로 높은 상태입니다. 성과와 지위에 대한 압박이 심리적 부담으로 작용하고 있습니다.', advice:'경쟁에서 잠시 물러나 자신의 페이스를 찾으세요. 모든 것을 이길 필요는 없습니다.' },
+  '4-1': { score:81, interp:'도시나 건물에서 활기차고 행복한 꿈은 직업적 성공이나 사회적 인정을 받을 길몽입니다. {S}이(가) 함께한 것은 이 성공이 어떤 형태로 찾아올지를 암시하며, 사업이나 직장에서의 도약이 가까이 있습니다.', psych:'사회적 성취욕이 높고 에너지가 넘치는 상태입니다. 외부 세계와 활발하게 연결되고 싶은 욕구가 강합니다.', advice:'좋은 에너지가 넘치는 지금, 미뤄뒀던 업무나 사업적 결정을 과감하게 실행에 옮겨보세요.' },
+  '4-2': { score:54, interp:'도시나 건물에서 이상하고 혼란스러운 꿈은 사회적 역할과 현실 사이의 괴리감을 나타냅니다. {S}이(가) 혼란 속에 등장한 것은 특정 환경이나 관계에서 자신의 위치가 불분명하다는 느낌을 반영합니다.', psych:'사회적 정체성에 대한 혼란 속에 있습니다. 무엇이 진짜 나의 것인지 재정비가 필요한 시기입니다.', advice:'나의 진짜 가치관과 목표를 종이에 써보세요. 명확성이 모든 혼란을 해소해 줍니다.' },
+  '4-3': { score:49, interp:'도시나 건물에서 슬프고 그리운 꿈은 바쁜 사회생활 속에서 잊어버린 자신의 꿈이나 소중한 것들에 대한 그리움을 나타냅니다. {S}이(가) 등장한 것은 그 아쉬움이 어디에서 비롯되는지를 보여줍니다.', psych:'성취 중심의 삶에서 잃어버린 진정성에 대한 그리움이 있습니다. 무엇이 정말 소중한지 되묻는 시간입니다.', advice:'일상의 속도를 늦추고 진정으로 소중한 것이 무엇인지 고요히 생각해보세요.' },
+
+  '5-0': { score:41, interp:'탈것에서 두려움과 불안을 느끼는 꿈은 삶의 방향에 대한 통제력 상실이나 예기치 못한 변화에 대한 두려움을 상징합니다. {S}이(가) 그 불안을 자극하고 있으며, 진행 중인 일에서 예상치 못한 변수가 생길 수 있으니 꼼꼼한 점검이 필요합니다.', psych:'변화에 대한 통제력을 잃을 것 같은 불안이 큽니다. 삶의 방향성에 대한 재점검이 필요합니다.', advice:'지금 진행 중인 일의 리스크를 점검하고 대비책을 미리 세워두세요. 준비된 사람에게 위기는 기회입니다.' },
+  '5-1': { score:84, interp:'탈것에서 즐겁고 행복한 꿈은 인생의 여정이 순조롭게 전개될 것을 예고하는 길몽입니다. {S}이(가) 함께한 것은 그 여정에서 소중한 동반자나 결정적 기회를 만날 것을 암시합니다. 새로운 시작이나 도전이 좋은 결과를 가져다 줄 시기입니다.', psych:'변화와 새로운 시작에 대한 긍정적인 에너지가 넘칩니다. 삶의 흐름을 자연스럽게 타는 능력이 최고조입니다.', advice:'새로운 기회나 변화를 두려워하지 말고 적극적으로 흐름에 올라타세요. 지금이 출발의 최적 타이밍입니다.' },
+  '5-2': { score:57, interp:'탈것에서 이상하고 혼란스러운 꿈은 인생의 방향에 대한 결정을 내리지 못하고 우왕좌왕하는 상황을 나타냅니다. {S}이(가) 함께 혼란 속에 있는 것은 그 결정에서 명확성이 필요함을 보여줍니다.', psych:'선택의 갈림길 앞에서 방향을 잡지 못하고 있는 상태입니다. 결정을 미루는 것 자체가 에너지를 소모하고 있습니다.', advice:'가장 작은 결정부터 하는 연습을 하세요. 작은 결단들이 모여 큰 방향이 만들어집니다.' },
+  '5-3': { score:51, interp:'탈것에서 슬프고 그리운 꿈은 지나쳐 온 장소나 함께했던 사람들에 대한 아련한 그리움을 나타냅니다. {S}이(가) 그 감정과 함께 등장한 것은 특정 기억과의 깊은 연결을 보여줍니다.', psych:'지나온 시절에 대한 그리움이 현재 앞으로 나아가는 동력에 영향을 미치고 있습니다.', advice:'지나온 여정이 있었기에 지금의 당신이 있습니다. 과거를 자산으로, 현재를 새로운 출발점으로 삼으세요.' },
+
+  '6-0': { score:47, interp:'우주나 하늘에서 두려움과 불안을 느끼는 꿈은 너무 큰 이상과 현실 사이의 간극에서 오는 압박을 나타냅니다. {S}이(가) 그 위협과 함께 등장한 것은 높은 곳에서 추락할 것 같은 두려움이 어디에서 비롯되는지를 보여줍니다.', psych:'이상과 현실의 격차에서 오는 불안이 큽니다. 지나치게 높은 기대치가 심리적 부담으로 작용하고 있습니다.', advice:'목표의 크기를 단계별로 나눠보세요. 한 번에 하늘에 닿지 않아도 됩니다. 한 발씩이면 충분합니다.' },
+  '6-1': { score:97, interp:'우주나 하늘에서 행복하고 자유로운 꿈은 가장 강력한 길몽 중 하나입니다. 무한한 가능성이 활짝 열려 있으며, {S}이(가) 함께한 것은 이 놀라운 기운이 특정 영역에서 폭발적으로 실현될 것을 암시합니다. 크게 소망하던 것이 이루어질 가능성이 매우 높습니다.', psych:'에너지가 최고조에 달해 있으며 자아실현에 대한 강한 의지가 활성화된 상태입니다. 무엇이든 가능하다는 감각이 실제로 실현될 것입니다.', advice:'오늘 가장 간절한 소원을 구체적으로 적어보세요. 이 기운이 살아 있을 때 대담하게 도전하세요.' },
+  '6-2': { score:64, interp:'우주나 하늘에서 이상하고 혼란스러운 꿈은 삶의 큰 그림을 그리려 하지만 아직 방향이 잡히지 않은 상태를 나타냅니다. {S}이(가) 함께 떠있는 것은 그 혼란이 특정 관계나 목표와 연결되어 있음을 보여줍니다.', psych:'큰 꿈을 향한 열망은 있지만 구체적인 방법이 아직 불분명한 상태입니다. 혼란은 새로운 가능성을 탐색하는 과정입니다.', advice:'꿈을 더 구체적으로 시각화하고, 오늘 한 가지 작은 실행 계획을 세워보세요.' },
+  '6-3': { score:60, interp:'우주나 하늘에서 슬프고 그리운 꿈은 이루지 못한 이상, 닿을 수 없을 것 같은 꿈에 대한 애수를 담고 있습니다. {S}이(가) 함께 등장한 것은 그 아쉬움이 어디서 비롯되는지를 보여줍니다. 꿈은 사라진 것이 아니라 방법을 찾고 있을 뿐입니다.', psych:'높은 이상을 가지고 있지만 현실의 제약에서 오는 아쉬움이 큽니다. 그 그리움 자체가 변화의 동력이 될 수 있습니다.', advice:'포기하지 않은 꿈은 살아 있습니다. 방법을 바꾸거나 시간표를 다시 짜보세요. 우회로도 목적지에 닿습니다.' },
 };
 
-// Fallback interpretations
-const FALLBACK = {
-  'gil': [
-    ['숨겨진 재능이 드러나거나 예상치 못한 행운이 찾아올 꿈의 기운이 감지됩니다. 지금의 노력이 빛을 발할 시기가 가까이 왔습니다.','자신을 믿고 도전을 멈추지 마세요.'],
-    ['긍정적인 변화가 시작되는 꿈입니다. 막혔던 일이 풀리고 인간관계에서 새로운 활력이 생길 것입니다.','마음을 열고 주변의 신호에 귀 기울여 보세요.'],
-  ],
-  'hyung': [
-    ['현재의 스트레스나 불안감이 꿈으로 표현된 것 같습니다. 무리하게 진행 중인 일이 있다면 잠시 멈추고 재검토해 보세요.','충분한 휴식이 최선의 해결책입니다.'],
-    ['주변의 갈등이나 환경적 압박이 꿈에 반영되었습니다. 감정을 억누르지 말고 건강하게 표출하는 방법을 찾으세요.','신뢰할 수 있는 사람과 대화를 나눠보세요.'],
-  ],
-  'plain': [
-    ['현재의 일상이 그대로 반영된 꿈입니다. 지금 이 순간을 충실히 살아가고 있다는 표시이며, 무난하고 안정적인 시기가 이어질 것입니다.','현재에 집중하고 작은 행복을 발견해보세요.'],
-    ['복잡한 감정과 생각이 정리되는 과정에서 꾼 꿈입니다. 자신의 내면을 들여다보는 좋은 기회가 될 것입니다.','명상이나 일기 쓰기가 도움이 될 수 있습니다.'],
-  ],
+// ── 등장 대상 데이터 ──────────────────────────────────────────────────────
+const SUBJ = [
+  { name:'가족',          p:'가족이',            scoreMod:3,   suffix:'가족과의 유대감이나 가정 안정에 대한 무의식적 바람이 꿈에 담겨 있습니다.',             lucky:['가족 사진','따뜻한 차','집밥'],           color:'#fbbf24', fm:{m:0,l:12,h:6}  },
+  { name:'연인·친구',     p:'연인·친구가',        scoreMod:5,   suffix:'친밀한 관계에 대한 감정과 연결에 대한 깊은 욕구가 반영된 꿈입니다.',                 lucky:['핑크쿼츠','장미 한 송이','손편지'],         color:'#f472b6', fm:{m:0,l:18,h:0}  },
+  { name:'귀신·악마',     p:'귀신·악마가',        scoreMod:-10, suffix:'억압된 두려움이나 해결하지 못한 내면의 갈등이 상징적으로 형상화된 것입니다.',           lucky:['굵은 소금','백수정','향초'],               color:'#a78bfa', fm:{m:-12,l:-12,h:-15} },
+  { name:'동물',          p:'동물이',             scoreMod:3,   suffix:'본능적 에너지와 자연스러운 생명력이 꿈에 나타났습니다. 동물의 종류에 따라 의미가 더욱 구체화됩니다.', lucky:['녹색 식물','자연 산책','원목 소품'],       color:'#34d399', fm:{m:5,l:5,h:12}  },
+  { name:'돈·보물',       p:'돈·보물이',          scoreMod:13,  suffix:'재물과 성취에 대한 욕구가 무의식에서 강하게 표현된 꿈입니다. 재물운의 변화를 예고합니다.', lucky:['황금색 소품','복숭아','새 지갑'],          color:'#f59e0b', fm:{m:22,l:0,h:0}  },
+  { name:'싸움·쫓김',     p:'싸움·쫓김이',        scoreMod:-8,  suffix:'현실의 갈등, 경쟁, 또는 피하고 싶은 상황이 꿈으로 강렬하게 표출된 것입니다.',           lucky:['붉은 노을 사진','격한 운동','심호흡'],      color:'#ef4444', fm:{m:-8,l:-12,h:-8} },
+  { name:'빛·신비로운 것', p:'빛·신비로운 것이',   scoreMod:15,  suffix:'강력한 영적 에너지와 긍정적인 전환의 기운이 꿈에 담겨 있습니다. 매우 특별한 꿈입니다.',   lucky:['자수정','별자리 노트','흰색 캔들'],        color:'#818cf8', fm:{m:12,l:12,h:12} },
+];
+
+const TYPE = {
+  gil:   { label:'✨ 길몽', cls:'badge-gil',   ringColor:'#46d369', fortune:{m:74,l:74,h:74} },
+  hyung: { label:'⚠️ 흉몽', cls:'badge-hyung', ringColor:'#ff6b6b', fortune:{m:33,l:33,h:33} },
+  plain: { label:'💤 평범한 꿈', cls:'badge-plain', ringColor:'#94a3b8', fortune:{m:56,l:56,h:56} },
 };
 
-const TYPE_INFO = {
-  'gil': { label: '✨ 길몽', cls: 'badge-gil' },
-  'hyung': { label: '⚠️ 흉몽', cls: 'badge-hyung' },
-  'plain': { label: '💤 평범한 꿈', cls: 'badge-plain' },
-};
+function clamp(v,mn,mx){ return Math.max(mn,Math.min(mx,v)); }
 
 function calculate() {
-  if (selPlace === null || selSubject === null || selMood === null) {
-    alert('모든 항목을 선택해주세요!');
-    return;
-  }
+  if (selPlace===null || selSubject===null || selMood===null) { alert('모든 항목을 선택해주세요!'); return; }
 
-  const key = `${selPlace}-${selSubject}-${selMood}`;
-  let type, interp, advice;
+  const pm   = PM[`${selPlace}-${selMood}`];
+  const subj = SUBJ[selSubject];
+  const finalScore = clamp(pm.score + subj.scoreMod, 10, 99);
+  const typeKey = finalScore >= 70 ? 'gil' : finalScore >= 42 ? 'plain' : 'hyung';
+  const T = TYPE[typeKey];
 
-  if (DREAM_DB[key]) {
-    [type, interp, advice] = DREAM_DB[key];
-  } else {
-    // Determine type by mood
-    if (selMood === 1) type = 'gil';
-    else if (selMood === 0) type = 'hyung';
-    else type = 'plain';
-    const fallbacks = FALLBACK[type];
-    const idx = (selPlace + selSubject) % fallbacks.length;
-    [interp, advice] = fallbacks[idx];
-  }
+  const interpText = pm.interp.replace('{S}', subj.p);
+  const psychText  = pm.psych + ' ' + subj.suffix;
 
-  const typeInfo = TYPE_INFO[type];
-  const placeName = PLACE_NAMES[selPlace];
-  const subjectName = SUBJECT_NAMES[selSubject];
-  const moodName = MOOD_NAMES[selMood];
+  const money  = clamp(T.fortune.m + subj.fm.m, 15, 99);
+  const love   = clamp(T.fortune.l + subj.fm.l, 15, 99);
+  const health = clamp(T.fortune.h + subj.fm.h, 15, 99);
+
+  const mColor = money  >= 70 ? '#f59e0b' : money  >= 45 ? '#60a5fa' : '#ef4444';
+  const lColor = love   >= 70 ? '#f472b6' : love   >= 45 ? '#c084fc' : '#94a3b8';
+  const hColor = health >= 70 ? '#34d399' : health >= 45 ? '#60a5fa' : '#f97316';
+
+  const luckyChips = subj.lucky.map(l =>
+    `<span class="lucky-chip" style="color:${subj.color};border-color:${subj.color}33;background:${subj.color}11;">${l}</span>`
+  ).join('');
+
+  const placeNames    = ['집·고향','학교','바다·강','산·숲','도시·건물','탈것·이동','우주·하늘'];
+  const moodNames     = ['무섭고 불안한','행복하고 따뜻한','이상하고 혼란스러운','슬프고 그리운'];
 
   showAdThenResult(() => {
     document.getElementById('formSection').style.display = 'none';
     const sec = document.getElementById('resultSection');
     sec.style.display = 'block';
-    sec.innerHTML = `<div class="result-card">
-      <div class="result-type">💭 꿈 해몽 결과</div>
-      <div class="result-emoji">💭</div>
+    sec.innerHTML = `
+      <div class="result-card">
+        <div class="result-type">💭 꿈 해몽 결과</div>
 
-      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px;">
-        <span class="result-tag">📍 ${placeName}</span>
-        <span class="result-tag">👤 ${subjectName}</span>
-        <span class="result-tag">🎭 ${moodName}</span>
-      </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0 20px;">
+          <span class="result-tag">📍 ${placeNames[selPlace]}</span>
+          <span class="result-tag">👤 ${subj.name}</span>
+          <span class="result-tag">🎭 ${moodNames[selMood]}</span>
+        </div>
 
-      <div class="dream-result-badge ${typeInfo.cls}">${typeInfo.label}</div>
+        <div class="score-wrap">
+          <div class="score-ring" style="border-color:${T.ringColor};box-shadow:0 0 24px ${T.ringColor}33;">
+            <div class="score-num" style="color:${T.ringColor};">${finalScore}</div>
+            <div class="score-unit" style="color:${T.ringColor};">점</div>
+          </div>
+          <span class="dream-badge ${T.cls}">${T.label}</span>
+        </div>
 
-      <div class="dream-interp">
-        <p>${interp}</p>
-      </div>
+        <div class="interp-box">
+          <p>${interpText}</p>
+        </div>
 
-      <div class="dream-advice-box">
-        <p>💜 오늘의 조언: ${advice}</p>
-      </div>
+        <div class="psych-box">
+          <div class="psych-title">🧠 심리 해석</div>
+          <div class="psych-text">${psychText}</div>
+        </div>
 
-      <div class="result-actions">
-        <button class="btn-share" onclick="shareResult()">🔗 결과 공유하기</button>
-        <button class="btn-retry" onclick="location.reload()">🔄 다시하기</button>
-        <a href="../index.html" class="btn-back">← 포털로</a>
-      </div>
-    </div>`;
+        <div class="fortune-wrap">
+          <div class="fortune-title">🌟 오늘의 운세</div>
+          <div class="fortune-item">
+            <div class="fortune-row">
+              <span class="fortune-label">💰 재물</span>
+              <div class="fortune-bg"><div class="fortune-fill" id="fMoney" style="width:0%;background:${mColor};"></div></div>
+              <span class="fortune-val" style="color:${mColor};">${money}</span>
+            </div>
+          </div>
+          <div class="fortune-item">
+            <div class="fortune-row">
+              <span class="fortune-label">💕 연애</span>
+              <div class="fortune-bg"><div class="fortune-fill" id="fLove" style="width:0%;background:${lColor};"></div></div>
+              <span class="fortune-val" style="color:${lColor};">${love}</span>
+            </div>
+          </div>
+          <div class="fortune-item">
+            <div class="fortune-row">
+              <span class="fortune-label">💪 건강</span>
+              <div class="fortune-bg"><div class="fortune-fill" id="fHealth" style="width:0%;background:${hColor};"></div></div>
+              <span class="fortune-val" style="color:${hColor};">${health}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lucky-title">🍀 오늘의 행운 아이템</div>
+        <div class="lucky-chips">${luckyChips}</div>
+
+        <div class="advice-box">
+          <div class="psych-title" style="margin-bottom:8px;">💜 오늘의 조언</div>
+          <div class="advice-text">${pm.advice}</div>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn-share" onclick="shareResult('${placeNames[selPlace]}','${subj.name}','${T.label}',${finalScore})">🔗 결과 공유하기</button>
+          <button class="btn-retry" onclick="location.reload()">🔄 다시하기</button>
+          <a href="../index.html" class="btn-back">← 포털로</a>
+        </div>
+      </div>`;
+
+    setTimeout(() => {
+      document.getElementById('fMoney').style.width  = money  + '%';
+      document.getElementById('fLove').style.width   = love   + '%';
+      document.getElementById('fHealth').style.width = health + '%';
+    }, 200);
   });
 }
 
-function shareResult() {
-  const placeName = PLACE_NAMES[selPlace];
-  const subjectName = SUBJECT_NAMES[selSubject];
-  const text = `꿈 해몽 결과 💭 ${placeName}에서 ${subjectName}이 나온 꿈! 나도 꿈 해몽해봐~`;
-  if (navigator.share) navigator.share({ title: '꿈 해몽', text, url: window.location.href });
+function shareResult(place, subject, type, score) {
+  const text = `꿈 해몽 결과 💭 ${place}에서 ${subject}이(가) 나온 꿈 — ${type} ${score}점! 나도 해봐~`;
+  if (navigator.share) navigator.share({ title:'꿈 해몽', text, url:window.location.href });
   else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
 }
 </script>

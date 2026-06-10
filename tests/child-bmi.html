@@ -4,48 +4,116 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>아이 성장 백분위 | 오늘연구소</title>
-  <meta name="description" content="아이 성장 백분위 — 오늘연구소에서 재미있게 즐겨보세요">
+  <meta name="description" content="생년월일로 계산하는 우리 아이 성장 백분위 — 키·몸무게·BMI 또래 비교">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
   <link rel="stylesheet" href="../style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <script src="../ad.js"></script>
   <style>
-    .input-row2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 16px;
+    .gender-group { display: flex; gap: 12px; margin-bottom: 20px; }
+    .gender-btn {
+      flex: 1; padding: 14px; border-radius: 14px; border: 1.5px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.04); color: var(--gray2); font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: all .2s; text-align: center;
     }
-    .bmi-big {
-      font-size: 72px;
-      font-weight: 900;
-      text-align: center;
-      margin: 20px 0 8px;
+    .gender-btn.selected-m { border-color: #60a5fa; background: rgba(96,165,250,.12); color: #60a5fa; }
+    .gender-btn.selected-f { border-color: #f472b6; background: rgba(244,114,182,.12); color: #f472b6; }
+
+    .birth-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .measure-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+
+    /* ── result ── */
+    .result-profile {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(255,255,255,.04); border-radius: 16px;
+      padding: 18px 20px; margin-bottom: 20px;
     }
-    .status-badge {
-      display: inline-block;
-      padding: 8px 24px;
-      border-radius: 50px;
-      font-size: 16px;
-      font-weight: 700;
-      margin: 8px auto 20px;
+    .profile-avatar { font-size: 44px; line-height: 1; }
+    .profile-name { font-size: 18px; font-weight: 900; color: var(--gray1); }
+    .profile-sub { font-size: 13px; color: var(--gray3); margin-top: 3px; }
+
+    .pct-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .pct-card {
+      border-radius: 18px; padding: 20px 14px; text-align: center;
+      border: 1px solid rgba(255,255,255,.08);
     }
-    .status-under { background: rgba(100,180,255,.15); color: #64b4ff; border: 1px solid rgba(100,180,255,.3); }
-    .status-normal { background: rgba(70,211,105,.15); color: #46d369; border: 1px solid rgba(70,211,105,.3); }
-    .status-over { background: rgba(255,200,0,.15); color: #ffc800; border: 1px solid rgba(255,200,0,.3); }
-    .status-obese { background: rgba(255,80,80,.15); color: #ff5050; border: 1px solid rgba(255,80,80,.3); }
-    .percentile-bar {
-      background: var(--bg3);
-      border-radius: 50px;
-      height: 12px;
-      margin: 8px 0 4px;
-      overflow: hidden;
+    .pct-card-h { background: linear-gradient(135deg, rgba(96,165,250,.12) 0%, rgba(96,165,250,.04) 100%); }
+    .pct-card-w { background: linear-gradient(135deg, rgba(167,139,250,.12) 0%, rgba(167,139,250,.04) 100%); }
+    .pct-icon { font-size: 22px; margin-bottom: 6px; }
+    .pct-big { font-size: 44px; font-weight: 900; line-height: 1; }
+    .pct-unit { font-size: 14px; font-weight: 400; }
+    .pct-type { font-size: 11px; color: var(--gray3); margin-top: 4px; }
+    .pct-measure { font-size: 15px; font-weight: 700; margin-top: 8px; }
+
+    .bar-section { margin-bottom: 20px; }
+    .bar-row { margin-bottom: 14px; }
+    .bar-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .bar-title { font-size: 13px; color: var(--gray2); font-weight: 600; }
+    .bar-pct-label { font-size: 12px; font-weight: 700; }
+    .bar-bg {
+      position: relative; background: rgba(255,255,255,.08);
+      border-radius: 50px; height: 12px; overflow: visible;
     }
-    .percentile-fill {
-      height: 100%;
-      border-radius: 50px;
-      background: linear-gradient(90deg, #96fbc4, #f9f586);
-      transition: width 1.5s cubic-bezier(.4,0,.2,1) .3s;
+    .bar-fill { height: 100%; border-radius: 50px; transition: width 1.3s cubic-bezier(.4,0,.2,1) .3s; }
+    .bar-dot {
+      position: absolute; top: 50%; transform: translate(-50%,-50%);
+      width: 20px; height: 20px; border-radius: 50%; border: 3px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,.4); transition: left 1.3s cubic-bezier(.4,0,.2,1) .3s;
+      z-index: 2;
+    }
+    .bar-ticks {
+      display: flex; justify-content: space-between;
+      font-size: 10px; color: rgba(255,255,255,.25); margin-top: 7px; padding: 0 2px;
+    }
+
+    .bmi-row {
+      display: flex; align-items: center; gap: 16px;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px; padding: 18px 20px; margin-bottom: 16px;
+    }
+    .bmi-num { font-size: 42px; font-weight: 900; line-height: 1; }
+    .bmi-sub { font-size: 11px; color: var(--gray3); margin-top: 3px; }
+    .bmi-badge {
+      display: inline-block; padding: 6px 16px; border-radius: 50px;
+      font-size: 14px; font-weight: 700; margin-top: 8px;
+    }
+    .bmi-under { background: rgba(100,180,255,.15); color: #64b4ff; border: 1px solid rgba(100,180,255,.3); }
+    .bmi-normal { background: rgba(70,211,105,.15); color: #46d369; border: 1px solid rgba(70,211,105,.3); }
+    .bmi-over   { background: rgba(255,200,0,.15);  color: #ffc800; border: 1px solid rgba(255,200,0,.3); }
+    .bmi-obese  { background: rgba(255,80,80,.15);  color: #ff5050; border: 1px solid rgba(255,80,80,.3); }
+
+    .compare-box {
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px; overflow: hidden; margin-bottom: 16px;
+    }
+    .compare-head {
+      padding: 11px 16px; font-size: 12px; font-weight: 700;
+      color: var(--gray3); border-bottom: 1px solid rgba(255,255,255,.06);
+      letter-spacing: .03em; text-transform: uppercase;
+    }
+    .compare-row {
+      display: grid; grid-template-columns: 1fr auto auto; align-items: center;
+      gap: 10px; padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,.05);
+      font-size: 13px;
+    }
+    .compare-row:last-child { border-bottom: none; }
+    .compare-label { color: var(--gray3); }
+    .compare-val { font-weight: 700; color: var(--gray1); text-align: right; }
+    .compare-diff { font-size: 12px; font-weight: 700; text-align: right; min-width: 56px; }
+    .diff-pos { color: #46d369; }
+    .diff-neg { color: #ff8c8c; }
+    .diff-zero { color: var(--gray3); }
+
+    .advice-box {
+      background: rgba(255,255,255,.04); border-radius: 14px;
+      padding: 18px 20px; margin-bottom: 20px;
+    }
+    .advice-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--gray1); }
+    .advice-text { font-size: 14px; color: var(--gray2); line-height: 1.78; }
+
+    .disclaimer {
+      background: rgba(255,255,255,.02); border-radius: 12px;
+      padding: 14px 16px; margin-top: 4px; margin-bottom: 20px;
     }
   </style>
 </head>
@@ -70,7 +138,7 @@
         <div class="test-header">
           <span class="test-header-emoji">📊</span>
           <h1>아이 성장 백분위</h1>
-          <p>우리 아이의 키, 몸무게, BMI가<br>또래와 비교해서 어느 정도인지 확인해요!</p>
+          <p>생년월일로 계산하는 우리 아이의<br>키·몸무게·BMI 또래 비교 분석</p>
           <div class="test-meta">
             <span>👶 육아</span>
             <span>⏱ 1분</span>
@@ -80,35 +148,45 @@
 
         <div class="question-card">
           <div class="question-num">아이 정보 입력</div>
-          <p class="question-text" style="margin-bottom:16px;">성별을 선택해주세요</p>
 
-          <div class="chip-group" id="genderGroup" style="margin-bottom:24px;">
-            <button class="chip" onclick="selectGender(this,'M')">💙 아들</button>
-            <button class="chip" onclick="selectGender(this,'F')">🩷 딸</button>
+          <p class="question-text" style="margin-bottom:12px;">성별을 선택해주세요</p>
+          <div class="gender-group">
+            <button class="gender-btn" id="btnM" onclick="selectGender('M')">💙 아들</button>
+            <button class="gender-btn" id="btnF" onclick="selectGender('F')">🩷 딸</button>
           </div>
 
-          <label class="input-label">만 나이 (0~17세)</label>
-          <input type="number" class="input-field" id="childAge" placeholder="예: 7" min="0" max="17">
+          <label class="input-label">생년월일</label>
+          <div class="birth-row">
+            <div>
+              <input type="number" class="input-field" id="byear" placeholder="출생연도 (예: 2019)" min="2007" max="2026" style="margin-bottom:0;">
+            </div>
+            <div>
+              <input type="number" class="input-field" id="bmonth" placeholder="월" min="1" max="12" style="margin-bottom:0;">
+            </div>
+            <div>
+              <input type="number" class="input-field" id="bday" placeholder="일" min="1" max="31" style="margin-bottom:0;">
+            </div>
+          </div>
 
-          <div class="input-row2">
+          <div class="measure-row" style="margin-top:16px;">
             <div>
               <label class="input-label">키 (cm)</label>
-              <input type="number" class="input-field" id="childHeight" placeholder="예: 120" min="40" max="200" style="margin-bottom:0;">
+              <input type="number" class="input-field" id="childHeight" placeholder="예: 115" min="40" max="200" style="margin-bottom:0;">
             </div>
             <div>
               <label class="input-label">몸무게 (kg)</label>
-              <input type="number" class="input-field" id="childWeight" placeholder="예: 25" min="2" max="120" style="margin-bottom:0;">
+              <input type="number" class="input-field" id="childWeight" placeholder="예: 22" min="2" max="120" style="margin-bottom:0;">
             </div>
           </div>
 
-          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;margin-top:16px;">
+          <button class="btn-primary" onclick="calculate()" style="width:100%;padding:15px;font-size:16px;margin-top:20px;">
             📊 성장 분석하기
           </button>
         </div>
 
-        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:16px 18px;margin-top:16px;">
+        <div class="disclaimer">
           <p style="font-size:12px;color:var(--gray3);line-height:1.7;">
-            📌 한국 소아청소년 성장 기준(<strong style="color:var(--gray2)">질병관리청 2017년 기준</strong>) 기반 근사값입니다.<br>
+            📌 한국 소아청소년 성장 기준 (<strong style="color:var(--gray2)">질병관리청 2017년 기준</strong>) 기반 근사값입니다.<br>
             정확한 성장 평가는 소아청소년과에서 받아주세요. 아이 성장에 정답은 없어요 💕
           </p>
         </div>
@@ -121,182 +199,307 @@
 <script>
 let childGender = null;
 
-function selectGender(btn, g) {
-  document.querySelectorAll('#genderGroup .chip').forEach(c => c.classList.remove('selected'));
-  btn.classList.add('selected');
+function selectGender(g) {
   childGender = g;
+  document.getElementById('btnM').className = 'gender-btn' + (g === 'M' ? ' selected-m' : '');
+  document.getElementById('btnF').className = 'gender-btn' + (g === 'F' ? ' selected-f' : '');
 }
 
-// Korean child growth reference (approximate averages)
-const growthRef = {
-  M: {
-    0:  { h: 50,  w: 3.3 },
-    1:  { h: 75,  w: 9.5 },
-    2:  { h: 87,  w: 12.2 },
-    3:  { h: 96,  w: 14.5 },
-    4:  { h: 103, w: 16.3 },
-    5:  { h: 110, w: 19.0 },
-    6:  { h: 116, w: 21.5 },
-    7:  { h: 122, w: 24.0 },
-    8:  { h: 128, w: 27.0 },
-    9:  { h: 133, w: 30.0 },
-    10: { h: 139, w: 34.0 },
-    11: { h: 144, w: 38.0 },
-    12: { h: 151, w: 43.0 },
-    13: { h: 162, w: 52.0 },
-    14: { h: 168, w: 58.0 },
-    15: { h: 170, w: 61.0 },
-    16: { h: 172, w: 63.0 },
-    17: { h: 173, w: 65.0 },
-  },
-  F: {
-    0:  { h: 49,  w: 3.2 },
-    1:  { h: 74,  w: 9.0 },
-    2:  { h: 86,  w: 11.5 },
-    3:  { h: 95,  w: 13.8 },
-    4:  { h: 102, w: 15.8 },
-    5:  { h: 109, w: 18.0 },
-    6:  { h: 115, w: 20.5 },
-    7:  { h: 121, w: 23.0 },
-    8:  { h: 127, w: 26.0 },
-    9:  { h: 133, w: 29.0 },
-    10: { h: 139, w: 33.0 },
-    11: { h: 146, w: 38.0 },
-    12: { h: 152, w: 44.0 },
-    13: { h: 157, w: 48.0 },
-    14: { h: 159, w: 51.0 },
-    15: { h: 160, w: 52.0 },
-    16: { h: 161, w: 53.0 },
-    17: { h: 161, w: 53.0 },
-  }
+// Korean CDC 2017 reference — median (p50) and approx stdDev per age (years 0-17)
+// h = height cm median, hsd = height stddev
+// w = weight kg median, wsd = weight stddev
+const REF = {
+  M: [
+    { h:50.0,  hsd:2.1,  w:3.3,  wsd:0.5  }, // 0
+    { h:75.8,  hsd:2.7,  w:9.5,  wsd:1.0  }, // 1
+    { h:87.8,  hsd:3.2,  w:12.5, wsd:1.4  }, // 2
+    { h:96.2,  hsd:3.5,  w:14.5, wsd:1.7  }, // 3
+    { h:103.0, hsd:3.8,  w:16.5, wsd:2.0  }, // 4
+    { h:110.0, hsd:4.2,  w:19.0, wsd:2.5  }, // 5
+    { h:116.5, hsd:4.5,  w:21.7, wsd:3.0  }, // 6
+    { h:122.5, hsd:4.8,  w:24.3, wsd:3.5  }, // 7
+    { h:128.0, hsd:5.1,  w:27.2, wsd:4.0  }, // 8
+    { h:133.5, hsd:5.5,  w:30.5, wsd:4.8  }, // 9
+    { h:139.5, hsd:5.8,  w:34.2, wsd:5.8  }, // 10
+    { h:145.5, hsd:6.2,  w:38.5, wsd:7.0  }, // 11
+    { h:152.5, hsd:6.5,  w:43.8, wsd:8.5  }, // 12
+    { h:161.0, hsd:6.5,  w:51.0, wsd:10.0 }, // 13
+    { h:166.5, hsd:6.0,  w:57.0, wsd:11.0 }, // 14
+    { h:169.5, hsd:5.8,  w:60.5, wsd:11.5 }, // 15
+    { h:171.5, hsd:5.6,  w:63.0, wsd:11.5 }, // 16
+    { h:173.0, hsd:5.5,  w:65.0, wsd:12.0 }, // 17
+  ],
+  F: [
+    { h:49.3,  hsd:2.0,  w:3.2,  wsd:0.5  }, // 0
+    { h:74.0,  hsd:2.6,  w:9.0,  wsd:0.9  }, // 1
+    { h:86.5,  hsd:3.0,  w:11.8, wsd:1.3  }, // 2
+    { h:95.3,  hsd:3.4,  w:14.0, wsd:1.6  }, // 3
+    { h:102.0, hsd:3.7,  w:15.9, wsd:1.9  }, // 4
+    { h:109.0, hsd:4.0,  w:18.2, wsd:2.4  }, // 5
+    { h:115.0, hsd:4.3,  w:20.8, wsd:2.9  }, // 6
+    { h:121.0, hsd:4.6,  w:23.5, wsd:3.4  }, // 7
+    { h:127.0, hsd:5.0,  w:26.4, wsd:4.0  }, // 8
+    { h:133.5, hsd:5.5,  w:29.8, wsd:5.0  }, // 9
+    { h:140.0, hsd:5.8,  w:34.0, wsd:6.2  }, // 10
+    { h:147.0, hsd:5.8,  w:39.0, wsd:7.5  }, // 11
+    { h:152.0, hsd:5.5,  w:44.5, wsd:8.5  }, // 12
+    { h:156.5, hsd:5.2,  w:48.5, wsd:9.0  }, // 13
+    { h:159.0, hsd:5.0,  w:51.5, wsd:9.5  }, // 14
+    { h:160.0, hsd:4.8,  w:52.5, wsd:9.5  }, // 15
+    { h:161.0, hsd:4.7,  w:53.5, wsd:9.5  }, // 16
+    { h:161.0, hsd:4.7,  w:53.5, wsd:9.5  }, // 17
+  ]
 };
 
-function estimatePercentile(value, avg, stdDev) {
-  const z = (value - avg) / stdDev;
-  const pct = Math.round(50 + z * 34);
-  return Math.max(3, Math.min(97, pct));
+function normalCDF(z) {
+  const t = 1 / (1 + 0.2316419 * Math.abs(z));
+  const d = 0.3989423 * Math.exp(-z * z / 2);
+  const p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+  return z >= 0 ? 1 - p : p;
 }
 
-function getBmiStatus(bmi, age) {
-  if (age < 2) {
-    if (bmi < 14) return { label: '저체중', cls: 'status-under' };
-    if (bmi < 18) return { label: '정상', cls: 'status-normal' };
-    if (bmi < 20) return { label: '과체중', cls: 'status-over' };
-    return { label: '비만', cls: 'status-obese' };
+function calcPct(value, median, sd) {
+  const z = (value - median) / sd;
+  const p = Math.round(normalCDF(z) * 100);
+  return Math.max(1, Math.min(99, p));
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function getRef(gender, ageMonths) {
+  const g = REF[gender];
+  const ageYears = ageMonths / 12;
+  const lo = Math.min(Math.floor(ageYears), 17);
+  const hi = Math.min(lo + 1, 17);
+  const t = ageYears - lo;
+  return {
+    h:   lerp(g[lo].h,   g[hi].h,   t),
+    hsd: lerp(g[lo].hsd, g[hi].hsd, t),
+    w:   lerp(g[lo].w,   g[hi].w,   t),
+    wsd: lerp(g[lo].wsd, g[hi].wsd, t),
+  };
+}
+
+function getBmiStatus(bmi, ageYears) {
+  if (ageYears < 2) {
+    if (bmi < 14)   return { label: '저체중', cls: 'bmi-under' };
+    if (bmi < 18)   return { label: '정상',   cls: 'bmi-normal' };
+    if (bmi < 20)   return { label: '과체중', cls: 'bmi-over' };
+    return           { label: '비만',   cls: 'bmi-obese' };
   }
-  // Age 2+ uses percentile-based thresholds (simplified)
-  if (bmi < 14) return { label: '저체중', cls: 'status-under' };
-  if (bmi < 22) return { label: '정상', cls: 'status-normal' };
-  if (bmi < 25) return { label: '과체중', cls: 'status-over' };
-  return { label: '비만', cls: 'status-obese' };
+  if (bmi < 14.5)  return { label: '저체중', cls: 'bmi-under' };
+  if (bmi < 22.5)  return { label: '정상',   cls: 'bmi-normal' };
+  if (bmi < 25.0)  return { label: '과체중', cls: 'bmi-over' };
+  return             { label: '비만',   cls: 'bmi-obese' };
 }
 
 function calculate() {
   if (!childGender) { alert('성별을 선택해주세요!'); return; }
-  const age = parseInt(document.getElementById('childAge').value);
+
+  const byear  = parseInt(document.getElementById('byear').value);
+  const bmonth = parseInt(document.getElementById('bmonth').value);
+  const bday   = parseInt(document.getElementById('bday').value);
   const height = parseFloat(document.getElementById('childHeight').value);
   const weight = parseFloat(document.getElementById('childWeight').value);
 
-  if (isNaN(age) || age < 0 || age > 17) { alert('나이를 0~17세 사이로 입력해주세요!'); return; }
+  if (!byear || !bmonth || !bday || byear < 2007 || byear > 2026) {
+    alert('생년월일을 정확히 입력해주세요!'); return;
+  }
   if (!height || height < 40 || height > 200) { alert('키를 정확하게 입력해주세요!'); return; }
-  if (!weight || weight < 2 || weight > 120) { alert('몸무게를 정확하게 입력해주세요!'); return; }
+  if (!weight || weight < 2  || weight > 120) { alert('몸무게를 정확하게 입력해주세요!'); return; }
 
-  const bmi = weight / Math.pow(height / 100, 2);
-  const status = getBmiStatus(bmi, age);
-  const ref = growthRef[childGender][age] || growthRef[childGender][17];
+  const today = new Date();
+  const birth = new Date(byear, bmonth - 1, bday);
+  if (birth > today) { alert('생년월일이 오늘 이후일 수 없어요!'); return; }
 
-  const hStdDev = ref.h * 0.044;
-  const wStdDev = ref.w * 0.18;
-  const hPct = estimatePercentile(height, ref.h, hStdDev);
-  const wPct = estimatePercentile(weight, ref.w, wStdDev);
+  let totalMonths = (today.getFullYear() - birth.getFullYear()) * 12
+                  + (today.getMonth() - birth.getMonth());
+  if (today.getDate() < birth.getDate()) totalMonths--;
+  if (totalMonths < 0) totalMonths = 0;
 
-  let advice;
-  if (status.label === '저체중') {
-    advice = '아이가 또래보다 체중이 적은 편이에요. 균형 잡힌 식사와 충분한 영양 섭취가 중요합니다. 영양이 풍부한 간식을 자주 제공해주세요.';
-  } else if (status.label === '정상') {
-    advice = '아이가 건강한 체중 범위에 있어요! 지금처럼 균형 잡힌 식사와 규칙적인 활동을 유지해주세요. 잘 크고 있답니다 😊';
-  } else if (status.label === '과체중') {
-    advice = '아이의 체중이 약간 많은 편이에요. 단 음료와 고칼로리 간식을 줄이고, 매일 60분 이상 신체활동을 늘려주세요. 성장 중이니 무리한 다이어트는 금물!';
-  } else {
-    advice = '체중 관리가 필요한 시기예요. 소아청소년과나 소아 비만 클리닉 상담을 권장드려요. 아이와 함께 걷기, 수영, 자전거 등 즐거운 운동을 시작해보세요.';
+  const ageYears  = Math.floor(totalMonths / 12);
+  const ageMonths = totalMonths % 12;
+
+  if (ageYears > 17 || (ageYears === 17 && ageMonths > 11)) {
+    alert('만 18세 미만의 아이만 분석할 수 있어요!'); return;
   }
 
-  const bmiColor = status.label === '저체중' ? '#64b4ff'
-    : status.label === '정상' ? '#46d369'
-    : status.label === '과체중' ? '#ffc800'
+  const ref = getRef(childGender, totalMonths);
+  const hPct = calcPct(height, ref.h, ref.hsd);
+  const wPct = calcPct(weight, ref.w, ref.wsd);
+  const bmi  = weight / Math.pow(height / 100, 2);
+  const bmiStatus = getBmiStatus(bmi, ageYears);
+
+  const genderLabel = childGender === 'M' ? '남아' : '여아';
+  const ageLabel    = ageMonths > 0
+    ? `만 ${ageYears}세 ${ageMonths}개월`
+    : `만 ${ageYears}세`;
+  const avatar = childGender === 'M' ? '👦' : '👧';
+
+  const hDiff = +(height - ref.h).toFixed(1);
+  const wDiff = +(weight - ref.w).toFixed(1);
+
+  const hDiffHtml = hDiff === 0
+    ? `<span class="diff-zero">평균과 동일</span>`
+    : hDiff > 0
+      ? `<span class="diff-pos">평균보다 +${hDiff}cm</span>`
+      : `<span class="diff-neg">평균보다 ${hDiff}cm</span>`;
+  const wDiffHtml = wDiff === 0
+    ? `<span class="diff-zero">평균과 동일</span>`
+    : wDiff > 0
+      ? `<span class="diff-pos">평균보다 +${wDiff}kg</span>`
+      : `<span class="diff-neg">평균보다 ${wDiff}kg</span>`;
+
+  const hTopStr = `상위 ${100 - hPct}%`;
+  const wTopStr = `상위 ${100 - wPct}%`;
+
+  const hBarColor = hPct >= 75 ? '#60a5fa' : hPct >= 25 ? '#96fbc4' : '#f9c74f';
+  const wBarColor = wPct >= 75 ? '#a78bfa' : wPct >= 25 ? '#a78bfa' : '#f4a261';
+
+  const bmiColor = bmiStatus.label === '저체중' ? '#64b4ff'
+    : bmiStatus.label === '정상'   ? '#46d369'
+    : bmiStatus.label === '과체중' ? '#ffc800'
     : '#ff5050';
+
+  let advice = '';
+  if (bmiStatus.label === '저체중') {
+    advice = `${ageLabel} ${genderLabel}는 또래보다 체중이 가벼운 편이에요. 규칙적인 식사 습관을 만들고, 단백질과 건강한 지방이 풍부한 음식을 자주 챙겨주세요. 식욕이 부진하다면 소아청소년과 상담을 권장드려요.`;
+  } else if (bmiStatus.label === '정상') {
+    advice = `${ageLabel} ${genderLabel}의 체중이 건강한 범위에 있어요! 지금처럼 균형 잡힌 식사와 규칙적인 신체 활동을 유지해 주세요. 충분한 수면과 햇빛도 성장에 큰 도움이 됩니다 😊`;
+  } else if (bmiStatus.label === '과체중') {
+    advice = `체중이 약간 많은 편이에요. 단 음료, 패스트푸드, 야식을 줄이고 매일 30~60분 이상 신체 활동을 늘려보세요. 성장 중이니 무리한 식이 제한보다 건강한 생활 습관이 우선입니다!`;
+  } else {
+    advice = `체중 관리가 필요한 시기예요. 소아청소년과나 소아 비만 클리닉 상담을 권장드려요. 아이와 함께 걷기, 수영, 자전거 등 즐거운 운동을 꾸준히 해보세요. 식습관 개선과 함께 가족 모두가 건강해지는 기회로 삼아보세요 💪`;
+  }
 
   showAdThenResult(() => {
     document.getElementById('formSection').style.display = 'none';
     const sec = document.getElementById('resultSection');
     sec.style.display = 'block';
     sec.innerHTML = `
-      <div class="result-card">
+      <div class="result-card" style="padding-bottom:8px;">
         <span class="result-emoji">📊</span>
-        <div class="result-type">${age}세 ${childGender === 'M' ? '남아' : '여아'} 성장 분석</div>
-        <div class="bmi-big" style="color:${bmiColor};">${bmi.toFixed(1)}</div>
-        <div style="text-align:center;margin-bottom:4px;color:var(--gray3);font-size:13px;">BMI (체질량지수)</div>
-        <div style="text-align:center;margin-bottom:20px;">
-          <span class="status-badge ${status.cls}">${status.label}</span>
-        </div>
+        <div class="result-type">성장 백분위 분석 결과</div>
 
-        <div class="range-info">
-          <div class="range-row">
-            <span>📏 키</span>
-            <span class="range-val">${height}cm</span>
-          </div>
-          <div class="range-row">
-            <span>📏 키 백분위</span>
-            <span class="range-val">상위 ${100-hPct}% (또래 중 ${hPct}번째)</span>
-          </div>
-          <div class="range-row">
-            <span>⚖️ 몸무게</span>
-            <span class="range-val">${weight}kg</span>
-          </div>
-          <div class="range-row">
-            <span>⚖️ 몸무게 백분위</span>
-            <span class="range-val">상위 ${100-wPct}% (또래 중 ${wPct}번째)</span>
-          </div>
-          <div class="range-row">
-            <span>📊 이 나이 평균 키</span>
-            <span class="range-val">${ref.h}cm</span>
-          </div>
-          <div class="range-row">
-            <span>📊 이 나이 평균 몸무게</span>
-            <span class="range-val">${ref.w}kg</span>
+        <div class="result-profile">
+          <div class="profile-avatar">${avatar}</div>
+          <div>
+            <div class="profile-name">${ageLabel} ${genderLabel}</div>
+            <div class="profile-sub">${byear}년 ${bmonth}월 ${bday}일생 · 총 ${totalMonths}개월</div>
           </div>
         </div>
 
-        <div style="margin: 8px 0 16px;">
-          <div style="font-size:13px;color:var(--gray3);margin-bottom:6px;text-align:left;">키 백분위 위치</div>
-          <div class="percentile-bar">
-            <div class="percentile-fill" id="hPctFill" style="width:0%"></div>
+        <div class="pct-cards">
+          <div class="pct-card pct-card-h">
+            <div class="pct-icon">📏</div>
+            <div class="pct-big" style="color:#60a5fa;">${hTopStr.replace('상위 ','').replace('%','')}<span class="pct-unit" style="color:#60a5fa;">%</span></div>
+            <div class="pct-type">또래 중 키 상위</div>
+            <div class="pct-measure" style="color:#60a5fa;">${height} cm</div>
           </div>
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray3);">
-            <span>작은 편</span><span>평균</span><span>큰 편</span>
+          <div class="pct-card pct-card-w">
+            <div class="pct-icon">⚖️</div>
+            <div class="pct-big" style="color:#a78bfa;">${(100 - wPct)}<span class="pct-unit" style="color:#a78bfa;">%</span></div>
+            <div class="pct-type">또래 중 몸무게 상위</div>
+            <div class="pct-measure" style="color:#a78bfa;">${weight} kg</div>
           </div>
         </div>
 
-        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:16px 18px;margin:20px 0;text-align:left;">
-          <div style="font-size:14px;font-weight:700;margin-bottom:8px;">💡 부모님께 드리는 조언</div>
-          <p style="font-size:14px;color:var(--gray2);line-height:1.7;">${advice}</p>
+        <div class="bar-section">
+          <div class="bar-row">
+            <div class="bar-top">
+              <span class="bar-title">📏 키 백분위</span>
+              <span class="bar-pct-label" style="color:${hBarColor};">${hPct}번째 / 100명 중</span>
+            </div>
+            <div class="bar-bg">
+              <div class="bar-fill" id="hBar" style="width:0%;background:linear-gradient(90deg,#60a5fa,${hBarColor});"></div>
+              <div class="bar-dot" id="hDot" style="left:0%;background:${hBarColor};"></div>
+            </div>
+            <div class="bar-ticks">
+              <span>하위</span><span>25%</span><span>50%</span><span>75%</span><span>상위</span>
+            </div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-top">
+              <span class="bar-title">⚖️ 몸무게 백분위</span>
+              <span class="bar-pct-label" style="color:${wBarColor};">${wPct}번째 / 100명 중</span>
+            </div>
+            <div class="bar-bg">
+              <div class="bar-fill" id="wBar" style="width:0%;background:linear-gradient(90deg,#a78bfa,${wBarColor});"></div>
+              <div class="bar-dot" id="wDot" style="left:0%;background:${wBarColor};"></div>
+            </div>
+            <div class="bar-ticks">
+              <span>하위</span><span>25%</span><span>50%</span><span>75%</span><span>상위</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bmi-row">
+          <div>
+            <div class="bmi-num" style="color:${bmiColor};">${bmi.toFixed(1)}</div>
+            <div class="bmi-sub">BMI (체질량지수)</div>
+            <div><span class="bmi-badge ${bmiStatus.cls}">${bmiStatus.label}</span></div>
+          </div>
+          <div style="flex:1;padding-left:10px;font-size:13px;color:var(--gray3);line-height:1.65;">
+            ${bmiStatus.label === '정상' ? '건강한 체중 범위예요. 지금처럼 유지해 주세요!' :
+              bmiStatus.label === '저체중' ? '또래보다 체중이 가벼운 편이에요. 영양 섭취에 신경 써 주세요.' :
+              bmiStatus.label === '과체중' ? '체중이 약간 많은 편이에요. 활동량을 늘려보세요.' :
+              '체중 관리가 필요해요. 소아과 상담을 권장드려요.'}
+          </div>
+        </div>
+
+        <div class="compare-box">
+          <div class="compare-head">또래 평균과 비교</div>
+          <div class="compare-row">
+            <span class="compare-label">📏 우리 아이 키</span>
+            <span class="compare-val">${height} cm</span>
+            <span class="compare-diff">${hDiffHtml}</span>
+          </div>
+          <div class="compare-row">
+            <span class="compare-label">📊 또래 평균 키</span>
+            <span class="compare-val">${ref.h.toFixed(1)} cm</span>
+            <span class="compare-diff" style="color:var(--gray3);">기준</span>
+          </div>
+          <div class="compare-row">
+            <span class="compare-label">⚖️ 우리 아이 몸무게</span>
+            <span class="compare-val">${weight} kg</span>
+            <span class="compare-diff">${wDiffHtml}</span>
+          </div>
+          <div class="compare-row">
+            <span class="compare-label">📊 또래 평균 몸무게</span>
+            <span class="compare-val">${ref.w.toFixed(1)} kg</span>
+            <span class="compare-diff" style="color:var(--gray3);">기준</span>
+          </div>
+        </div>
+
+        <div class="advice-box">
+          <div class="advice-title">💡 부모님께 드리는 조언</div>
+          <div class="advice-text">${advice}</div>
+        </div>
+
+        <div class="disclaimer">
+          <p style="font-size:12px;color:var(--gray3);line-height:1.7;">
+            📌 질병관리청 2017년 소아청소년 성장 기준 기반 근사값입니다. 정확한 성장 평가는 소아청소년과에서 받아주세요.
+          </p>
         </div>
 
         <div class="result-actions">
-          <button class="btn-share" onclick="shareResult()">🔗 결과 공유하기</button>
+          <button class="btn-share" onclick="shareResult('${ageLabel}','${genderLabel}','${hTopStr}','${(100-wPct)}')">🔗 결과 공유하기</button>
           <button class="btn-retry" onclick="location.reload()">🔄 다시 계산</button>
           <a href="../index.html" class="btn-back">← 포털로</a>
         </div>
       </div>`;
 
     setTimeout(() => {
-      document.getElementById('hPctFill').style.width = hPct + '%';
+      document.getElementById('hBar').style.width = hPct + '%';
+      document.getElementById('hDot').style.left  = hPct + '%';
+      document.getElementById('wBar').style.width = wPct + '%';
+      document.getElementById('wDot').style.left  = wPct + '%';
     }, 200);
   });
 }
 
-function shareResult() {
-  const text = '우리 아이 성장 백분위 계산해봤어요! 📊 우리 아이도 체크해봐요~';
+function shareResult(ageLabel, gLabel, hTop, wTop) {
+  const text = `우리 아이 성장 백분위 결과! 🌱 ${ageLabel} ${gLabel} — 키 ${hTop} · 몸무게 상위 ${wTop}% 우리 아이도 체크해봐요~`;
   if (navigator.share) navigator.share({ title: '아이 성장 백분위', text, url: window.location.href });
   else navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => alert('복사됐어요! 🎉'));
 }

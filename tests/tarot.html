@@ -24,6 +24,7 @@
       content: '';
       position: absolute; inset: 0;
       background: radial-gradient(ellipse at 50% -20%, rgba(161,140,209,.35) 0%, transparent 65%);
+      pointer-events: none;
     }
     .tarot-intro-emoji { font-size: 72px; display: block; margin-bottom: 14px; position: relative; }
     .tarot-intro h2 { font-size: 22px; font-weight: 800; margin-bottom: 10px; position: relative; }
@@ -48,10 +49,13 @@
       text-transform: uppercase;
       letter-spacing: 1px;
     }
+    .tarot-card-wrapper {
+      perspective: 800px;
+      -webkit-perspective: 800px;
+    }
     .tarot-card {
       width: 110px;
       height: 170px;
-      perspective: 800px;
       cursor: pointer;
     }
     .tarot-card-inner {
@@ -59,11 +63,14 @@
       height: 100%;
       position: relative;
       transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
       transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      -webkit-transition: -webkit-transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
       border-radius: 12px;
     }
     .tarot-card.flipped .tarot-card-inner {
       transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
     }
     .tarot-card-front,
     .tarot-card-back {
@@ -71,6 +78,7 @@
       inset: 0;
       border-radius: 12px;
       backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -95,6 +103,7 @@
       background: linear-gradient(145deg, #0a1a2e 0%, #0d2840 100%);
       border: 1.5px solid rgba(100,180,255,.3);
       transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
     }
     .card-front-symbol { font-size: 42px; margin-bottom: 8px; }
     .card-front-name { font-size: 12px; font-weight: 700; text-align: center; line-height: 1.4; color: #c9e8ff; }
@@ -132,6 +141,69 @@
       padding: 8px 12px;
       line-height: 1.6;
     }
+    .card-readings-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      margin: 10px 0;
+    }
+    .card-reading-item {
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 10px; padding: 10px 12px;
+    }
+    .card-reading-label { font-size: 11px; font-weight: 700; color: var(--gray3); margin-bottom: 5px; }
+    .card-reading-text  { font-size: 12px; color: var(--gray2); line-height: 1.65; }
+    .card-keywords { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+    .keyword-chip {
+      background: rgba(201,184,247,.12); border: 1px solid rgba(201,184,247,.25);
+      color: #c9b8f7; border-radius: 50px; padding: 4px 10px;
+      font-size: 11px; font-weight: 600;
+    }
+    .energy-bar-wrap {
+      display: flex; align-items: center; gap: 8px; margin: 10px 0 0;
+    }
+    .energy-bar-label { font-size: 11px; color: var(--gray3); white-space: nowrap; }
+    .energy-bar-bg {
+      flex: 1; height: 6px; background: rgba(255,255,255,.1);
+      border-radius: 4px; overflow: hidden;
+    }
+    .energy-bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+    .energy-bar-val  { font-size: 11px; font-weight: 700; min-width: 32px; text-align: right; }
+    /* ── 종합 리딩 ── */
+    .summary-flow {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; margin: 14px 0; flex-wrap: wrap;
+    }
+    .summary-flow-card {
+      text-align: center; background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.1); border-radius: 10px;
+      padding: 8px 12px; min-width: 66px;
+    }
+    .summary-flow-sym  { font-size: 22px; display: block; }
+    .summary-flow-pos  { font-size: 10px; color: var(--gray3); }
+    .summary-flow-name { font-size: 11px; font-weight: 700; color: #c9e8ff; }
+    .summary-flow-arrow { font-size: 18px; color: var(--gray3); }
+    .summary-area-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0;
+    }
+    .summary-area-box {
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px; padding: 12px 14px;
+    }
+    .summary-area-label { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+    .summary-area-text  { font-size: 12px; color: var(--gray2); line-height: 1.7; }
+    .summary-energy-row {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,.04); border-radius: 12px; padding: 12px 16px;
+      margin: 10px 0;
+    }
+    .summary-energy-label { font-size: 13px; font-weight: 700; flex: 1; }
+    .summary-energy-val { font-size: 22px; font-weight: 900; }
+    .today-msg-box {
+      background: linear-gradient(135deg, rgba(201,184,247,.12), rgba(100,180,255,.08));
+      border: 1px solid rgba(201,184,247,.25); border-radius: 12px;
+      padding: 14px 16px; margin-top: 12px;
+    }
+    .today-msg-label { font-size: 11px; font-weight: 700; color: #c9b8f7; margin-bottom: 6px; }
+    .today-msg-text  { font-size: 13px; color: var(--gray1); line-height: 1.75; }
     .reveal-btn {
       width: 100%;
       padding: 12px;
@@ -238,26 +310,125 @@
 
 <script>
 const TAROT_DECK = [
-  { name:'마법사', symbol:'🧙', meaning:'새로운 시작과 무한한 가능성이 열립니다. 당신 안에 이미 모든 도구가 갖춰져 있습니다. 의지와 집중력을 발휘할 때입니다.', advice:'오늘은 미루던 일을 시작하기 가장 좋은 날입니다. 첫걸음을 내딛으세요.' },
-  { name:'여사제', symbol:'🌙', meaning:'직관과 내면의 지혜에 귀 기울이세요. 겉으로 드러나지 않는 진실이 있으며, 신중한 관찰이 필요한 시기입니다.', advice:'충동적으로 행동하지 말고 조용히 상황을 지켜보는 것이 현명합니다.' },
-  { name:'여황제', symbol:'🌸', meaning:'풍요와 창조적 에너지가 넘치는 시기입니다. 자연의 흐름을 따르면 원하는 것이 저절로 찾아옵니다.', advice:'자신을 사랑하고 돌보는 시간을 가지세요. 지금 당신은 가장 매력적인 상태입니다.' },
-  { name:'황제', symbol:'👑', meaning:'권위와 리더십이 빛나는 시기. 계획한 일을 실행에 옮길 강한 의지와 구조적 사고가 필요합니다.', advice:'원칙과 규율을 세우고 일관성 있게 밀고 나가세요. 흔들리지 않는 태도가 성공을 만듭니다.' },
-  { name:'교황', symbol:'⛪', meaning:'지혜로운 조언자나 정신적 가르침이 필요한 시기입니다. 전통과 도덕적 가치가 중요하게 다가옵니다.', advice:'신뢰할 수 있는 선배나 멘토에게 조언을 구해보세요.' },
-  { name:'연인', symbol:'💑', meaning:'중요한 선택의 기로에 서 있습니다. 마음과 가치관이 일치하는 방향을 선택해야 할 때입니다.', advice:'머리보다 마음이 이끄는 곳을 따르세요. 진정한 행복은 그곳에 있습니다.' },
-  { name:'전차', symbol:'🏆', meaning:'강한 의지와 추진력으로 장애물을 돌파하는 시기입니다. 자기 통제와 집중력이 승리의 열쇠입니다.', advice:'두 가지 상반된 욕구를 조율하며 목표를 향해 직진하세요. 승리가 가까이 있습니다.' },
-  { name:'힘', symbol:'🦁', meaning:'내면의 용기와 인내심이 요구되는 시기입니다. 두려움을 우아하게 극복하는 것이 진정한 힘입니다.', advice:'거칠게 밀어붙이지 않아도 됩니다. 부드러운 용기와 내면의 강인함을 믿으세요.' },
-  { name:'은둔자', symbol:'🕯️', meaning:'잠시 혼자만의 시간이 필요합니다. 내면을 돌아보고 삶의 방향을 재정비하는 중요한 시기입니다.', advice:'세상의 소음에서 벗어나 자신만의 공간에서 깊이 생각해보세요.' },
-  { name:'운명의 바퀴', symbol:'🎡', meaning:'큰 전환점이 찾아옵니다. 변화는 새로운 기회이며, 운명의 흐름을 긍정적으로 받아들이세요.', advice:'지금의 상황이 영원하지 않습니다. 변화를 두려워 말고 흐름을 타세요.' },
-  { name:'정의', symbol:'⚖️', meaning:'공정한 결과와 균형이 회복되는 시기입니다. 자신의 행동과 결정이 공정한지 돌아보세요.', advice:'정직함이 최선의 전략입니다. 진실을 말하고 공정하게 행동하면 좋은 결과가 따릅니다.' },
-  { name:'매달린 남자', symbol:'🔄', meaning:'새로운 시각이 필요한 시기입니다. 잠시 멈추고 다른 각도에서 상황을 바라보면 해결책이 보입니다.', advice:'무언가를 내려놓아야 더 큰 것을 얻을 수 있습니다. 집착을 버리세요.' },
-  { name:'죽음', symbol:'🦋', meaning:'끝이 아니라 새로운 시작을 알리는 카드입니다. 과거를 떠나보내야 새로운 것이 찾아올 수 있습니다.', advice:'더 이상 필요하지 않은 것을 과감히 놓아주세요. 변화는 성장의 씨앗입니다.' },
-  { name:'절제', symbol:'🌈', meaning:'균형과 절도가 필요한 시기입니다. 인내심을 갖고 조화를 이루어 가면 목표에 도달할 수 있습니다.', advice:'지금 당장의 결과를 조급해 말고 꾸준한 노력으로 천천히 나아가세요.' },
-  { name:'악마', symbol:'⛓️', meaning:'집착이나 두려움이 당신을 옭아매고 있습니다. 스스로 만든 제약에서 벗어날 힘이 있습니다.', advice:'자신도 모르게 빠진 나쁜 습관이나 관계를 직시하고 변화를 시작하세요.' },
-  { name:'별', symbol:'⭐', meaning:'희망과 영감이 찾아옵니다. 어둠 뒤에 반드시 빛이 있으며, 꿈을 포기하지 마세요.', advice:'마음속 소원을 밤하늘에 빌어보세요. 우주가 응답할 준비가 되어 있습니다.' },
-  { name:'달', symbol:'🌑', meaning:'불확실성과 혼란의 시기지만, 직관이 길을 안내합니다. 표면 아래 숨겨진 진실이 있습니다.', advice:'두려움이나 불안이 크더라도 멈추지 마세요. 끝까지 나아가면 빛이 보입니다.' },
-  { name:'태양', symbol:'☀️', meaning:'기쁨, 활력, 성공이 빛처럼 쏟아지는 최고의 시기입니다. 자신감을 갖고 세상으로 나아가세요.', advice:'오늘 하루 최선을 다해 즐기세요. 당신이 빛나는 날입니다!' },
-  { name:'심판', symbol:'📯', meaning:'중요한 각성과 재탄생의 순간이 찾아옵니다. 자신에 대한 솔직한 평가가 도약의 발판이 됩니다.', advice:'과거를 용서하고 새로운 나로 거듭날 준비를 하세요. 두 번째 기회가 주어집니다.' },
-  { name:'세계', symbol:'🌍', meaning:'완성과 성취의 카드입니다. 오랫동안 추구해온 목표가 완성되는 시기입니다.', advice:'지금까지의 여정을 축하하세요. 당신은 이미 훌륭하게 성장했습니다.' },
+  { name:'마법사', symbol:'🧙', energy:90, keywords:['새로운 시작','의지력','창의성','실행'],
+    meaning:'새로운 시작과 무한한 가능성이 열립니다. 당신 안에 이미 모든 도구가 갖춰져 있습니다. 의지와 집중력, 창의적인 아이디어가 결합되면 무엇이든 이뤄낼 수 있는 시기입니다. 지금 가진 자원과 능력을 믿으세요.',
+    love:'적극적인 표현이 열쇠입니다. 솔로라면 먼저 다가가는 용기가 인연을 만들어 줍니다. 연인이 있다면 새로운 데이트나 특별한 이벤트로 관계에 활력을 불어넣을 좋은 시기입니다.',
+    career:'새로운 프로젝트나 사업 아이디어를 실행에 옮기기에 최적의 타이밍입니다. 당신의 역량이 주목받고 중요한 기회가 찾아올 수 있습니다.',
+    advice:'오늘은 미루던 일을 시작하기 가장 좋은 날입니다. 첫걸음을 내딛으세요.' },
+
+  { name:'여사제', symbol:'🌙', energy:60, keywords:['직관','신중함','관찰','내면의 지혜'],
+    meaning:'직관과 내면의 지혜에 귀 기울이세요. 겉으로 드러나지 않는 진실이 있으며, 신중한 관찰이 필요한 시기입니다. 서두르지 않고 때를 기다리는 것이 지혜입니다.',
+    love:'섣부른 판단보다 상대방을 더 깊이 이해하는 시간이 필요합니다. 상대의 말보다 행동을 보세요. 솔로라면 내가 진정 원하는 것이 무엇인지 먼저 알아야 합니다.',
+    career:'지금은 과감한 행동보다 정보를 모으고 상황을 파악하는 시기입니다. 중요한 결정은 충분히 생각한 후에 내리세요.',
+    advice:'충동적으로 행동하지 말고 조용히 상황을 지켜보는 것이 현명합니다.' },
+
+  { name:'여황제', symbol:'🌸', energy:85, keywords:['풍요','창조','따뜻함','매력'],
+    meaning:'풍요와 창조적 에너지가 넘치는 시기입니다. 아이디어가 자연스럽게 샘솟고, 주변 사람들에게 따뜻한 에너지를 전달할 수 있습니다. 자연의 흐름을 따르면 원하는 것이 저절로 찾아옵니다.',
+    love:'사랑이 풍성해지는 시기입니다. 솔로라면 자연스러운 매력이 인연을 끌어당깁니다. 커플이라면 서로에 대한 애정이 더욱 깊어지고 따뜻한 시간을 보낼 수 있습니다.',
+    career:'창의적인 분야, 예술, 뷰티, 음식, 교육 등에서 두각을 나타낼 수 있는 시기입니다. 아이디어를 행동으로 옮기면 좋은 결과가 따릅니다.',
+    advice:'자신을 사랑하고 돌보는 시간을 가지세요. 지금 당신은 가장 매력적인 상태입니다.' },
+
+  { name:'황제', symbol:'👑', energy:80, keywords:['권위','안정','리더십','원칙'],
+    meaning:'권위와 리더십이 빛나는 시기입니다. 계획한 일을 실행에 옮길 강한 의지와 구조적 사고가 필요합니다. 안정적인 기반을 다지고, 원칙과 규율로 목표를 향해 나아가세요.',
+    love:'안정적이고 책임감 있는 관계를 원하는 시기입니다. 솔로라면 신뢰할 수 있는 사람을 찾게 됩니다. 연인이 있다면 관계에서 더 주도적인 역할을 하게 될 수 있습니다.',
+    career:'리더십을 발휘할 기회가 찾아옵니다. 체계적이고 전략적인 접근이 성공을 가져다 줍니다. 관리자나 책임자 역할에 적합한 시기입니다.',
+    advice:'원칙과 규율을 세우고 일관성 있게 밀고 나가세요. 흔들리지 않는 태도가 성공을 만듭니다.' },
+
+  { name:'교황', symbol:'⛪', energy:65, keywords:['전통','조언','공동체','배움'],
+    meaning:'지혜로운 조언자나 정신적 가르침이 필요한 시기입니다. 전통과 도덕적 가치, 그리고 공동체의 지혜를 따르는 것이 중요합니다. 혼자 결정하기보다 경험 있는 사람의 의견을 구하세요.',
+    love:'안정적이고 전통적인 관계를 원하는 마음이 강해집니다. 진지한 만남과 장기적인 관계에 집중하게 됩니다. 솔로라면 지인 소개나 공식적인 만남이 유리합니다.',
+    career:'멘토나 선배의 조언이 큰 도움이 됩니다. 기존의 방식과 규칙을 따르되, 그 안에서 자신의 역할을 확고히 하세요.',
+    advice:'신뢰할 수 있는 선배나 멘토에게 조언을 구해보세요.' },
+
+  { name:'연인', symbol:'💑', energy:88, keywords:['선택','인연','조화','결합'],
+    meaning:'중요한 선택의 기로에 서 있습니다. 마음과 가치관이 일치하는 방향을 선택해야 할 때입니다. 관계와 연결, 그리고 자신이 진정 원하는 것이 무엇인지 깊이 생각해야 합니다.',
+    love:'연애운이 매우 강한 시기입니다. 솔로라면 운명적인 만남이 기다리고 있으며, 커플이라면 관계가 더욱 깊어지거나 중요한 결정(약혼, 동거 등)을 하게 될 수 있습니다.',
+    career:'협력과 파트너십이 중요한 시기입니다. 중요한 선택을 해야 할 상황이 생길 수 있으며, 가치관에 따라 결정하세요.',
+    advice:'머리보다 마음이 이끄는 곳을 따르세요. 진정한 행복은 그곳에 있습니다.' },
+
+  { name:'전차', symbol:'🏆', energy:92, keywords:['추진력','승리','집중','돌파'],
+    meaning:'강한 의지와 추진력으로 장애물을 돌파하는 시기입니다. 자기 통제와 집중력이 승리의 열쇠입니다. 두 가지 상반된 힘을 조율하여 목표를 향해 돌진하세요.',
+    love:'연애에서 주도권을 쥐고 싶은 욕구가 강해집니다. 솔로라면 적극적으로 대시하면 성공할 확률이 높습니다. 연인과의 사이에서 작은 갈등이 있더라도 소통으로 해결하세요.',
+    career:'목표를 향해 집중하면 빠른 성과를 낼 수 있습니다. 경쟁에서 우위를 점할 수 있는 시기이며, 자신감 있게 나아가세요.',
+    advice:'두 가지 상반된 욕구를 조율하며 목표를 향해 직진하세요. 승리가 가까이 있습니다.' },
+
+  { name:'힘', symbol:'🦁', energy:78, keywords:['용기','인내','포용','내적 강인함'],
+    meaning:'내면의 용기와 인내심이 요구되는 시기입니다. 두려움을 우아하게 극복하는 것이 진정한 힘입니다. 거칠게 밀어붙이지 않아도, 부드러운 강인함으로 어려움을 넘어설 수 있습니다.',
+    love:'인내심과 이해심이 관계를 더욱 깊게 만드는 시기입니다. 상대방의 단점도 포용하는 너그러움이 사랑을 성장시킵니다. 솔로라면 자신을 먼저 사랑하는 것이 좋은 인연을 끌어당깁니다.',
+    career:'어려운 상황에서도 포기하지 않는 끈기가 결국 성과를 만들어 냅니다. 동료나 부하직원을 다독이는 리더십이 빛날 수 있습니다.',
+    advice:'거칠게 밀어붙이지 않아도 됩니다. 부드러운 용기와 내면의 강인함을 믿으세요.' },
+
+  { name:'은둔자', symbol:'🕯️', energy:55, keywords:['성찰','고독','내면 탐구','지혜'],
+    meaning:'잠시 혼자만의 시간이 필요합니다. 내면을 돌아보고 삶의 방향을 재정비하는 중요한 시기입니다. 세상의 소음에서 벗어나 자신만의 빛을 찾으세요.',
+    love:'지금은 새로운 인연보다 자신을 알아가는 시간이 더 필요합니다. 혼자만의 시간을 통해 진정으로 원하는 것을 명확히 하세요. 연인이 있다면 각자의 공간을 존중해 주세요.',
+    career:'창의적인 아이디어는 혼자만의 사색에서 나올 수 있습니다. 지금은 대외 활동보다 내실을 다지는 시간입니다. 전문성을 높이는 공부나 자기계발이 유리합니다.',
+    advice:'세상의 소음에서 벗어나 자신만의 공간에서 깊이 생각해보세요.' },
+
+  { name:'운명의 바퀴', symbol:'🎡', energy:82, keywords:['변화','행운','기회','전환점'],
+    meaning:'큰 전환점이 찾아옵니다. 변화는 새로운 기회이며, 운명의 흐름을 긍정적으로 받아들이세요. 순환하는 삶 속에서 지금은 좋은 흐름이 찾아오는 시기입니다.',
+    love:'예상치 못한 인연이 찾아오거나 관계에 큰 변화가 생길 수 있습니다. 솔로라면 운명적인 만남이 기다리고 있으며, 커플은 관계가 새로운 국면에 접어들 수 있습니다.',
+    career:'예기치 않은 기회나 행운이 찾아옵니다. 변화를 두려워하지 않고 받아들이면 큰 도약을 이룰 수 있는 시기입니다.',
+    advice:'지금의 상황이 영원하지 않습니다. 변화를 두려워 말고 흐름을 타세요.' },
+
+  { name:'정의', symbol:'⚖️', energy:72, keywords:['공정','균형','진실','결과'],
+    meaning:'공정한 결과와 균형이 회복되는 시기입니다. 자신의 행동과 결정이 공정한지 돌아보세요. 진실이 밝혀지고 적절한 보상이나 결과가 찾아오는 시기입니다.',
+    love:'관계에서 공정함과 균형이 중요해집니다. 서로를 동등하게 대우하는 것이 건강한 관계의 기초입니다. 오래된 갈등이나 문제가 정리될 수 있는 시기입니다.',
+    career:'노력한 만큼 공정한 평가나 보상이 따릅니다. 법적인 문제나 계약 관련 사항에서 유리한 결과를 기대할 수 있습니다.',
+    advice:'정직함이 최선의 전략입니다. 진실을 말하고 공정하게 행동하면 좋은 결과가 따릅니다.' },
+
+  { name:'매달린 남자', symbol:'🔄', energy:48, keywords:['인내','관점 전환','희생','기다림'],
+    meaning:'새로운 시각이 필요한 시기입니다. 잠시 멈추고 다른 각도에서 상황을 바라보면 해결책이 보입니다. 기다림과 인내가 결국 더 큰 것을 가져다 줄 것입니다.',
+    love:'관계에서 한 발 물러서서 상대방을 있는 그대로 바라보는 시간이 필요합니다. 집착보다 자유를 줄 때 사랑이 더 깊어질 수 있습니다.',
+    career:'지금은 결과를 서두르지 않는 것이 중요합니다. 다른 관점으로 상황을 분석하면 창의적인 해결책을 찾을 수 있습니다.',
+    advice:'무언가를 내려놓아야 더 큰 것을 얻을 수 있습니다. 집착을 버리세요.' },
+
+  { name:'죽음', symbol:'🦋', energy:70, keywords:['변화','끝과 시작','해방','전환'],
+    meaning:'끝이 아니라 새로운 시작을 알리는 카드입니다. 과거를 떠나보내야 새로운 것이 찾아올 수 있습니다. 변화를 받아들이고 더 이상 필요하지 않은 것을 용감하게 놓아주세요.',
+    love:'오래된 연애 패턴이나 관계를 끝낼 때가 되었을 수 있습니다. 이별이 두렵더라도 때로는 끝이 새로운 사랑의 시작입니다. 커플이라면 관계가 새로운 단계로 진화하는 시기입니다.',
+    career:'낡은 방식이나 정체된 상황을 과감히 변화시킬 시간입니다. 이직, 전직, 새로운 도전이 결국 더 나은 결과를 가져다 줄 수 있습니다.',
+    advice:'더 이상 필요하지 않은 것을 과감히 놓아주세요. 변화는 성장의 씨앗입니다.' },
+
+  { name:'절제', symbol:'🌈', energy:68, keywords:['균형','절제','인내','조화'],
+    meaning:'균형과 절도가 필요한 시기입니다. 인내심을 갖고 조화를 이루어 가면 목표에 도달할 수 있습니다. 극단을 피하고 중용의 길을 걸어가세요.',
+    love:'관계에서 균형과 조화가 중요합니다. 서로 다른 부분을 인정하고 조율하면 더욱 성숙한 사랑이 가능합니다. 솔로라면 너무 이상적인 상대를 찾기보다 현실적인 시각을 갖는 것이 좋습니다.',
+    career:'과도한 야망보다 꾸준하고 지속적인 노력이 빛을 발합니다. 여러 가지 일을 동시에 처리할 수 있는 균형 감각이 요구됩니다.',
+    advice:'지금 당장의 결과를 조급해 말고 꾸준한 노력으로 천천히 나아가세요.' },
+
+  { name:'악마', symbol:'⛓️', energy:52, keywords:['집착','해방','직면','변화'],
+    meaning:'집착이나 두려움이 당신을 옭아매고 있습니다. 스스로 만든 제약에서 벗어날 힘이 있습니다. 자신을 가두고 있는 것이 무엇인지 직시하고 변화를 시작하세요.',
+    love:'집착이나 불건전한 의존 관계에 주의가 필요합니다. 상대방을 소유하려 하거나 두려움으로 관계를 유지하고 있다면 점검이 필요한 시기입니다.',
+    career:'나쁜 습관, 부정적인 사고방식, 또는 독성적인 환경에서 벗어날 용기가 필요합니다. 과도한 욕심이나 탐욕에 주의하세요.',
+    advice:'자신도 모르게 빠진 나쁜 습관이나 관계를 직시하고 변화를 시작하세요.' },
+
+  { name:'별', symbol:'⭐', energy:88, keywords:['희망','영감','치유','소원'],
+    meaning:'희망과 영감이 찾아옵니다. 어둠 뒤에 반드시 빛이 있으며, 꿈을 포기하지 마세요. 우주가 당신의 소원을 들어줄 준비가 되어 있는 축복받은 시기입니다.',
+    love:'희망적인 사랑의 에너지가 넘칩니다. 솔로라면 좋은 인연이 찾아올 징조이며, 커플이라면 관계에 새로운 희망과 활력이 생깁니다. 자신을 있는 그대로 드러내는 것이 중요합니다.',
+    career:'창의적인 영감이 넘치는 시기입니다. 오랫동안 꿈꿔온 목표를 향해 나아가세요. 도움의 손길이 예상치 못한 곳에서 찾아올 수 있습니다.',
+    advice:'마음속 소원을 밤하늘에 빌어보세요. 우주가 응답할 준비가 되어 있습니다.' },
+
+  { name:'달', symbol:'🌑', energy:58, keywords:['불확실','직관','감정','숨겨진 진실'],
+    meaning:'불확실성과 혼란의 시기지만, 직관이 길을 안내합니다. 표면 아래 숨겨진 진실이 있습니다. 두려움이나 불안에 사로잡히지 말고 내면의 빛을 따라가세요.',
+    love:'관계에서 불분명한 부분이 있을 수 있습니다. 상대방의 진심을 파악하기 어렵거나 오해가 생길 수 있으니 솔직한 대화가 필요합니다. 감정에 너무 휩쓸리지 않도록 주의하세요.',
+    career:'정보가 불확실하거나 상황이 불투명할 수 있습니다. 성급한 결정보다 더 많은 정보를 수집한 후 행동하세요. 사기나 오해에 주의가 필요합니다.',
+    advice:'두려움이나 불안이 크더라도 멈추지 마세요. 끝까지 나아가면 빛이 보입니다.' },
+
+  { name:'태양', symbol:'☀️', energy:98, keywords:['기쁨','성공','활력','자신감'],
+    meaning:'기쁨, 활력, 성공이 빛처럼 쏟아지는 최고의 시기입니다. 자신감을 갖고 세상으로 나아가세요. 모든 것이 밝고 긍정적인 방향으로 흘러갑니다.',
+    love:'사랑이 활짝 피어나는 시기입니다. 솔로라면 밝고 긍정적인 에너지가 좋은 인연을 끌어당깁니다. 커플이라면 함께하는 시간이 더없이 행복하고 설레는 시기입니다.',
+    career:'노력의 결실이 찾아오는 최고의 시기입니다. 자신감 있게 자신을 표현하고, 새로운 도전도 두려워하지 마세요. 성공이 당신을 향해 달려오고 있습니다.',
+    advice:'오늘 하루 최선을 다해 즐기세요. 당신이 빛나는 날입니다!' },
+
+  { name:'심판', symbol:'📯', energy:75, keywords:['각성','재탄생','평가','결단'],
+    meaning:'중요한 각성과 재탄생의 순간이 찾아옵니다. 과거를 정리하고 새로운 나로 거듭날 준비를 하세요. 자신에 대한 솔직한 평가가 도약의 발판이 됩니다.',
+    love:'과거의 인연을 마무리하거나 새로운 시작을 결심하는 시기입니다. 오래된 감정을 정리하고 솔직하게 자신의 마음을 표현하세요. 용서와 화해가 관계를 새롭게 만들 수 있습니다.',
+    career:'중요한 결정이나 평가가 있을 수 있습니다. 자신의 능력을 솔직하게 평가하고 더 나은 방향으로 나아갈 준비를 하세요. 두 번째 기회가 찾아올 수 있습니다.',
+    advice:'과거를 용서하고 새로운 나로 거듭날 준비를 하세요. 두 번째 기회가 주어집니다.' },
+
+  { name:'세계', symbol:'🌍', energy:95, keywords:['완성','성취','통합','자유'],
+    meaning:'완성과 성취의 카드입니다. 오랫동안 추구해온 목표가 완성되는 시기입니다. 하나의 중요한 사이클이 마무리되고, 다음 단계로 나아갈 준비가 되어 있습니다.',
+    love:'완성된 사랑의 에너지입니다. 커플이라면 결혼이나 동거 등 중요한 결정을 할 수 있는 시기입니다. 솔로라면 마침내 자신이 원하는 이상적인 인연을 만나게 될 수 있습니다.',
+    career:'오랫동안 준비하고 노력한 프로젝트나 목표가 결실을 맺는 시기입니다. 성공적인 완수와 함께 새로운 가능성이 열립니다.',
+    advice:'지금까지의 여정을 축하하세요. 당신은 이미 훌륭하게 성장했습니다.' },
 ];
 
 const POSITIONS = ['과거', '현재', '미래'];
@@ -285,7 +456,7 @@ function startTarot() {
   area.innerHTML = POSITIONS.map((pos, i) => `
     <div class="tarot-card-wrapper">
       <div class="tarot-card-label">${pos}</div>
-      <div class="tarot-card" id="card${i}" onclick="revealCard(${i})">
+      <div class="tarot-card" data-idx="${i}">
         <div class="tarot-card-inner">
           <div class="tarot-card-back">
             <div class="tarot-card-back-pattern">✦</div>
@@ -299,11 +470,15 @@ function startTarot() {
       </div>
     </div>
   `).join('');
+
+  area.querySelectorAll('.tarot-card').forEach(card => {
+    card.addEventListener('click', () => revealCard(parseInt(card.dataset.idx)));
+  });
 }
 
 function revealCard(idx) {
-  const card = document.getElementById(`card${idx}`);
-  if (card.classList.contains('flipped')) return;
+  const card = document.querySelector(`.tarot-card[data-idx="${idx}"]`);
+  if (!card || card.classList.contains('flipped')) return;
   card.classList.add('flipped');
 
   document.getElementById(`dot${idx}`).classList.add('active');
@@ -317,6 +492,9 @@ function revealCard(idx) {
     detail.className = 'card-detail';
     detail.style.animation = 'fadeInUp .4s ease';
     const c = drawnCards[idx];
+    const kwHtml = (c.keywords || []).map(k => `<span class="keyword-chip">${k}</span>`).join('');
+    const eng = c.energy ?? 70;
+    const engColor = eng >= 85 ? '#f9c74f' : eng >= 65 ? '#90e0ef' : '#f4a261';
     detail.innerHTML = `
       <div class="card-detail-header">
         <div class="card-detail-sym">${c.symbol}</div>
@@ -326,6 +504,22 @@ function revealCard(idx) {
         </div>
       </div>
       <div class="card-detail-meaning">${c.meaning}</div>
+      <div class="card-keywords">${kwHtml}</div>
+      <div class="card-readings-grid">
+        <div class="card-reading-item">
+          <div class="card-reading-label">💕 연애 · 관계</div>
+          <div class="card-reading-text">${c.love || ''}</div>
+        </div>
+        <div class="card-reading-item">
+          <div class="card-reading-label">💼 직업 · 재물</div>
+          <div class="card-reading-text">${c.career || ''}</div>
+        </div>
+      </div>
+      <div class="energy-bar-wrap">
+        <span style="font-size:11px;color:var(--gray3);white-space:nowrap;">오늘의 에너지</span>
+        <div class="energy-bar-bg"><div class="energy-bar-fill" style="width:${eng}%;background:${engColor};"></div></div>
+        <span class="energy-bar-val" style="color:${engColor};">${eng}</span>
+      </div>
       <div class="card-detail-advice">💜 조언: ${c.advice}</div>
     `;
     revealArea.appendChild(detail);
@@ -342,16 +536,77 @@ function revealCard(idx) {
 
 function buildSummary() {
   const [past, present, future] = drawnCards;
-  const summaries = [
-    `${past.name}의 흐름을 바탕으로 ${present.name}의 시기를 지나, ${future.name}이 암시하는 밝은 미래로 나아가고 있습니다.`,
-    `과거의 ${past.name} 에너지가 현재 ${present.name}에 영향을 미치고 있으며, ${future.name}이 보여주는 가능성이 기다리고 있습니다.`,
-    `${past.name}이 가져온 경험이 오늘 ${present.name}의 지혜로 쌓였고, 앞으로 ${future.name}의 축복이 함께할 것입니다.`,
+
+  const narratives = [
+    `${past.name}이 쌓아온 경험과 에너지 위에 ${present.name}의 기운이 더해지고 있습니다. 앞으로 ${future.name}이 예고하는 흐름 속에서 당신의 선택이 더욱 빛날 것입니다.`,
+    `과거의 ${past.name}이 가져온 교훈이 현재 ${present.name}의 상황을 만들었습니다. 이 흐름을 타면 ${future.name}이 열어주는 가능성에 자연스럽게 닿게 됩니다.`,
+    `${past.name}의 그림자와 ${present.name}의 빛이 교차하는 지금, ${future.name}이 암시하는 전환이 머지않아 찾아올 것입니다.`,
   ];
-  const idx = (drawnCards[0].name.length + drawnCards[2].name.length) % summaries.length;
+  const ni = (past.name.length + future.name.length) % narratives.length;
+
+  const avgEnergy = Math.round(((past.energy ?? 70) + (present.energy ?? 70) + (future.energy ?? 70)) / 3);
+  const engColor = avgEnergy >= 85 ? '#f9c74f' : avgEnergy >= 65 ? '#90e0ef' : '#f4a261';
+
+  const loveMsgs = [
+    `${past.name}의 연애 에너지가 씨앗이 되어 ${present.name}의 감정 흐름을 타고 있습니다. ${future.name}이 예고하는 설렘을 준비하세요.`,
+    `연애 흐름 상 ${present.name}의 영향이 가장 강하게 작용합니다. ${future.name}의 카드가 새로운 만남이나 관계의 발전을 암시하고 있습니다.`,
+  ];
+  const careerMsgs = [
+    `${past.name}이 닦아놓은 기반 위에 ${present.name}의 기운이 실력을 강화시킵니다. ${future.name}이 예고하는 기회를 놓치지 마세요.`,
+    `직업·재물 측면에서 ${present.name}과 ${future.name}의 조합이 긍정적입니다. 지금의 노력이 결실로 이어질 가능성이 높습니다.`,
+  ];
+  const li = (present.name.length) % loveMsgs.length;
+  const ci = (future.name.length) % careerMsgs.length;
+
+  const todayMsgs = [
+    `오늘은 ${future.name}의 에너지를 활용해 미루던 일 하나를 시작해 보세요. 작은 행동이 큰 변화를 만듭니다.`,
+    `${present.name}의 메시지처럼 지금 이 순간에 충실하세요. 오늘 하루 당신의 빛이 가장 밝습니다.`,
+    `세 장의 카드가 한목소리로 말합니다 — 당신은 이미 충분히 준비되어 있다고.`,
+  ];
+  const ti = (past.name.length + present.name.length + future.name.length) % todayMsgs.length;
+
   return `<div class="reading-summary">
     <h3>🔮 종합 타로 리딩</h3>
-    <p style="font-size:14px;color:var(--gray1);line-height:1.85;">${summaries[idx]}</p>
-    <p style="font-size:13px;color:var(--gray3);margin-top:12px;line-height:1.7;">카드는 가능성을 보여줄 뿐, 운명은 당신 스스로 만들어 갑니다. 오늘 하루도 최선을 다하세요 🌟</p>
+    <div class="summary-flow">
+      <div class="summary-flow-card">
+        <div style="font-size:22px;">${past.symbol}</div>
+        <div style="font-size:11px;color:var(--gray3);margin-top:4px;">과거</div>
+        <div style="font-size:12px;color:var(--gray2);font-weight:600;">${past.name}</div>
+      </div>
+      <div style="font-size:18px;color:var(--gray3);align-self:center;">→</div>
+      <div class="summary-flow-card" style="border-color:rgba(201,184,247,.4);">
+        <div style="font-size:26px;">${present.symbol}</div>
+        <div style="font-size:11px;color:var(--gray3);margin-top:4px;">현재</div>
+        <div style="font-size:13px;color:#c9b8f7;font-weight:700;">${present.name}</div>
+      </div>
+      <div style="font-size:18px;color:var(--gray3);align-self:center;">→</div>
+      <div class="summary-flow-card">
+        <div style="font-size:22px;">${future.symbol}</div>
+        <div style="font-size:11px;color:var(--gray3);margin-top:4px;">미래</div>
+        <div style="font-size:12px;color:var(--gray2);font-weight:600;">${future.name}</div>
+      </div>
+    </div>
+    <p style="font-size:14px;color:var(--gray1);line-height:1.85;margin:14px 0 10px;">${narratives[ni]}</p>
+    <div class="summary-area-grid">
+      <div class="summary-area-box">
+        <div style="font-size:11px;font-weight:700;color:var(--gray3);margin-bottom:6px;">💕 연애 · 관계 종합</div>
+        <div style="font-size:12px;color:var(--gray2);line-height:1.65;">${loveMsgs[li]}</div>
+      </div>
+      <div class="summary-area-box">
+        <div style="font-size:11px;font-weight:700;color:var(--gray3);margin-bottom:6px;">💼 직업 · 재물 종합</div>
+        <div style="font-size:12px;color:var(--gray2);line-height:1.65;">${careerMsgs[ci]}</div>
+      </div>
+    </div>
+    <div class="summary-energy-row">
+      <span style="font-size:12px;color:var(--gray3);">오늘의 전체 에너지</span>
+      <div class="energy-bar-bg" style="flex:1;"><div class="energy-bar-fill" style="width:${avgEnergy}%;background:${engColor};"></div></div>
+      <span style="font-size:13px;font-weight:700;color:${engColor};">${avgEnergy}</span>
+    </div>
+    <div class="today-msg-box">
+      <div style="font-size:11px;font-weight:700;color:var(--gray3);margin-bottom:6px;">✨ 오늘의 메시지</div>
+      <div class="today-msg-text">${todayMsgs[ti]}</div>
+    </div>
+    <p style="font-size:12px;color:var(--gray3);margin-top:14px;text-align:center;line-height:1.7;">카드는 가능성을 보여줄 뿐, 운명은 당신 스스로 만들어 갑니다 🌟</p>
   </div>`;
 }
 
