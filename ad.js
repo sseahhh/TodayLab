@@ -1,20 +1,28 @@
-﻿/**
- * 오늘연구소 — 결과 전 광고 오버레이
- * ═══════════════════════════════════════════════
- *  실제 광고 수익 연결 방법 (아래 AD_SLOT_HTML 교체)
- * ───────────────────────────────────────────────
- *  ① Google AdSense  →  adsense.google.com 가입/승인 후
- *     <ins class="adsbygoogle" ...> 코드를 AD_SLOT_HTML에 붙여넣기
- *     + <head>에 AdSense 스크립트 추가
- *
- *  ② Kakao Adfit (한국 추천)  →  adfit.kakao.com 에서 광고 단위 생성 후
- *     <ins class="kakao_ad_area" ...> 코드를 AD_SLOT_HTML에 붙여넣기
- *     + <head>에 Adfit 스크립트 추가
- * ═══════════════════════════════════════════════
- */
+﻿// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  Google AdSense 설정
+//  1단계(신청 중): ADSENSE_PUB_ID 에 pub ID 입력 → 스크립트 자동 주입
+//  2단계(승인 후): ADSENSE_SLOT_ID 에 광고 단위 ID 입력
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const ADSENSE_PUB_ID  = 'ca-pub-8403043532847351';
+const ADSENSE_SLOT_ID = '';   // 예: '1234567890'  (승인 후 광고 단위 ID)
 
-// ▼ 여기에 실제 광고 코드(AdSense / Adfit)를 교체하세요 ▼
-const AD_SLOT_HTML = `
+// pub ID가 설정되면 AdSense 스크립트를 <head>에 자동 주입
+if (ADSENSE_PUB_ID) {
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUB_ID}`;
+  s.crossOrigin = 'anonymous';
+  document.head.appendChild(s);
+}
+
+// 광고 슬롯 HTML — pub ID + slot ID 가 모두 설정되면 실제 AdSense 광고, 아니면 플레이스홀더
+const AD_SLOT_HTML = (ADSENSE_PUB_ID && ADSENSE_SLOT_ID) ? `
+  <ins class="adsbygoogle"
+    style="display:inline-block;width:300px;height:250px"
+    data-ad-client="${ADSENSE_PUB_ID}"
+    data-ad-slot="${ADSENSE_SLOT_ID}"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});<\/script>
+` : `
   <div style="
     width:300px; height:250px;
     background:rgba(255,255,255,.04);
@@ -27,10 +35,9 @@ const AD_SLOT_HTML = `
   ">
     <span style="font-size:32px;opacity:.5;">📢</span>
     <span>광고 영역 (300 × 250)</span>
-    <small style="font-size:10px;opacity:.6;">AdSense / Adfit 코드로 교체하세요</small>
+    <small style="font-size:10px;opacity:.6;">AdSense 승인 후 자동 전환됩니다</small>
   </div>
 `;
-// ▲ 광고 코드 영역 끝 ▲
 
 const TOTAL_SEC  = 5;   // 전체 카운트다운 초
 const SKIP_AFTER = 2;   // 몇 초 후 건너뛰기 버튼 활성화

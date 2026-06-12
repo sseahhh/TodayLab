@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://오늘연구소.kr/sitemap.xml
+Sitemap: https://todaylab.co.kr/sitemap.xml
